@@ -1,5 +1,5 @@
 /** @format */
-
+import 'server-only'
 import {database} from '@/lib/database'
 import {encrypt, decrypt} from '@/lib/utils/crypto'
 import {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'

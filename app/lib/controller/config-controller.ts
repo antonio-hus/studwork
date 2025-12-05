@@ -1,67 +1,76 @@
 /** @format */
+'use server'
 
 import {ConfigService} from '@/lib/service/config-service'
-import {ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'
+import {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'
+import {ActionResponse} from "@/lib/domain/actions";
 
 /**
- * Controller for Platform Configuration.
- *
- * Acts as the server action layer, connecting frontend calls to the ConfigService singleton.
+ * Access the existing singleton instance from your service layer.
  */
-class ConfigController {
-    /** Service singleton */
-    private service = ConfigService.instance
+const service = ConfigService.instance
 
-    /** Retrieves the global configuration */
-    async getConfig() {
-        try {
-            const config = await this.service.getConfig()
-            return {success: true, data: config}
-        } catch (error: any) {
-            console.error('[ConfigController] getConfig error:', error)
-            return {success: false, error: 'Failed to fetch configuration'}
-        }
-    }
-
-    /** Creates the global configuration */
-    async createConfig(input: ConfigCreateType) {
-        try {
-            const config = await this.service.createConfig(input)
-            return {success: true, data: config}
-        } catch (error: any) {
-            console.error('[ConfigController] createConfig error:', error)
-            return {success: false, error: 'Failed to create configuration'}
-        }
-    }
-
-    /** Updates the global configuration */
-    async updateConfig(input: ConfigUpdateType) {
-        try {
-            const config = await this.service.updateConfig(input)
-            return {success: true, data: config}
-        } catch (error: any) {
-            console.error('[ConfigController] updateConfig error:', error)
-            return {success: false, error: 'Failed to update configuration'}
-        }
-    }
-
-    /** Checks if the platform has been configured */
-    async isConfigured() {
-        try {
-            const configured = await this.service.isConfigured()
-            return {success: true, data: configured}
-        } catch (error: any) {
-            console.error('[ConfigController] isConfigured error:', error)
-            return {success: false, error: 'Failed to check configuration status'}
-        }
-    }
-
-    /** Clears the in-memory configuration cache */
-    async clearCache() {
-        this.service.clearCache()
-        return {success: true, message: 'Configuration cache cleared'}
+/**
+ * Retrieves the global configuration.
+ */
+export async function getConfig(): Promise<ActionResponse<Config | null>> {
+    try {
+        const config = await service.getConfig()
+        return {success: true, data: config}
+    } catch (error) {
+        console.error('[ConfigController] getConfig error:', error)
+        return {success: false, error: 'Failed to fetch configuration'}
     }
 }
 
-/** Export a singleton instance */
-export const configController = new ConfigController()
+/**
+ * Creates the global configuration.
+ */
+export async function createConfig(input: ConfigCreateType): Promise<ActionResponse<Config>> {
+    try {
+        const config = await service.createConfig(input)
+        return {success: true, data: config}
+    } catch (error) {
+        console.error('[ConfigController] createConfig error:', error)
+        return {success: false, error: 'Failed to create configuration'}
+    }
+}
+
+/**
+ * Updates the global configuration.
+ */
+export async function updateConfig(input: ConfigUpdateType): Promise<ActionResponse<Config>> {
+    try {
+        const config = await service.updateConfig(input)
+        return {success: true, data: config}
+    } catch (error) {
+        console.error('[ConfigController] updateConfig error:', error)
+        return {success: false, error: 'Failed to update configuration'}
+    }
+}
+
+/**
+ * Checks if the platform has been configured.
+ */
+export async function isConfigured(): Promise<ActionResponse<boolean>> {
+    try {
+        const configured = await service.isConfigured()
+        return {success: true, data: configured}
+    } catch (error) {
+        console.error('[ConfigController] isConfigured error:', error)
+        return {success: false, error: 'Failed to check configuration status'}
+    }
+}
+
+/**
+ * Clears the in-memory configuration cache.
+ */
+export async function clearCache(): Promise<ActionResponse<string>> {
+    try {
+        service.clearCache()
+        return {success: true, data: 'Configuration cache cleared'}
+    } catch (error) {
+        console.error('[ConfigController] clearCache error:', error)
+        return {success: false, error: 'Failed to clear cache'}
+    }
+}

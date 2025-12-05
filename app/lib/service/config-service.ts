@@ -1,5 +1,5 @@
 /** @format */
-
+import 'server-only'
 import {ConfigRepository} from '@/lib/repository/config-repository'
 import {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'
 
