@@ -10,7 +10,7 @@ datasource db {
 model Config {
   id String @id @default("global_config")
 
-  name        String @default("Example University")
+  name        String
   logo        String
   themeColors Json
 
@@ -20,7 +20,7 @@ model Config {
   smtpPassword String
   emailFrom    String
 
-  allowPublicRegistration Boolean @default(false)
+  allowPublicRegistration Boolean
   studentEmailDomain      String?
   staffEmailDomain        String?
 

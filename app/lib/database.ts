@@ -44,4 +44,4 @@ if (process.env.NODE_ENV !== 'production') {
  * const users = await database.user.findMany();
  * ```
  */
-export default database;
+export {database};
