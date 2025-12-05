@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../prisma/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Config {
+  id String @id @default("global_config")
+
+  name        String @default("Example University")
+  logo        String
+  themeColors Json
+
+  smtpHost     String
+  smtpPort     Int
+  smtpUser     String
+  smtpPassword String
+  emailFrom    String
+
+  allowPublicRegistration Boolean @default(false)
+  studentEmailDomain      String?
+  staffEmailDomain        String?
+
+  updatedAt DateTime @updatedAt
+}
