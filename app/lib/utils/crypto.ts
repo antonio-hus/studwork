@@ -1,5 +1,4 @@
 /** @format */
-
 import 'server-only'
 import {
     createCipheriv,
@@ -16,11 +15,11 @@ import {
 const ALGORITHM: string = 'aes-256-gcm'
 
 /**
- * 32-byte encryption key loaded from `APP_ENCRYPTION_KEY` environment variable.
+ * 32-byte encryption key loaded from `SECRET_KEY` environment variable.
  * Must be provided as a hex-encoded hex string.
  * @type {Buffer}
  */
-const KEY: Buffer = Buffer.from(process.env.APP_ENCRYPTION_KEY!, 'hex')
+const KEY: Buffer = Buffer.from(process.env.SECRET_KEY!, 'hex')
 
 /**
  * Encrypts a UTF-8 string using the AES-256-GCM authenticated encryption mode.
