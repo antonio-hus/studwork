@@ -1,5 +1,6 @@
 /** @format */
-import type { Prisma } from "@/prisma/generated/client";
+import type {Prisma} from "@/prisma/generated/client";
+import {UserCreateType} from "@/lib/domain/user";
 
 /**
  * Re-exporting generated Prisma types for the Student entity.
@@ -25,3 +26,11 @@ export type StudentUpdateType = Prisma.StudentUpdateInput;
 export type StudentWithUser = Prisma.StudentGetPayload<{
     include: { user: true };
 }>;
+
+/**
+ * Composite DTO used by the Service Layer to orchestrate registration.
+ */
+export type StudentRegistrationInput = {
+    user: Omit<UserCreateType, 'role'>;
+    student: Omit<StudentCreateType, 'user' | 'userId'>;
+};

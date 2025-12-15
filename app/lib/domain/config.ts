@@ -1,5 +1,5 @@
 /** @format */
-import { Prisma } from "@/prisma/generated/client";
+import {Prisma} from "@/prisma/generated/client";
 
 /**
  * Represents the global configuration settings for the application.
@@ -12,7 +12,7 @@ import { Prisma } from "@/prisma/generated/client";
  * - Registration rules: `allowPublicRegistration`, `studentEmailDomain`, `staffEmailDomain`
  * - Metadata: `updatedAt` (automatically updated timestamp)
  */
-export type { Config } from "@/prisma/generated/client";
+export type {Config} from "@/prisma/generated/client";
 
 /**
  * Theme color type for one mode (light or dark)

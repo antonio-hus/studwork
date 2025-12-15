@@ -1,5 +1,6 @@
 /** @format */
-import type { Prisma } from "@/prisma/generated/client";
+import type {Prisma} from "@/prisma/generated/client";
+import {UserCreateType} from "@/lib/domain/user";
 
 /**
  * Re-exporting generated Prisma types for the Organization entity.
@@ -23,3 +24,11 @@ export type OrganizationUpdateType = Prisma.OrganizationUpdateInput;
 export type OrganizationWithUser = Prisma.OrganizationGetPayload<{
     include: { user: true };
 }>;
+
+/**
+ * Composite DTO used by the Service Layer to orchestrate registration.
+ */
+export type OrganizationRegistrationInput = {
+    user: Omit<UserCreateType, 'role'>;
+    organization: Omit<OrganizationCreateType, 'user' | 'userId'>;
+};
