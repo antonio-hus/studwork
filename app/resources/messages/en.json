@@ -111,5 +111,15 @@
         }
       }
     }
+  },
+  "errors": {
+    "auth": {
+      "user_not_found": "Unauthorized: User account not found.",
+      "admin_required": "Unauthorized: Administrator privileges required.",
+      "coordinator_required": "Unauthorized: Coordinator privileges required.",
+      "organization_required": "Unauthorized: Organization privileges required.",
+      "student_required": "Unauthorized: Student privileges required.",
+      "forbidden_resource": "Unauthorized: You do not have permission to modify this resource."
+    }
   }
 }
