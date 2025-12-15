@@ -2,6 +2,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations } from "next-intl";
 import { ThemeColors, ThemeModeColors } from "@/lib/domain/config";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -20,6 +21,7 @@ interface ThemeEditorProps {
  * A comprehensive editor for the application's theme colors.
  */
 export function ThemeEditor({ colors, onChange }: ThemeEditorProps) {
+    const t = useTranslations("setup.branding.theme");
 
     const updateColor = (mode: "light" | "dark", key: keyof ThemeModeColors, value: string) => {
         onChange({
@@ -40,7 +42,7 @@ export function ThemeEditor({ colors, onChange }: ThemeEditorProps) {
                 {keys.map((key) => (
                     <ColorInput
                         key={key}
-                        label={key.replace(/([A-Z])/g, ' $1').trim()}
+                        label={t(`color_labels.${key}`)}
                         value={colors[mode][key]}
                         onChange={(v) => updateColor(mode, key, v)}
                     />
@@ -54,8 +56,8 @@ export function ThemeEditor({ colors, onChange }: ThemeEditorProps) {
             <Tabs defaultValue="light" className="w-full flex flex-col h-[500px]">
                 <div className="bg-muted/30 border-b border-border p-2">
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="light">Light Mode</TabsTrigger>
-                        <TabsTrigger value="dark">Dark Mode</TabsTrigger>
+                        <TabsTrigger value="light">{t("light_mode")}</TabsTrigger>
+                        <TabsTrigger value="dark">{t("dark_mode")}</TabsTrigger>
                     </TabsList>
                 </div>
 
@@ -63,26 +65,26 @@ export function ThemeEditor({ colors, onChange }: ThemeEditorProps) {
                     <TabsContent key={mode} value={mode} className="flex-1 m-0 overflow-hidden relative">
                         <ScrollArea className="h-full p-6">
                             <div className="space-y-2">
-                                {renderSection(mode, "Brand Colors", [
+                                {renderSection(mode, t("sections.brand"), [
                                     "primary", "primaryHover", "primaryLight", "primaryDark", "primaryForeground",
                                     "secondary", "secondaryHover", "secondaryLight", "secondaryDark", "secondaryForeground",
                                     "accent", "accentHover", "accentLight", "accentDark", "accentForeground"
                                 ])}
 
-                                {renderSection(mode, "Surfaces & Typography", [
+                                {renderSection(mode, t("sections.surfaces"), [
                                     "background", "foreground",
                                     "surface", "surfaceElevated",
                                     "textPrimary", "textSecondary", "textTertiary", "textDisabled"
                                 ])}
 
-                                {renderSection(mode, "Status & Feedback", [
+                                {renderSection(mode, t("sections.status"), [
                                     "success", "successLight", "successForeground",
                                     "error", "errorLight", "errorForeground",
                                     "warning", "warningLight", "warningForeground",
                                     "info", "infoLight", "infoForeground"
                                 ])}
 
-                                {renderSection(mode, "UI Elements", [
+                                {renderSection(mode, t("sections.ui"), [
                                     "border", "input", "ring",
                                     "muted", "mutedForeground"
                                 ])}

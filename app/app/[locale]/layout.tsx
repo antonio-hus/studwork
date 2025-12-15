@@ -1,10 +1,14 @@
 /** @format */
-import "./globals.css";
+import "../globals.css";
 import React from "react";
 import type {Metadata} from "next";
+import {routing} from "@/lib/utils/i18n/routing";
+import {notFound} from "next/navigation";
 import {Geist, Geist_Mono} from "next/font/google";
 import {getConfig} from "@/lib/controller/config-controller";
 import {defaultThemeColors, ThemeColors} from "@/lib/domain/config";
+import {NextIntlClientProvider} from "next-intl";
+import {getMessages} from "next-intl/server";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -54,9 +58,23 @@ function themeColorsToCssVars(themeColors: Record<string, any>, prefix = ""): st
  * - Falls back to `defaultThemeColors` if no configuration is found in the database.
  *
  * @param children - The React nodes to render inside the layout
+ * @param params - Internationalization params
  * @returns The fully themed HTML structure with CSS variables injected
  */
-export default async function RootLayout({children}: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({children, params}: Readonly<{ children: React.ReactNode, params: Promise<{ locale: string }>; }>) {
+    // Await the params to get the locale
+    const { locale } = await params;
+
+    // Security Check: Validate locale matches your routing config
+    // If someone visits /de/dashboard but 'de' isn't supported, 404 immediately.
+    if (!routing.locales.includes(locale as any)) {
+        notFound();
+    }
+
+    // Fetch messages for the current locale
+    const messages = await getMessages();
+
+    // Await the platform configurations
     const configResponse = await getConfig();
 
     // Extract data safely based on the success flag
@@ -70,7 +88,7 @@ export default async function RootLayout({children}: Readonly<{ children: React.
     const darkCssVars = themeColorsToCssVars(themeColors.dark);
 
     return (
-        <html lang="en">
+        <html lang={locale}>
         <head>
             <style
                 dangerouslySetInnerHTML={{
@@ -93,7 +111,9 @@ export default async function RootLayout({children}: Readonly<{ children: React.
             />
         </head>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
+        <NextIntlClientProvider messages={messages}>
+            {children}
+        </NextIntlClientProvider>
         </body>
         </html>
     );

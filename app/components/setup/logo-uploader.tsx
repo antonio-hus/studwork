@@ -1,7 +1,11 @@
+/** @format */
+"use client";
+
 import React, { useRef, useState, useEffect } from "react";
 import { Upload, X, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 /**
  * Props for the LogoUploader component.
@@ -24,6 +28,7 @@ interface LogoUploaderProps {
  * - **Drag & Drop**: Friendly UI for file selection.
  */
 export function LogoUploader({ value, onChange, hasError }: LogoUploaderProps) {
+    const t = useTranslations("setup.branding.logo");
     const inputRef = useRef<HTMLInputElement>(null);
     const [loadError, setLoadError] = useState(false);
 
@@ -36,7 +41,7 @@ export function LogoUploader({ value, onChange, hasError }: LogoUploaderProps) {
         if (!file) return;
 
         if (file.size > 2 * 1024 * 1024) {
-            alert("File is too large. Max 2MB.");
+            alert(t("file_too_large"));
             return;
         }
 
@@ -63,9 +68,9 @@ export function LogoUploader({ value, onChange, hasError }: LogoUploaderProps) {
                     "text-sm font-medium leading-none",
                     hasError ? "text-destructive" : "text-foreground"
                 )}>
-                    Platform Logo <span className="text-destructive">*</span>
+                    {t("label")} <span className="text-destructive">*</span>
                 </span>
-                {hasError && <span className="text-xs text-destructive font-medium">Required</span>}
+                {hasError && <span className="text-xs text-destructive font-medium">{t("required_badge")}</span>}
             </div>
 
             <input
@@ -104,10 +109,10 @@ export function LogoUploader({ value, onChange, hasError }: LogoUploaderProps) {
                             "text-xs font-medium transition-colors",
                             hasError ? "text-destructive" : "text-muted-foreground group-hover:text-primary"
                         )}>
-                            {loadError ? "Image failed to load. Try again." : "Click to upload logo"}
+                            {loadError ? t("error_load") : t("drag_drop")}
                         </p>
                         <p className="text-[10px] text-muted-foreground mt-1">
-                            SVG, PNG, JPG (max 2MB)
+                            {t("file_hint")}
                         </p>
                     </div>
                 </div>

@@ -1,0 +1,115 @@
+{
+  "setup": {
+    "title": "Platform Setup",
+    "description": "Configure system access and visual branding.",
+    "status": "Initialization",
+    "success": {
+      "title": "All Set!",
+      "description": "Your platform has been successfully configured.",
+      "dashboard_button": "Go to Dashboard"
+    },
+    "tabs": {
+      "system": "System & Access",
+      "branding": "Branding & Appearance"
+    },
+    "buttons": {
+      "back": "Back",
+      "next": "Next: Branding",
+      "saving": "Saving...",
+      "complete": "Complete Setup"
+    },
+    "steps": {
+      "one": "Step 1 of 2",
+      "two": "Step 2 of 2"
+    },
+    "errors": {
+      "required": "Please fill in all required fields correctly.",
+      "branding_required": "Please upload a logo and set a name.",
+      "unknown": "Unknown error occurred.",
+      "unexpected": "An unexpected system error occurred."
+    },
+    "system": {
+      "email_title": "Email Services (SMTP)",
+      "smtp_host": "SMTP Host",
+      "smtp_port": "Port",
+      "username": "Username",
+      "password": "Password",
+      "sender_email": "Sender Email (From)",
+      "sender_email_hint": "Emails sent by the system will appear to come from this address.",
+      "access_title": "Access Policies",
+      "student_domain": "Student Email Domain",
+      "student_domain_hint": "Only emails ending with this domain can register as students.",
+      "staff_domain": "Staff Email Domain",
+      "staff_domain_hint": "Only emails ending with this domain can register as staff.",
+      "public_reg": {
+        "title": "Public Registration",
+        "description": "Allow anyone to create an account without domain restrictions."
+      }
+    },
+    "branding": {
+      "org_name": "Organization Name",
+      "org_name_placeholder": "e.g. Acme University",
+      "advanced_theme": "Advanced Theming",
+      "logo": {
+        "label": "Platform Logo",
+        "required_badge": "Required",
+        "drag_drop": "Click to upload logo",
+        "error_load": "Image failed to load. Try again.",
+        "file_hint": "SVG, PNG, JPG (max 2MB)",
+        "file_too_large": "File is too large. Max 2MB."
+      },
+      "theme": {
+        "light_mode": "Light Mode",
+        "dark_mode": "Dark Mode",
+        "sections": {
+          "brand": "Brand Colors",
+          "surfaces": "Surfaces & Typography",
+          "status": "Status & Feedback",
+          "ui": "UI Elements"
+        },
+        "color_labels": {
+          "primary": "Primary",
+          "primaryHover": "Primary Hover",
+          "primaryLight": "Primary Light",
+          "primaryDark": "Primary Dark",
+          "primaryForeground": "Primary Foreground",
+          "secondary": "Secondary",
+          "secondaryHover": "Secondary Hover",
+          "secondaryLight": "Secondary Light",
+          "secondaryDark": "Secondary Dark",
+          "secondaryForeground": "Secondary Foreground",
+          "accent": "Accent",
+          "accentHover": "Accent Hover",
+          "accentLight": "Accent Light",
+          "accentDark": "Accent Dark",
+          "accentForeground": "Accent Foreground",
+          "background": "Background",
+          "foreground": "Foreground",
+          "surface": "Surface",
+          "surfaceElevated": "Surface Elevated",
+          "textPrimary": "Text Primary",
+          "textSecondary": "Text Secondary",
+          "textTertiary": "Text Tertiary",
+          "textDisabled": "Text Disabled",
+          "success": "Success",
+          "successLight": "Success Light",
+          "successForeground": "Success Foreground",
+          "error": "Error",
+          "errorLight": "Error Light",
+          "errorForeground": "Error Foreground",
+          "warning": "Warning",
+          "warningLight": "Warning Light",
+          "warningForeground": "Warning Foreground",
+          "info": "Info",
+          "infoLight": "Info Light",
+          "infoForeground": "Info Foreground",
+          "border": "Border",
+          "input": "Input",
+          "ring": "Ring",
+          "muted": "Muted",
+          "mutedForeground": "Muted Foreground"
+        }
+      }
+    }
+  }
+}
