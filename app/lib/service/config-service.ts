@@ -2,6 +2,7 @@
 import 'server-only'
 import {ConfigRepository} from '@/lib/repository/config-repository'
 import {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'
+import {requireAdmin} from "@/lib/utils/permissions";
 
 /**
  * Service layer for Platform Configuration.
