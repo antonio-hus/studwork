@@ -26,6 +26,16 @@ export class UserRepository {
     }
 
     /**
+     * Retrieves a user by their identifier.
+     *
+     * @param id - The identifier to search for.
+     * @returns The user record or null if not found.
+     */
+    async getById(id: string): Promise<User | null> {
+        return database.user.findUnique({where: {id}})
+    }
+
+    /**
      * Retrieves a user by their email address.
      *
      * @param email - The email to search for.
