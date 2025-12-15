@@ -35,12 +35,13 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 function themeColorsToCssVars(themeColors: Record<string, any>, prefix = ""): string {
     return Object.entries(themeColors)
-        .map(([key, value]) =>
-            typeof value === "object"
-                ? themeColorsToCssVars(value, `${prefix}${key}-`)
-                : `--${prefix}${key}: ${value};`
-        )
-        .join("\n");
+        .map(([key, value]) => {
+            const cssKey = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+            return typeof value === "object"
+                ? themeColorsToCssVars(value, `${prefix}${cssKey}-`)
+                : `--${prefix}${cssKey}: ${value};`;
+        })
+        .join("\n    ");
 }
 
 /**
@@ -70,17 +71,28 @@ export default async function RootLayout({children}: Readonly<{ children: React.
 
     return (
         <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <style
-            dangerouslySetInnerHTML={{
-                __html: `
-                          :root { ${lightCssVars} }
-                          @media (prefers-color-scheme: dark) {
-                            :root { ${darkCssVars} }
-                          }
+        <head>
+            <style
+                dangerouslySetInnerHTML={{
+                    __html: `
+                            :root {
+                                ${lightCssVars}
+                            }
+                            
+                            @media (prefers-color-scheme: dark) {
+                                :root {
+                                    ${darkCssVars}
+                                }
+                            }
+                            
+                            .dark {
+                                ${darkCssVars}
+                            }
                         `,
-            }}
-        />
+                }}
+            />
+        </head>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
         </body>
         </html>
