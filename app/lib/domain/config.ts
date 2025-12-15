@@ -158,23 +158,23 @@ export const defaultThemeColors: ThemeColors = {
         primaryHover: "#2dd4bf",
         primaryLight: "#99f6e4",
         primaryDark: "#14b8a6",
-        primaryForeground: "#0f172a",
+        primaryForeground: "#0a0a0a",
 
         secondary: "#94a3b8",
         secondaryHover: "#cbd5e1",
         secondaryLight: "#cbd5e1",
         secondaryDark: "#64748b",
-        secondaryForeground: "#0f172a",
+        secondaryForeground: "#0a0a0a",
 
         accent: "#fbbf24",
         accentHover: "#fcd34d",
         accentLight: "#fde68a",
         accentDark: "#f59e0b",
-        accentForeground: "#0f172a",
+        accentForeground: "#0a0a0a",
 
         success: "#34d399",
-        successLight: "#065f46",
-        successForeground: "#0f172a",
+        successLight: "#064e3b",
+        successForeground: "#0a0a0a",
 
         error: "#f87171",
         errorLight: "#7f1d1d",
@@ -182,27 +182,27 @@ export const defaultThemeColors: ThemeColors = {
 
         warning: "#fbbf24",
         warningLight: "#78350f",
-        warningForeground: "#0f172a",
+        warningForeground: "#0a0a0a",
 
         info: "#60a5fa",
         infoLight: "#1e3a8a",
-        infoForeground: "#0f172a",
+        infoForeground: "#0a0a0a",
 
         background: "#0a0a0a",
-        foreground: "#ededed",
-        surface: "#1a1a1a",
-        surfaceElevated: "#262626",
+        foreground: "#f1f5f9",
+        surface: "#0a0a0a",
+        surfaceElevated: "#141414",
 
-        textPrimary: "#f8fafc",
+        textPrimary: "#f1f5f9",
         textSecondary: "#cbd5e1",
         textTertiary: "#94a3b8",
         textDisabled: "#64748b",
 
-        border: "#404040",
-        input: "#404040",
+        border: "#2a2a2a",
+        input: "#1f1f1f",
         ring: "#5eead4",
 
-        muted: "#262626",
+        muted: "#1a1a1a",
         mutedForeground: "#a1a1aa",
     },
 };
@@ -211,15 +211,15 @@ export const defaultThemeColors: ThemeColors = {
  * Default global configuration for the platform.
  */
 export const defaultConfig: ConfigCreateType = {
-    name: "Example University",
-    logo: "/images/logo.png",
+    name: "",
+    logo: "",
     themeColors: defaultThemeColors,
 
-    smtpHost: "smtp.example.com",
+    smtpHost: "",
     smtpPort: 587,
-    smtpUser: "user@example.com",
-    smtpPassword: "password",
-    emailFrom: "no-reply@example.com",
+    smtpUser: "",
+    smtpPassword: "",
+    emailFrom: "",
 
     allowPublicRegistration: false,
     studentEmailDomain: null,
