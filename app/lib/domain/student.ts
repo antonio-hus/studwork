@@ -31,6 +31,6 @@ export type StudentWithUser = Prisma.StudentGetPayload<{
  * Composite DTO used by the Service Layer to orchestrate registration.
  */
 export type StudentRegistrationInput = {
-    user: Omit<UserCreateType, 'role'>;
+    user: Omit<UserCreateType, 'role' | 'hashedPassword'> & { password: string };
     student: Omit<StudentCreateType, 'user' | 'userId'>;
 };

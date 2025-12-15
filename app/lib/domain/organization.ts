@@ -29,6 +29,6 @@ export type OrganizationWithUser = Prisma.OrganizationGetPayload<{
  * Composite DTO used by the Service Layer to orchestrate registration.
  */
 export type OrganizationRegistrationInput = {
-    user: Omit<UserCreateType, 'role'>;
+    user: Omit<UserCreateType, 'role' | 'hashedPassword'> & { password: string };
     organization: Omit<OrganizationCreateType, 'user' | 'userId'>;
 };

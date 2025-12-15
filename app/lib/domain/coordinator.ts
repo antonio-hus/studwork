@@ -29,6 +29,6 @@ export type CoordinatorWithUser = Prisma.CoordinatorGetPayload<{
  * Composite DTO used by the Service Layer to orchestrate registration.
  */
 export type CoordinatorRegistrationInput = {
-    user: Omit<UserCreateType, 'role'>;
+    user: Omit<UserCreateType, 'role' | 'hashedPassword'> & { password: string };
     coordinator: Omit<CoordinatorCreateType, 'user' | 'userId'>;
 };
