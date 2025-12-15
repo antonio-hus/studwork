@@ -328,9 +328,6 @@ export default function SetupPage() {
                                             <div className="space-y-4">
                                                 <div className="flex items-center justify-between">
                                                     <h3 className="text-lg font-semibold text-foreground">Advanced Theming</h3>
-                                                    <span className="text-xs uppercase font-medium text-muted-foreground bg-muted px-2 py-1 rounded">
-                                                        JSON Field
-                                                    </span>
                                                 </div>
                                                 <ThemeEditor colors={form.themeColors} onChange={updateTheme} />
                                             </div>
