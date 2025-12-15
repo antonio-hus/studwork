@@ -26,3 +26,141 @@ model Config {
 
   updatedAt DateTime @updatedAt
 }
+
+enum UserRole {
+  STUDENT
+  COORDINATOR
+  ORGANIZATION
+  ADMINISTRATOR
+}
+
+enum OrganizationType {
+  NGO
+  SMALL_BUSINESS
+  STARTUP
+  NON_PROFIT
+  SOCIAL_ENTERPRISE
+  OTHER
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  role           UserRole
+
+  name              String?
+  profilePictureUrl String?
+  bio               String? @db.Text
+
+  verificationTokens  VerificationToken[]
+  passwordResetTokens PasswordResetToken[]
+
+  isSuspended Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student       Student?
+  coordinator   Coordinator?
+  organization  Organization?
+  administrator Administrator?
+
+  @@index([email])
+  @@index([role])
+  @@map("users")
+}
+
+model Student {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  studyProgram String?
+  yearOfStudy  Int?
+
+  skills    String[]
+  interests String[]
+  resumeUrl String?
+
+  @@index([userId])
+  @@index([studyProgram])
+  @@map("students")
+}
+
+model Coordinator {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  department       String?
+  title            String?
+  areasOfExpertise String[]
+
+  @@index([userId])
+  @@index([department])
+  @@map("coordinators")
+}
+
+model Organization {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type OrganizationType
+
+  contactPerson String?
+  contactEmail  String?
+  contactPhone  String?
+  websiteUrl    String?
+  facebookUrl   String?
+
+  address String?
+  city    String?
+  country String?
+
+  isVerified Boolean   @default(false)
+  verifiedAt DateTime?
+
+  @@index([userId])
+  @@index([isVerified])
+  @@index([type])
+  @@map("organizations")
+}
+
+model Administrator {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("administrators")
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@map("password_reset_tokens")
+}
