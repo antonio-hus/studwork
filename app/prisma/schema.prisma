@@ -50,7 +50,7 @@ model User {
   hashedPassword String?
   role           UserRole
 
-  name              String?
+  name              String
   profilePictureUrl String?
   bio               String? @db.Text
 
@@ -108,7 +108,7 @@ model Organization {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  type OrganizationType
+  type OrganizationType @default(OTHER)
 
   contactPerson String?
   contactEmail  String?

@@ -1,6 +1,6 @@
 /** @format */
 import 'server-only'
-import {PrismaClient} from '@/prisma/generated/client';
+import {Prisma, PrismaClient} from '@/prisma/generated/client';
 import {PrismaPg} from '@prisma/adapter-pg';
 
 /**
@@ -46,3 +46,8 @@ if (process.env.NODE_ENV !== 'production') {
  * ```
  */
 export {database};
+
+/**
+ * Re-export transaction client type
+ */
+export type TransactionClient = Prisma.TransactionClient;
