@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "admin:add": "tsx -r dotenv/config lib/scripts/create-admin.ts",
+    "seed:users": "tsx -r dotenv/config lib/scripts/seed-users.ts",
+    "setup": "tsx -r dotenv/config lib/scripts/setup.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.1.0",
