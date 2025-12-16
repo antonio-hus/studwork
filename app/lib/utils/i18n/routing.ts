@@ -38,3 +38,14 @@ export const routing = defineRouting({
  * @exports getPathname - Helper to generate localized pathnames.
  */
 export const {Link, redirect, usePathname, useRouter, getPathname} = createNavigation(routing)
+
+/**
+ * Supported Locale Type.
+ *
+ * Represents the union of all valid language codes defined in the routing configuration.
+ * Use this type to enforce strict typing for locale parameters across the application
+ * (e.g., in page props, API handlers, or email services).
+ *
+ * Derived automatically from `routing.locales`.
+ */
+export type Locale = (typeof routing.locales)[number]
