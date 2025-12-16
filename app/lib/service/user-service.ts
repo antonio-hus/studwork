@@ -1,9 +1,10 @@
 /** @format */
-import {User, UserCreateType, UserUpdateType} from '@/lib/domain/user'
+import 'server-only'
+import type {User, UserCreateType, UserUpdateType} from '@/lib/domain/user'
 import {UserRepository} from '@/lib/repository/user-repository'
 
 /**
- * Service for generic User operations (Authentication, Profile Management).
+ * Service for generic User operations
  */
 export class UserService {
     private static _instance: UserService
@@ -60,7 +61,7 @@ export class UserService {
      * @throws Error if the actor is not an administrator.
      */
     async suspendUser(targetUserId: string): Promise<User> {
-        return UserRepository.instance.update(targetUserId, { isSuspended: true })
+        return UserRepository.instance.update(targetUserId, {isSuspended: true})
     }
 
     /**
@@ -70,6 +71,15 @@ export class UserService {
      * @throws Error if the actor is not an administrator.
      */
     async unsuspendUser(targetUserId: string): Promise<User> {
-        return UserRepository.instance.update(targetUserId, { isSuspended: false })
+        return UserRepository.instance.update(targetUserId, {isSuspended: false})
+    }
+
+    /**
+     * Permanently deletes a user account.
+     *
+     * @param userId - The ID of the user to delete.
+     */
+    async deleteUser(userId: string): Promise<void> {
+        await UserRepository.instance.delete(userId)
     }
 }

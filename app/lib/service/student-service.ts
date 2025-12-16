@@ -1,14 +1,10 @@
 /** @format */
+import 'server-only'
 import {database} from '@/lib/database'
-import {
-    StudentRegistrationInput,
-    StudentUpdateType,
-    StudentWithUser
-} from '@/lib/domain/student'
+import type {StudentRegistrationInput, StudentUpdateType, StudentWithUser} from '@/lib/domain/student'
 import {StudentRepository} from '@/lib/repository/student-repository'
 import {UserRepository} from '@/lib/repository/user-repository'
 import {hashPassword} from '@/lib/utils/password'
-import {requireOwnerOrAdmin} from "@/lib/utils/permissions";
 
 /**
  * Service for managing Student-related business logic and transactions.
@@ -39,20 +35,11 @@ export class StudentService {
             const hashedPassword = await hashPassword(password)
 
             const user = await UserRepository.instance.create(
-                {
-                    ...userData,
-                    hashedPassword,
-                    role: 'STUDENT',
-                },
-                tx
+                {...userData, hashedPassword, role: 'STUDENT',}, tx
             )
 
             const student = await StudentRepository.instance.create(
-                {
-                    ...input.student,
-                    user: {connect: {id: user.id}},
-                },
-                tx
+                {...input.student, user: {connect: {id: user.id}},}, tx
             )
 
             return {...student, user}
@@ -72,18 +59,15 @@ export class StudentService {
     /**
      * Updates a student's profile information.
      *
-     * @param actorId - The ID of the user performing the operation.
      * @param userId - The ID of the user.
      * @param data - The update payload.
      * @returns The updated student entity.
      * @throws Error if the user does not exist or is not a student.
      */
     async updateStudentProfile(
-        actorId: string,
         userId: string,
         data: StudentUpdateType
     ): Promise<StudentWithUser> {
-        await requireOwnerOrAdmin(actorId, userId)
         const existingProfile = await StudentRepository.instance.getByUserId(userId)
         if (!existingProfile) {
             throw new Error(`Student profile not found for user ${userId}`)
@@ -96,11 +80,9 @@ export class StudentService {
     /**
      * Permanently deletes a student account and their user record.
      *
-     * @param actorId - The ID of the user performing the operation.
      * @param userId - The ID of the user to delete.
      */
-    async deleteStudentAccount(actorId: string, userId: string): Promise<void> {
-        await requireOwnerOrAdmin(actorId, userId)
+    async deleteStudentAccount(userId: string): Promise<void> {
         await UserRepository.instance.delete(userId)
     }
 }

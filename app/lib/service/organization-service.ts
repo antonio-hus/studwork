@@ -1,6 +1,7 @@
 /** @format */
+import 'server-only'
 import {database} from '@/lib/database'
-import {
+import type {
     OrganizationRegistrationInput,
     OrganizationUpdateType,
     OrganizationWithUser
@@ -40,20 +41,11 @@ export class OrganizationService {
             const hashedPassword = await hashPassword(password)
 
             const user = await UserRepository.instance.create(
-                {
-                    ...userData,
-                    hashedPassword,
-                    role: 'ORGANIZATION',
-                },
-                tx
+                {...userData, hashedPassword, role: 'ORGANIZATION',}, tx
             )
 
             const organization = await OrganizationRepository.instance.create(
-                {
-                    ...input.organization,
-                    user: {connect: {id: user.id}},
-                },
-                tx
+                {...input.organization, user: {connect: {id: user.id}},}, tx
             )
 
             return {...organization, user}

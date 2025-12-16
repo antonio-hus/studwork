@@ -1,10 +1,6 @@
 /** @format */
 import {database} from '@/lib/database'
-import {
-    CoordinatorRegistrationInput,
-    CoordinatorUpdateType,
-    CoordinatorWithUser
-} from '@/lib/domain/coordinator'
+import type {CoordinatorRegistrationInput, CoordinatorUpdateType, CoordinatorWithUser} from '@/lib/domain/coordinator'
 import {CoordinatorRepository} from '@/lib/repository/coordinator-repository'
 import {UserRepository} from '@/lib/repository/user-repository'
 import {hashPassword} from '@/lib/utils/password'
@@ -40,20 +36,11 @@ export class CoordinatorService {
             const hashedPassword = await hashPassword(password)
 
             const user = await UserRepository.instance.create(
-                {
-                    ...userData,
-                    hashedPassword,
-                    role: 'COORDINATOR',
-                },
-                tx
+                {...userData, hashedPassword, role: 'COORDINATOR',}, tx
             )
 
             const coordinator = await CoordinatorRepository.instance.create(
-                {
-                    ...input.coordinator,
-                    user: {connect: {id: user.id}},
-                },
-                tx
+                {...input.coordinator, user: {connect: {id: user.id}},}, tx
             )
 
             return {...coordinator, user}
