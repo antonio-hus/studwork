@@ -24,9 +24,15 @@ const PUBLIC_PATHS = [
 ]
 
 /**
- * Routes that do not require authentication.
+ * Routes that do not require authentication AND should redirect
+ * authenticated users away (e.g., Login, Register).
  */
-const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/verify-email', '/reset-password']
+const GUEST_ONLY_ROUTES = [
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password'
+]
 
 /**
  * Helper to strip locale from pathname for logic checks
@@ -34,8 +40,9 @@ const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/verify-email',
  */
 function getPathWithoutLocale(pathname: string): string {
     const segments = pathname.split('/')
-    if (routing.locales.includes(segments[1] as any)) {
-        return '/' + segments.slice(2).join('/')
+    if (segments.length > 1 && routing.locales.includes(segments[1] as any)) {
+        const cleanPath = '/' + segments.slice(2).join('/')
+        return cleanPath === '//' ? '/' : cleanPath
     }
     return pathname
 }
@@ -71,34 +78,44 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
     const isAuthenticated = !!user
 
     // Protect Dashboard/Protected Routes
-    if (pathWithoutLocale.startsWith('/dashboard') || pathWithoutLocale.startsWith('/admin')) {
+    if (pathWithoutLocale.startsWith('/dashboard') || pathWithoutLocale.startsWith('/admin') || pathWithoutLocale.startsWith('/verify-email-pending')) {
+
         if (!isAuthenticated) {
             const loginUrl = new URL('/login', request.url)
             return NextResponse.redirect(loginUrl)
         }
 
-        // Role-Based Access Control (RBAC)
-        // Prevent non-admins from accessing /admin routes
+        // Role-Based Access Control (RBAC) - Admin Check
         if (pathWithoutLocale.startsWith('/admin') && user?.role !== UserRole.ADMINISTRATOR) {
             const accessDeniedUrl = new URL('/access-denied', request.url)
             accessDeniedUrl.searchParams.set('required', UserRole.ADMINISTRATOR)
             return NextResponse.redirect(accessDeniedUrl)
         }
 
-        // Prevent pending verification users from accessing main dashboard (except verification page)
-        if (!user.emailVerified && !pathWithoutLocale.startsWith('/verify-email-pending')) {
-            return NextResponse.redirect(new URL('/verify-email-pending', request.url))
+        // CEmail Verification Enforcement
+        const isVerificationPendingPage = pathWithoutLocale.startsWith('/verify-email-pending')
+        const isVerifyingEmail = pathWithoutLocale.startsWith('/verify-email')
+
+        // If user is NOT verified
+        if (!user.emailVerified) {
+            if (!isVerificationPendingPage && !isVerifyingEmail) {
+                return NextResponse.redirect(new URL('/verify-email-pending', request.url))
+            }
         }
 
-        // Prevent verified users from going back to pending page
-        if (user.emailVerified && pathWithoutLocale.startsWith('/verify-email-pending')) {
-            return NextResponse.redirect(new URL('/dashboard', request.url))
+        // If user IS verified (according to cookie)
+        else {
+            // If they try to access the pending page, send them to dashboard
+            if (isVerificationPendingPage) {
+                return NextResponse.redirect(new URL('/dashboard', request.url))
+            }
         }
     }
 
-    // Redirect Authenticated Users away from Auth Pages
-    if (isAuthenticated && AUTH_ROUTES.some(route => pathWithoutLocale.startsWith(route))) {
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+    // Redirect Authenticated Users away from Guest-Only Pages
+    if (isAuthenticated && GUEST_ONLY_ROUTES.some(route => pathWithoutLocale === route || pathWithoutLocale.startsWith(route + '/'))) {
+        const target = user.emailVerified ? '/dashboard' : '/verify-email-pending'
+        return NextResponse.redirect(new URL(target, request.url))
     }
 
     // Internationalization

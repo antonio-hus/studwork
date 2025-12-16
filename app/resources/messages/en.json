@@ -175,39 +175,8 @@
     }
   },
   "email": {
-    "suspended": {
-      "subject": "Action Required: Account Suspended",
-      "greeting": "Hello",
-      "body": "We are writing to inform you that your account access has been temporarily suspended by an administrator.",
-      "reasonTitle": "Reason for Suspension",
-      "impact": "While suspended, you will not be able to log in or access platform features.",
-      "footer": "If you believe this decision was made in error, please contact our support team immediately."
-    },
-    "orgApproved": {
-      "subject": "Good News: Your Organization is Approved",
-      "greeting": "Congratulations",
-      "body": "We are pleased to inform you that your organization account has been reviewed and approved.",
-      "nextSteps": "You now have full access to the platform. You can begin setting up your team and managing your resources.",
-      "buttonText": "Access Dashboard",
-      "footer": "We look forward to seeing what you build with us."
-    },
-    "orgRejected": {
-      "subject": "Update regarding your Organization Registration",
-      "greeting": "Hello",
-      "body": "Thank you for your interest. After reviewing your application, we are unable to approve your organization account at this time.",
-      "reasonLabel": "Reason for Rejection",
-      "guidance": "You are welcome to submit a new application once the issues above have been addressed."
-    },
-    "passwordReset": {
-      "subject": "Reset your password",
-      "greeting": "Hi",
-      "body": "We received a request to reset the password for your account. If you made this request, please click the button below.",
-      "buttonText": "Reset Password",
-      "orCopy": "Or copy and paste this link into your browser:",
-      "expiry": "This link will expire in 1 hour for your security.",
-      "ignore": "If you did not ask to reset your password, you can safely ignore this email."
-    },
     "verification": {
+      "from": "Account Security",
       "subject": "Verify your email address",
       "greeting": "Welcome",
       "body": "Thanks for signing up! Please verify your email address to activate your account and get started.",
@@ -217,10 +186,47 @@
       "ignore": "If you did not create an account, no further action is required."
     },
     "welcome": {
+      "from": "Welcome Team",
       "subject": "Welcome aboard!",
       "greeting": "Welcome",
       "body": "Your email has been successfully verified. We are thrilled to have you with us.",
       "buttonText": "Go to Dashboard"
+    },
+    "passwordReset": {
+      "from": "Account Security",
+      "subject": "Reset your password",
+      "greeting": "Hi",
+      "body": "We received a request to reset the password for your account. If you made this request, please click the button below.",
+      "buttonText": "Reset Password",
+      "orCopy": "Or copy and paste this link into your browser:",
+      "expiry": "This link will expire in 1 hour for your security.",
+      "ignore": "If you did not ask to reset your password, you can safely ignore this email."
+    },
+    "orgApproved": {
+      "from": "Platform Administration",
+      "subject": "Good News: Your Organization is Approved",
+      "greeting": "Congratulations",
+      "body": "We are pleased to inform you that your organization account has been reviewed and approved.",
+      "nextSteps": "You now have full access to the platform. You can begin setting up your team and managing your resources.",
+      "buttonText": "Access Dashboard",
+      "footer": "We look forward to seeing what you build with us."
+    },
+    "orgRejected": {
+      "from": "Platform Administration",
+      "subject": "Update regarding your Organization Registration",
+      "greeting": "Hello",
+      "body": "Thank you for your interest. After reviewing your application, we are unable to approve your organization account at this time.",
+      "reasonLabel": "Reason for Rejection",
+      "guidance": "You are welcome to submit a new application once the issues above have been addressed."
+    },
+    "suspended": {
+      "from": "Platform Security",
+      "subject": "Action Required: Account Suspended",
+      "greeting": "Hello",
+      "body": "We are writing to inform you that your account access has been temporarily suspended by an administrator.",
+      "reasonTitle": "Reason for Suspension",
+      "impact": "While suspended, you will not be able to log in or access platform features.",
+      "footer": "If you believe this decision was made in error, please contact our support team immediately."
     }
   },
   "pages": {

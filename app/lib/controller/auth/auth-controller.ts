@@ -10,6 +10,7 @@ import {getClientIp} from "@/lib/utils/ip";
 import {createLogger} from "@/lib/utils/logger";
 import {ActionResponse} from "@/lib/domain/actions";
 import {UserRole} from "@/lib/domain/user";
+import {UserService} from "@/lib/service/user-service";
 
 const logger = createLogger('AuthController');
 
@@ -135,6 +136,7 @@ export async function signOut(): Promise<void> {
 export async function verifyEmail(token: string): Promise<ActionResponse<void>> {
     const t = await getTranslations();
     const authService = AuthService.instance;
+    const sessionService = SessionService.instance;
 
     try {
         if (!token) {
@@ -142,6 +144,16 @@ export async function verifyEmail(token: string): Promise<ActionResponse<void>> 
         }
 
         await authService.verifyEmail(token);
+        const currentSessionUser = await sessionService.getCurrentSessionUser();
+
+        if (currentSessionUser) {
+            const freshUser = await UserService.instance.getUserById(currentSessionUser.id);
+            if (freshUser) {
+                await sessionService.createSession(freshUser);
+                logger.debug('Session updated with verified status', { userId: freshUser.id });
+            }
+        }
+
         return {success: true, data: undefined};
     } catch (error) {
         logger.error('Email verification error', error as Error);

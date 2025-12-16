@@ -68,7 +68,7 @@ export class AuthService {
             if (data.role === UserRole.STUDENT && config.studentEmailDomain) {
                 const domain = config.studentEmailDomain.toLowerCase()
                 const emailDomain = data.email.split('@')[1]?.toLowerCase()
-                if (emailDomain !== domain) {
+                if (emailDomain !== domain && "@" + emailDomain !== domain) {
                     throw new Error('auth.invalidStudentDomain')
                 }
             }
@@ -76,7 +76,7 @@ export class AuthService {
             if (data.role === UserRole.COORDINATOR && config.staffEmailDomain) {
                 const domain = config.staffEmailDomain.toLowerCase()
                 const emailDomain = data.email.split('@')[1]?.toLowerCase()
-                if (emailDomain !== domain) {
+                if (emailDomain !== domain && "@" + emailDomain !== domain) {
                     throw new Error('auth.invalidStaffDomain')
                 }
             }

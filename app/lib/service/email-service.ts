@@ -126,7 +126,7 @@ export class EmailService {
             const config = await this.getSafeConfig()
             if (!transporter) return
 
-            const t = await getTranslations({locale, namespace: 'email.verification'})
+            const t = await getTranslations({locale})
             const verificationUrl = `${process.env.APP_URL}/verify-email?token=${token}`
 
             const htmlBody = getVerificationEmailTemplate(name, verificationUrl, t, locale, config)
@@ -155,7 +155,7 @@ export class EmailService {
             const config = await this.getSafeConfig()
             if (!transporter) return
 
-            const t = await getTranslations({locale, namespace: 'email.welcome'})
+            const t = await getTranslations({locale})
             const dashboardUrl = `${process.env.APP_URL}/dashboard`
 
             const htmlBody = getWelcomeEmailTemplate(name, dashboardUrl, t, locale, config)
@@ -184,7 +184,7 @@ export class EmailService {
             const config = await this.getSafeConfig()
             if (!transporter) return
 
-            const t = await getTranslations({locale, namespace: 'email.passwordReset'})
+            const t = await getTranslations({locale})
             const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`
 
             const htmlBody = getPasswordResetEmailTemplate(name, resetUrl, t, locale, config)
@@ -213,7 +213,7 @@ export class EmailService {
             const config = await this.getSafeConfig()
             if (!transporter) return
 
-            const t = await getTranslations({locale, namespace: 'email.orgApproved'})
+            const t = await getTranslations({locale})
             const dashboardUrl = `${process.env.APP_URL}/dashboard/organization`
 
             const htmlBody = getOrganizationApprovedTemplate(name, dashboardUrl, t, locale, config)
@@ -242,7 +242,7 @@ export class EmailService {
             const config = await this.getSafeConfig()
             if (!transporter) return
 
-            const t = await getTranslations({locale, namespace: 'email.orgRejected'})
+            const t = await getTranslations({locale})
             const supportUrl = `${process.env.APP_URL}/contact`
 
             const htmlBody = getOrganizationRejectedTemplate(name, reason, supportUrl, locale, config)
@@ -271,7 +271,7 @@ export class EmailService {
             const config = await this.getSafeConfig()
             if (!transporter) return
 
-            const t = await getTranslations({locale, namespace: 'email.suspended'})
+            const t = await getTranslations({locale})
 
             const htmlBody = getAccountSuspendedTemplate(name, reason, t, locale, config)
 

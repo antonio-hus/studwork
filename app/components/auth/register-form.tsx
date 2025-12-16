@@ -109,10 +109,11 @@ export function RegisterForm() {
                         <select
                             id="role"
                             name="role"
+                            defaultValue=""
                             required
                             className="flex h-11 w-full appearance-none rounded-xl border border-border bg-muted/50 pl-10 pr-8 py-2 text-sm text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
                         >
-                            <option value="" disabled selected>{t('roleSelect')}</option>
+                            <option value="" disabled>{t('roleSelect')}</option>
                             <option value="STUDENT">{t('roleStudent')}</option>
                             <option value="COORDINATOR">{t('roleCoordinator')}</option>
                             <option value="ORGANIZATION">{t('roleOrganization')}</option>
