@@ -61,7 +61,6 @@ export class SessionService {
             this.logger.debug('Session destroyed via service')
         } catch (error) {
             this.logger.error('Failed to destroy session in service', error as Error)
-            // Non-critical, just log
         }
     }
 

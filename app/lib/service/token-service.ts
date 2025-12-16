@@ -116,7 +116,6 @@ export class TokenService {
             }
         } catch (error) {
             this.logger.error('Failed to delete verification token', error as Error)
-            // Non-critical error, suppressing to prevent flow interruption
         }
     }
 

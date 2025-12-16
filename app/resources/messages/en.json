@@ -112,14 +112,248 @@
       }
     }
   },
+  "auth": {
+    "invalidStudentDomain": "Invalid email domain. Student accounts are restricted to specific domains.",
+    "invalidStaffDomain": "Invalid email domain. Coordinator accounts are restricted to specific domains.",
+    "emailAlreadyExists": "An account with this email address already exists.",
+    "invalidRole": "The selected user role is invalid.",
+    "rateLimitExceeded": "Too many attempts. Please try again later.",
+    "configMissing": "System configuration is missing. Please contact support.",
+    "invalidCredentials": "The email or password you entered is incorrect.",
+    "accountSuspended": "Your account has been suspended. Please contact support.",
+    "emailDeliveryFailed": "Failed to send email. Please try again later.",
+    "tokenExpired": "This link has expired. Please request a new one.",
+    "invalidToken": "This link is invalid or has already been used.",
+    "invalidResetToken": "This password reset link is invalid or has expired.",
+    "userNotFound": "User not found.",
+    "emailAlreadyVerified": "This email address is already verified."
+  },
   "errors": {
     "auth": {
+      "tooManyAttempts": "Too many attempts. Please wait a moment before trying again.",
+      "signUpFailed": "Registration failed. Please try again.",
+      "signInFailed": "Unable to sign in. Please check your credentials.",
+      "invalidToken": "The verification token is missing or invalid.",
+      "verificationFailed": "Email verification failed. The link may be expired.",
+      "resetRequestFailed": "We couldn't process your password reset request. Please try again.",
+      "resetFailed": "Failed to reset password. Please try again.",
+      "missingFields": "Please fill in all required fields.",
+      "tokenInvalid": "This reset link is no longer valid.",
+      "tokenVerificationFailed": "Unable to verify the reset token.",
+      "resendFailed": "Failed to resend the verification email.",
+      "notAuthenticated": "You must be logged in to perform this action.",
       "user_not_found": "Unauthorized: User account not found.",
       "admin_required": "Unauthorized: Administrator privileges required.",
       "coordinator_required": "Unauthorized: Coordinator privileges required.",
       "organization_required": "Unauthorized: Organization privileges required.",
       "student_required": "Unauthorized: Student privileges required.",
-      "forbidden_resource": "Unauthorized: You do not have permission to modify this resource."
+      "forbidden_resource": "Unauthorized: You do not have permission to modify this resource.",
+      "unexpected": "An unexpected error occurred. Please try again."
+    },
+    "validation": {
+      "nameTooShort": "Name must be at least 2 characters long.",
+      "invalidEmail": "Please enter a valid email address.",
+      "weakPassword": "Password must be at least 8 characters and include a number and an uppercase letter.",
+      "passwordRequired": "Password is required.",
+      "invalidRole": "Please select a valid account type."
+    },
+    "config": {
+      "fetchFailed": "Unable to load system configuration.",
+      "createFailed": "Failed to initialize system configuration.",
+      "updateFailed": "Could not update system settings.",
+      "checkStatusFailed": "Unable to verify system status.",
+      "clearCacheFailed": "Failed to clear system cache."
+    }
+  },
+  "success": {
+    "auth": {
+      "resetEmailSent": "If an account exists with this email, you will receive a password reset link shortly.",
+      "verificationEmailSent": "A new verification email has been sent to your inbox."
+    },
+    "config": {
+      "cacheCleared": "System cache cleared successfully."
+    }
+  },
+  "email": {
+    "suspended": {
+      "subject": "Action Required: Account Suspended",
+      "greeting": "Hello",
+      "body": "We are writing to inform you that your account access has been temporarily suspended by an administrator.",
+      "reasonTitle": "Reason for Suspension",
+      "impact": "While suspended, you will not be able to log in or access platform features.",
+      "footer": "If you believe this decision was made in error, please contact our support team immediately."
+    },
+    "orgApproved": {
+      "subject": "Good News: Your Organization is Approved",
+      "greeting": "Congratulations",
+      "body": "We are pleased to inform you that your organization account has been reviewed and approved.",
+      "nextSteps": "You now have full access to the platform. You can begin setting up your team and managing your resources.",
+      "buttonText": "Access Dashboard",
+      "footer": "We look forward to seeing what you build with us."
+    },
+    "orgRejected": {
+      "subject": "Update regarding your Organization Registration",
+      "greeting": "Hello",
+      "body": "Thank you for your interest. After reviewing your application, we are unable to approve your organization account at this time.",
+      "reasonLabel": "Reason for Rejection",
+      "guidance": "You are welcome to submit a new application once the issues above have been addressed."
+    },
+    "passwordReset": {
+      "subject": "Reset your password",
+      "greeting": "Hi",
+      "body": "We received a request to reset the password for your account. If you made this request, please click the button below.",
+      "buttonText": "Reset Password",
+      "orCopy": "Or copy and paste this link into your browser:",
+      "expiry": "This link will expire in 1 hour for your security.",
+      "ignore": "If you did not ask to reset your password, you can safely ignore this email."
+    },
+    "verification": {
+      "subject": "Verify your email address",
+      "greeting": "Welcome",
+      "body": "Thanks for signing up! Please verify your email address to activate your account and get started.",
+      "buttonText": "Verify Email",
+      "orCopy": "Or copy and paste this link into your browser:",
+      "expiry": "This verification link is valid for 24 hours.",
+      "ignore": "If you did not create an account, no further action is required."
+    },
+    "welcome": {
+      "subject": "Welcome aboard!",
+      "greeting": "Welcome",
+      "body": "Your email has been successfully verified. We are thrilled to have you with us.",
+      "buttonText": "Go to Dashboard"
+    }
+  },
+  "pages": {
+    "auth": {
+      "accessControl": {
+        "accessDenied": "Access Denied",
+        "noPermission": "You do not have permission to view this page.",
+        "requiredRoles": "Required Roles",
+        "goToDashboard": "Go to Dashboard",
+        "errorId": "Error ID"
+      },
+      "session": {
+        "expired": "Session Expired",
+        "pleaseSignIn": "Your session has timed out. Please sign in again to continue."
+      },
+      "forgotPassword": {
+        "title": "Forgot password?",
+        "subtitle": "No worries, we'll send you reset instructions.",
+        "backToLogin": "Back to login",
+        "emailLabel": "Email Address",
+        "success": "Reset link sent!",
+        "checkEmailTitle": "Check your email",
+        "sending": "Sending...",
+        "sendButton": "Send Reset Link",
+        "errors": {
+          "unexpected": "Something went wrong. Please try again."
+        }
+      },
+      "login": {
+        "title": "Welcome back",
+        "subtitle": "Enter your credentials to access your account",
+        "noAccount": "Don't have an account?",
+        "createOne": "Create one",
+        "email": "Email",
+        "password": "Password",
+        "forgotPassword": "Forgot password?",
+        "signingIn": "Signing in...",
+        "signIn": "Sign In",
+        "errors": {
+          "unexpected": "An unexpected error occurred."
+        }
+      },
+      "register": {
+        "title": "Create an account",
+        "subtitle": "Enter your information to get started",
+        "hasAccount": "Already have an account?",
+        "signIn": "Sign in",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "John Doe",
+        "email": "Email Address",
+        "role": "I am a...",
+        "roleSelect": "Select your role",
+        "roleStudent": "Student",
+        "roleCoordinator": "Coordinator",
+        "roleOrganization": "Organization",
+        "password": "Password",
+        "passwordHint": "Must be at least 8 characters long",
+        "creatingAccount": "Creating account...",
+        "createAccount": "Create Account",
+        "errors": {
+          "unexpected": "Registration failed. Please try again."
+        }
+      },
+      "resendVerification": {
+        "title": "Resend verification email",
+        "subtitle": "Enter your email address to receive a new link.",
+        "backToLogin": "Back to login",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "Enter your email",
+        "success": "Verification email sent!",
+        "checkInbox": "Please check your inbox for the new link.",
+        "sending": "Sending...",
+        "resendIn": "Resend in {seconds}s",
+        "sendButton": "Send Verification Link",
+        "waitMessage": "Please wait before requesting another email.",
+        "errors": {
+          "unexpected": "Failed to resend email. Please try again."
+        }
+      },
+      "resetPassword": {
+        "title": "Reset password",
+        "subtitle": "Enter your new password below.",
+        "backToLogin": "Back to login",
+        "noToken": "Missing reset token.",
+        "invalidToken": "This link is invalid or expired.",
+        "passwordMismatch": "Passwords do not match.",
+        "verifyingToken": "Verifying reset link...",
+        "tokenErrorTitle": "Invalid Link",
+        "requestNew": "Request a new link",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "passwordHint": "Must be at least 8 characters long",
+        "resetting": "Resetting...",
+        "resetPassword": "Reset Password",
+        "errors": {
+          "unexpected": "Failed to reset password."
+        }
+      },
+      "verifyEmail": {
+        "title": "Verifying your email",
+        "subtitle": "Please wait while we verify your email address...",
+        "noToken": "Verification token is missing.",
+        "success": "Your email has been successfully verified!",
+        "failed": "Verification failed.",
+        "verifying": "Verifying your email...",
+        "verifiedTitle": "Email Verified!",
+        "redirecting": "Redirecting to dashboard...",
+        "failedTitle": "Verification Failed",
+        "backToLogin": "Back to Login",
+        "resendPrompt": "Need a new link?",
+        "resendLink": "Click here to resend"
+      },
+      "verifyEmailPending": {
+        "title": "Check your email",
+        "subtitle": "We sent a verification link to",
+        "nextSteps": "What happens next?",
+        "step1": "Check your inbox for an email from us.",
+        "step2": "Click the link in the email to verify your address.",
+        "step3": "You'll be automatically logged in.",
+        "didNotReceive": "Didn't receive the email?",
+        "emailSent": "Email sent successfully!",
+        "sending": "Sending...",
+        "resendIn": "Resend in",
+        "resendButton": "Resend Verification Email",
+        "waitMessage": "Please wait before requesting another email.",
+        "or": "or",
+        "signingOut": "Signing out...",
+        "signOut": "Sign Out",
+        "signOutHelp": "Sign out to use a different account",
+        "errors": {
+          "unexpected": "An unexpected error occurred."
+        }
+      }
     }
   }
 }

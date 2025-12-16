@@ -44,7 +44,8 @@ export class EmailService {
         const config = await ConfigService.instance.getConfig()
 
         if (!config) {
-            throw new Error('[EmailService] Global configuration not found')
+            this.logger.error('No config found for email service')
+            throw new Error('Global configuration not found')
         }
 
         this.config = config
