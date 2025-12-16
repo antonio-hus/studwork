@@ -1,10 +1,10 @@
 /** @format */
-import type { Prisma } from "@/prisma/generated/client";
+import type {Prisma} from "@/prisma/generated/client";
 
 /**
  * Re-exporting generated Prisma types for Security Tokens.
  */
-export type { VerificationToken, PasswordResetToken } from "@/prisma/generated/client";
+export type {VerificationToken, PasswordResetToken} from "@/prisma/generated/client";
 
 /**
  * DTO for creating an Email Verification Token.

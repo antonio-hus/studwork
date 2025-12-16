@@ -4,7 +4,8 @@ import type {User, Prisma} from "@/prisma/generated/client";
 /**
  * Re-exporting generated Prisma types for the User entity.
  */
-export type {User, UserRole} from "@/prisma/generated/client";
+export type {User} from "@/prisma/generated/client";
+export {UserRole} from "@/prisma/generated/client";
 
 /**
  * Data Transfer Object (DTO) for creating a new User.

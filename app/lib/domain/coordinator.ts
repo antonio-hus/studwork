@@ -5,7 +5,7 @@ import {UserCreateType} from "@/lib/domain/user";
 /**
  * Re-exporting generated Prisma types for the Coordinator entity.
  */
-export type { Coordinator } from "@/prisma/generated/client";
+export type {Coordinator} from "@/prisma/generated/client";
 
 /**
  * Data Transfer Object (DTO) for creating a new Coordinator profile.

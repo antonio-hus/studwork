@@ -5,7 +5,7 @@ import {UserCreateType} from "@/lib/domain/user";
 /**
  * Re-exporting generated Prisma types for the Student entity.
  */
-export type { Student } from "@/prisma/generated/client";
+export type {Student} from "@/prisma/generated/client";
 
 /**
  * Data Transfer Object (DTO) for creating a new Student profile.

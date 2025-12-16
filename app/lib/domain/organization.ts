@@ -5,7 +5,8 @@ import {UserCreateType} from "@/lib/domain/user";
 /**
  * Re-exporting generated Prisma types for the Organization entity.
  */
-export type { Organization, OrganizationType } from "@/prisma/generated/client";
+export type {Organization} from "@/prisma/generated/client";
+export {OrganizationType} from "@/prisma/generated/client";
 
 /**
  * Data Transfer Object (DTO) for creating a new Organization profile.
