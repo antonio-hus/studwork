@@ -9,12 +9,14 @@ import type {
 import {OrganizationRepository} from '@/lib/repository/organization-repository'
 import {UserRepository} from '@/lib/repository/user-repository'
 import {hashPassword} from '@/lib/utils/password'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Service for managing Organization-related business logic.
  */
 export class OrganizationService {
     private static _instance: OrganizationService
+    private readonly logger = createLogger('OrganizationService')
 
     private constructor() {
     }
@@ -36,20 +38,31 @@ export class OrganizationService {
     async registerOrganization(
         input: OrganizationRegistrationInput
     ): Promise<OrganizationWithUser> {
-        return database.$transaction(async (tx) => {
-            const {password, ...userData} = input.user
-            const hashedPassword = await hashPassword(password)
+        try {
+            const result = await database.$transaction(async (tx) => {
+                const {password, ...userData} = input.user
+                const hashedPassword = await hashPassword(password)
 
-            const user = await UserRepository.instance.create(
-                {...userData, hashedPassword, role: 'ORGANIZATION',}, tx
-            )
+                const user = await UserRepository.instance.create(
+                    {...userData, hashedPassword, role: 'ORGANIZATION',}, tx
+                )
 
-            const organization = await OrganizationRepository.instance.create(
-                {...input.organization, user: {connect: {id: user.id}},}, tx
-            )
+                const organization = await OrganizationRepository.instance.create(
+                    {...input.organization, user: {connect: {id: user.id}},}, tx
+                )
 
-            return {...organization, user}
-        })
+                return {...organization, user}
+            })
+
+            this.logger.info('Organization registered successfully', {
+                userId: result.user.id,
+                orgId: result.id
+            })
+            return result
+        } catch (error) {
+            this.logger.error('Failed to register organization', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -66,13 +79,21 @@ export class OrganizationService {
         userId: string,
         data: OrganizationUpdateType
     ): Promise<OrganizationWithUser> {
-        const existingProfile = await OrganizationRepository.instance.getByUserId(userId)
-        if (!existingProfile) {
-            throw new Error(`Organization profile not found for user ${userId}`)
-        }
+        try {
+            const existingProfile = await OrganizationRepository.instance.getByUserId(userId)
+            if (!existingProfile) {
+                this.logger.warn('Attempted to update non-existent organization', { userId })
+                throw new Error(`Organization profile not found for user ${userId}`)
+            }
 
-        const org = await OrganizationRepository.instance.update(userId, data)
-        return {...org, user: existingProfile.user}
+            const org = await OrganizationRepository.instance.update(userId, data)
+
+            this.logger.info('Organization profile updated', { userId })
+            return {...org, user: existingProfile.user}
+        } catch (error) {
+            this.logger.error('Failed to update organization profile', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -80,13 +101,19 @@ export class OrganizationService {
      * Restricted to Administrators.
      *
      * @param userId - The ID of the organization to verify.
-     * @throws Error if the actor is not an administrator.
      */
     async verifyOrganization(userId: string): Promise<void> {
-        await OrganizationRepository.instance.update(userId, {
-            isVerified: true,
-            verifiedAt: new Date(),
-        })
+        try {
+            await OrganizationRepository.instance.update(userId, {
+                isVerified: true,
+                verifiedAt: new Date(),
+            })
+
+            this.logger.info('Organization verified', { userId })
+        } catch (error) {
+            this.logger.error('Failed to verify organization', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -100,6 +127,12 @@ export class OrganizationService {
      * Permanently deletes an organization account.
      */
     async deleteOrganizationAccount(userId: string): Promise<void> {
-        await UserRepository.instance.delete(userId)
+        try {
+            await UserRepository.instance.delete(userId)
+            this.logger.warn('Organization account permanently deleted', { userId })
+        } catch (error) {
+            this.logger.error('Failed to delete organization account', error as Error)
+            throw error
+        }
     }
 }

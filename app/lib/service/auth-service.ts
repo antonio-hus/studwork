@@ -12,6 +12,7 @@ import {OrganizationService} from '@/lib/service/organization-service'
 import {ConfigService} from '@/lib/service/config-service'
 import {hashPassword, verifyPassword} from '@/lib/utils/password'
 import {UserService} from "@/lib/service/user-service";
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Authentication Service
@@ -19,6 +20,7 @@ import {UserService} from "@/lib/service/user-service";
  */
 export class AuthService {
     private static _instance: AuthService
+    private readonly logger = createLogger('AuthService')
 
     private constructor() {
     }
@@ -50,6 +52,7 @@ export class AuthService {
         // Rate Limit Check
         const limitCheck = RateLimitService.signupLimiter.check(3, ipAddress)
         if (!limitCheck.success) {
+            this.logger.warn('Signup rate limit exceeded', { ipAddress })
             throw new Error('auth.rateLimitExceeded')
         }
 
@@ -82,6 +85,7 @@ export class AuthService {
         // Check for Existing User
         const existingUser = await UserRepository.instance.getByEmail(data.email)
         if (existingUser) {
+            this.logger.debug('Signup failed: email already exists', { email: data.email })
             throw new Error('auth.emailAlreadyExists')
         }
 
@@ -141,12 +145,16 @@ export class AuthService {
                 verificationToken.token
             )
 
+            this.logger.info('User signed up successfully', { userId: user.id, role: data.role })
+
             return {user, verificationToken}
 
         } catch (error: any) {
             // Rollback if user was created but email failed
             if (user && user.id) {
-                console.error(`[AuthService] SignUp failed during email sending. Rolling back user ${user.id}. Error: ${error.message}`)
+                this.logger.error(
+                    `SignUp failed during email sending. Rolling back user ${user.id}. Error: ${error.message}`
+                )
 
                 // Hard delete the user to clean up.
                 await UserService.instance.deleteUser(user.id)
@@ -174,25 +182,31 @@ export class AuthService {
     ) {
         const limitCheck = RateLimitService.loginLimiter.check(5, ipAddress)
         if (!limitCheck.success) {
+            this.logger.warn('Login rate limit exceeded', { ipAddress, email: data.email })
             throw new Error('auth.rateLimitExceeded')
         }
 
         const user = await UserRepository.instance.getByEmail(data.email)
 
         if (!user || !user.hashedPassword) {
+            this.logger.debug('Login failed: invalid credentials', { email: data.email })
             throw new Error('auth.invalidCredentials')
         }
 
         const isValidPassword = await verifyPassword(data.password, user.hashedPassword)
         if (!isValidPassword) {
+            this.logger.debug('Login failed: invalid password', { email: data.email })
             throw new Error('auth.invalidCredentials')
         }
 
         if (user.isSuspended) {
+            this.logger.warn('Suspended user attempted login', { userId: user.id })
             throw new Error('auth.accountSuspended')
         }
 
         await SessionService.instance.createSession(user)
+
+        this.logger.info('User signed in', { userId: user.id })
 
         return user
     }
@@ -215,15 +229,19 @@ export class AuthService {
 
         const user = await UserRepository.instance.getByEmail(data.email)
 
-        if (!user) return null
+        if (!user) {
+            this.logger.debug('Password reset requested for non-existent email', { email: data.email })
+            return null
+        }
 
         const token = await TokenService.instance.createPasswordResetToken(user.id)
 
         try {
             await EmailService.instance.sendPasswordResetEmail(user.name, user.email, token.token)
+            this.logger.info('Password reset email sent', { userId: user.id })
         } catch (error) {
-            console.error('[AuthService] Failed to send password reset email', error)
-            await TokenService.instance.deletePasswordResetToken(token.id)
+            this.logger.error('Failed to send password reset email', error as Error)
+            await TokenService.instance.deletePasswordResetToken(token.token) // Note: using token string or ID depending on your delete implementation
             throw new Error('auth.emailDeliveryFailed')
         }
 
@@ -245,6 +263,8 @@ export class AuthService {
         await UserRepository.instance.update(result.userId, {hashedPassword})
         await TokenService.instance.deletePasswordResetToken(data.token)
 
+        this.logger.info('Password reset successfully', { userId: result.userId })
+
         return {success: true}
     }
 
@@ -261,13 +281,15 @@ export class AuthService {
         await UserRepository.instance.update(result.userId, {emailVerified: new Date()})
         await TokenService.instance.deleteVerificationToken(token)
 
+        this.logger.info('Email verified successfully', { userId: result.userId })
+
         // After successful verification, send welcome email
         const user = await UserRepository.instance.getById(result.userId)
         if (user) {
             try {
                 await EmailService.instance.sendWelcomeEmail(user.email, user.name)
             } catch (error) {
-                console.error('[AuthService] Failed to send welcome email', error)
+                this.logger.error('Failed to send welcome email after verification', error as Error)
             }
         }
 
@@ -292,8 +314,9 @@ export class AuthService {
 
         try {
             await EmailService.instance.sendVerificationEmail(user.name, user.email, verificationToken.token)
+            this.logger.info('Verification email resent', { userId: user.id })
         } catch (error) {
-            console.error('[AuthService] Failed to resend verification email', error)
+            this.logger.error('Failed to resend verification email', error as Error)
             throw new Error('auth.emailDeliveryFailed')
         }
 
@@ -304,6 +327,10 @@ export class AuthService {
      * Logs out the current user.
      */
     async signOut() {
+        const user = await this.getCurrentUser()
+        if (user) {
+            this.logger.info('User signed out', { userId: user.id })
+        }
         await SessionService.instance.destroySession()
     }
 

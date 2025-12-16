@@ -1,6 +1,7 @@
 /** @format */
 import 'server-only'
 import {RateLimitRepository} from '@/lib/repository/rate-limit-repository'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Rate Limit Service
@@ -9,6 +10,7 @@ import {RateLimitRepository} from '@/lib/repository/rate-limit-repository'
  */
 export class RateLimitService {
     private repository: RateLimitRepository
+    private readonly logger = createLogger('RateLimitService')
 
     /**
      * Private constructor to enforce usage of static instances.
@@ -43,6 +45,12 @@ export class RateLimitService {
 
         // Deny if the usage has already reached or exceeded the limit
         if (rateLimit.count >= limit) {
+            this.logger.warn('Rate limit exceeded', {
+                token,
+                limit,
+                resetAt: new Date(rateLimit.resetAt).toISOString()
+            })
+
             return {
                 success: false,
                 remaining: 0,

@@ -2,12 +2,14 @@
 import 'server-only'
 import type {User, UserCreateType, UserUpdateType} from '@/lib/domain/user'
 import {UserRepository} from '@/lib/repository/user-repository'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Service for generic User operations
  */
 export class UserService {
     private static _instance: UserService
+    private readonly logger = createLogger('UserService')
 
     private constructor() {
     }
@@ -20,7 +22,7 @@ export class UserService {
     }
 
     /**
-     * Retrieves a user by email.
+     * Retrieves a user by ID.
      */
     async getUserById(id: string): Promise<User | null> {
         return UserRepository.instance.getById(id)
@@ -44,34 +46,56 @@ export class UserService {
      * Creates generic user details.
      */
     async createUser(data: UserCreateType): Promise<User> {
-        return UserRepository.instance.create(data)
+        try {
+            return await UserRepository.instance.create(data)
+        } catch (error) {
+            this.logger.error('Failed to create user', error as Error)
+            throw error
+        }
     }
 
     /**
      * Updates generic user details.
      */
     async updateUser(id: string, data: UserUpdateType): Promise<User> {
-        return UserRepository.instance.update(id, data)
+        try {
+            return await UserRepository.instance.update(id, data)
+        } catch (error) {
+            this.logger.error('Failed to update user', error as Error)
+            throw error
+        }
     }
 
     /**
      * Suspends a user account, preventing login access.
      *
      * @param targetUserId - The ID of the user to suspend.
-     * @throws Error if the actor is not an administrator.
      */
     async suspendUser(targetUserId: string): Promise<User> {
-        return UserRepository.instance.update(targetUserId, {isSuspended: true})
+        try {
+            const user = await UserRepository.instance.update(targetUserId, {isSuspended: true})
+            this.logger.warn('User suspended', { userId: targetUserId })
+            return user
+        } catch (error) {
+            this.logger.error('Failed to suspend user', error as Error)
+            throw error
+        }
     }
 
     /**
      * Restores access to a suspended user account.
      *
      * @param targetUserId - The ID of the user to unsuspend.
-     * @throws Error if the actor is not an administrator.
      */
     async unsuspendUser(targetUserId: string): Promise<User> {
-        return UserRepository.instance.update(targetUserId, {isSuspended: false})
+        try {
+            const user = await UserRepository.instance.update(targetUserId, {isSuspended: false})
+            this.logger.info('User unsuspended', { userId: targetUserId })
+            return user
+        } catch (error) {
+            this.logger.error('Failed to unsuspend user', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -80,6 +104,12 @@ export class UserService {
      * @param userId - The ID of the user to delete.
      */
     async deleteUser(userId: string): Promise<void> {
-        await UserRepository.instance.delete(userId)
+        try {
+            await UserRepository.instance.delete(userId)
+            this.logger.warn('User permanently deleted', { userId })
+        } catch (error) {
+            this.logger.error('Failed to delete user', error as Error)
+            throw error
+        }
     }
 }

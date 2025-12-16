@@ -11,6 +11,7 @@ import {getAccountSuspendedTemplate} from '@/resources/emails/account-suspended'
 import {getOrganizationRejectedTemplate} from '@/resources/emails/organization-rejected'
 import {getOrganizationApprovedTemplate} from '@/resources/emails/organization-approved'
 import {Config} from "@/lib/domain/config"
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Email Service
@@ -20,6 +21,7 @@ export class EmailService {
     private static _instance: EmailService
     private transporter: Transporter | null = null
     private config: Config | null = null
+    private readonly logger = createLogger('EmailService')
 
     private constructor() {}
 
@@ -77,10 +79,10 @@ export class EmailService {
                 greetingTimeout: 10000,
             } as any)
 
-            console.log(`[EmailService] SMTP initialized: Host=${config.smtpHost} Port=${config.smtpPort}`)
+            this.logger.info(`SMTP initialized`, { host: config.smtpHost, port: config.smtpPort })
             return this.transporter
         } catch (error) {
-            console.error('[EmailService] Failed to initialize transporter:', error)
+            this.logger.error('Failed to initialize transporter', error as Error)
             return null
         }
     }
@@ -103,10 +105,10 @@ export class EmailService {
             if (!transporter) return false
 
             await transporter.verify()
-            console.log('[EmailService] SMTP connection verified')
+            this.logger.info('SMTP connection verified')
             return true
         } catch (error) {
-            console.error('[EmailService] SMTP connection failed:', error)
+            this.logger.error('SMTP connection failed', error as Error)
             this.transporter = null
             return false
         }
@@ -135,9 +137,9 @@ export class EmailService {
                 html: htmlBody,
             })
 
-            console.log(`[EmailService] Verification email sent to ${email}`)
+            this.logger.info('Verification email sent', { email })
         } catch (error) {
-            console.error('[EmailService] Failed to send verification email:', error)
+            this.logger.error('Failed to send verification email', error as Error)
             throw new Error('email.verificationFailed')
         }
     }
@@ -163,8 +165,10 @@ export class EmailService {
                 subject: t('subject'),
                 html: htmlBody,
             })
+
+            this.logger.info('Welcome email sent', { email })
         } catch (error) {
-            console.error('[EmailService] Failed to send welcome email:', error)
+            this.logger.error('Failed to send welcome email', error as Error)
         }
     }
 
@@ -190,8 +194,10 @@ export class EmailService {
                 subject: t('subject'),
                 html: htmlBody,
             })
+
+            this.logger.info('Password reset email sent', { email })
         } catch (error) {
-            console.error('[EmailService] Failed to send password reset email:', error)
+            this.logger.error('Failed to send password reset email', error as Error)
             throw new Error('email.resetFailed')
         }
     }
@@ -217,8 +223,10 @@ export class EmailService {
                 subject: t('subject'),
                 html: htmlBody,
             })
+
+            this.logger.info('Organization approved email sent', { email })
         } catch (error) {
-            console.error('[EmailService] Failed to send org approval email:', error)
+            this.logger.error('Failed to send org approval email', error as Error)
         }
     }
 
@@ -244,8 +252,10 @@ export class EmailService {
                 subject: t('subject'),
                 html: htmlBody,
             })
+
+            this.logger.info('Organization rejected email sent', { email })
         } catch (error) {
-            console.error('[EmailService] Failed to send org rejection email:', error)
+            this.logger.error('Failed to send org rejection email', error as Error)
         }
     }
 
@@ -270,8 +280,10 @@ export class EmailService {
                 subject: t('subject'),
                 html: htmlBody,
             })
+
+            this.logger.info('Account suspended email sent', { email })
         } catch (error) {
-            console.error('[EmailService] Failed to send suspension email:', error)
+            this.logger.error('Failed to send suspension email', error as Error)
         }
     }
 
@@ -286,5 +298,6 @@ export class EmailService {
             this.transporter = null
         }
         await this.getTransporter()
+        this.logger.debug('Email configuration refreshed')
     }
 }

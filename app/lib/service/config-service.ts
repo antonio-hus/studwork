@@ -2,6 +2,7 @@
 import 'server-only'
 import {ConfigRepository} from '@/lib/repository/config-repository'
 import {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Service layer for Platform Configuration.
@@ -12,6 +13,7 @@ import {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'
 export class ConfigService {
     /** Singleton instance */
     private static _instance: ConfigService
+    private readonly logger = createLogger('ConfigService')
 
     /** Repository singleton */
     private repository = ConfigRepository.instance
@@ -46,7 +48,14 @@ export class ConfigService {
      * @returns {Promise<Config>} The newly created configuration record.
      */
     async createConfig(input: ConfigCreateType): Promise<Config> {
-        return this.repository.createConfig(input)
+        try {
+            const config = await this.repository.createConfig(input)
+            this.logger.info('Global configuration created via service')
+            return config
+        } catch (error) {
+            this.logger.error('Failed to create global configuration via service', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -58,7 +67,14 @@ export class ConfigService {
      * @returns {Promise<Config>} The updated configuration record.
      */
     async updateConfig(input: ConfigUpdateType): Promise<Config> {
-        return this.repository.updateConfig(input)
+        try {
+            const config = await this.repository.updateConfig(input)
+            this.logger.info('Global configuration updated via service')
+            return config
+        } catch (error) {
+            this.logger.error('Failed to update global configuration via service', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -75,5 +91,6 @@ export class ConfigService {
      */
     clearCache(): void {
         this.repository.clearCache()
+        this.logger.debug('Configuration cache cleared via service')
     }
 }

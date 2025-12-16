@@ -2,6 +2,7 @@
 import 'server-only'
 import {SessionRepository} from '@/lib/repository/session-repository'
 import type {User} from '@/lib/domain/user'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Session Service
@@ -11,6 +12,7 @@ import type {User} from '@/lib/domain/user'
 export class SessionService {
     private static _instance: SessionService
     private sessionRepository: SessionRepository
+    private readonly logger = createLogger('SessionService')
 
     private constructor() {
         this.sessionRepository = new SessionRepository()
@@ -40,7 +42,13 @@ export class SessionService {
      * @param user - The user object to store in the session.
      */
     async createSession(user: User) {
-        return this.sessionRepository.createSession(user)
+        try {
+            await this.sessionRepository.createSession(user)
+            this.logger.debug('Session created via service', { userId: user.id })
+        } catch (error) {
+            this.logger.error('Failed to create session in service', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -48,7 +56,13 @@ export class SessionService {
      * Removes the encrypted session cookie and clears all session data.
      */
     async destroySession() {
-        return this.sessionRepository.destroySession()
+        try {
+            await this.sessionRepository.destroySession()
+            this.logger.debug('Session destroyed via service')
+        } catch (error) {
+            this.logger.error('Failed to destroy session in service', error as Error)
+            // Non-critical, just log
+        }
     }
 
     /**
@@ -76,22 +90,28 @@ export class SessionService {
      * @returns Boolean authentication status.
      */
     async verifySession() {
-        const session = await this.getSession()
+        try {
+            const session = await this.getSession()
 
-        // Check if user is authenticated
-        if (!session.isAuth || !session.user?.id) {
+            // Check if user is authenticated
+            if (!session.isAuth || !session.user?.id) {
+                return false
+            }
+
+            // Check if session is expired
+            const expired = await this.isSessionExpired()
+            if (expired) {
+                this.logger.debug('Session expired during verification, destroying', { userId: session.user.id })
+                // Destroy expired session
+                await this.destroySession()
+                return false
+            }
+
+            return true
+        } catch (error) {
+            this.logger.error('Error verifying session', error as Error)
             return false
         }
-
-        // Check if session is expired
-        const expired = await this.isSessionExpired()
-        if (expired) {
-            // Destroy expired session
-            await this.destroySession()
-            return false
-        }
-
-        return true
     }
 
     /**
@@ -102,20 +122,26 @@ export class SessionService {
      * @returns The User object from session or null if not authenticated.
      */
     async getCurrentSessionUser() {
-        const session = await this.getSession()
+        try {
+            const session = await this.getSession()
 
-        // Check if user is authenticated
-        if (!session.isAuth || !session.user?.id) {
+            // Check if user is authenticated
+            if (!session.isAuth || !session.user?.id) {
+                return null
+            }
+
+            // Check if session is expired
+            const expired = await this.isSessionExpired()
+            if (expired) {
+                this.logger.debug('Session expired during user retrieval', { userId: session.user.id })
+                await this.destroySession()
+                return null
+            }
+
+            return session.user
+        } catch (error) {
+            this.logger.error('Error retrieving current session user', error as Error)
             return null
         }
-
-        // Check if session is expired
-        const expired = await this.isSessionExpired()
-        if (expired) {
-            await this.destroySession()
-            return null
-        }
-
-        return session.user
     }
 }

@@ -5,12 +5,14 @@ import type {StudentRegistrationInput, StudentUpdateType, StudentWithUser} from 
 import {StudentRepository} from '@/lib/repository/student-repository'
 import {UserRepository} from '@/lib/repository/user-repository'
 import {hashPassword} from '@/lib/utils/password'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Service for managing Student-related business logic and transactions.
  */
 export class StudentService {
     private static _instance: StudentService
+    private readonly logger = createLogger('StudentService')
 
     private constructor() {
     }
@@ -30,20 +32,28 @@ export class StudentService {
      * @returns The created student profile with user details.
      */
     async registerStudent(input: StudentRegistrationInput): Promise<StudentWithUser> {
-        return database.$transaction(async (tx) => {
-            const {password, ...userData} = input.user
-            const hashedPassword = await hashPassword(password)
+        try {
+            const result = await database.$transaction(async (tx) => {
+                const {password, ...userData} = input.user
+                const hashedPassword = await hashPassword(password)
 
-            const user = await UserRepository.instance.create(
-                {...userData, hashedPassword, role: 'STUDENT',}, tx
-            )
+                const user = await UserRepository.instance.create(
+                    {...userData, hashedPassword, role: 'STUDENT',}, tx
+                )
 
-            const student = await StudentRepository.instance.create(
-                {...input.student, user: {connect: {id: user.id}},}, tx
-            )
+                const student = await StudentRepository.instance.create(
+                    {...input.student, user: {connect: {id: user.id}},}, tx
+                )
 
-            return {...student, user}
-        })
+                return {...student, user}
+            })
+
+            this.logger.info('Student registered successfully', { userId: result.user.id })
+            return result
+        } catch (error) {
+            this.logger.error('Failed to register student', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -68,13 +78,21 @@ export class StudentService {
         userId: string,
         data: StudentUpdateType
     ): Promise<StudentWithUser> {
-        const existingProfile = await StudentRepository.instance.getByUserId(userId)
-        if (!existingProfile) {
-            throw new Error(`Student profile not found for user ${userId}`)
-        }
+        try {
+            const existingProfile = await StudentRepository.instance.getByUserId(userId)
+            if (!existingProfile) {
+                this.logger.warn('Attempted to update non-existent student profile', { userId })
+                throw new Error(`Student profile not found for user ${userId}`)
+            }
 
-        const student = await StudentRepository.instance.update(userId, data)
-        return {...student, user: existingProfile.user}
+            const student = await StudentRepository.instance.update(userId, data)
+
+            this.logger.info('Student profile updated', { userId })
+            return {...student, user: existingProfile.user}
+        } catch (error) {
+            this.logger.error('Failed to update student profile', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -83,6 +101,12 @@ export class StudentService {
      * @param userId - The ID of the user to delete.
      */
     async deleteStudentAccount(userId: string): Promise<void> {
-        await UserRepository.instance.delete(userId)
+        try {
+            await UserRepository.instance.delete(userId)
+            this.logger.warn('Student account permanently deleted', { userId })
+        } catch (error) {
+            this.logger.error('Failed to delete student account', error as Error)
+            throw error
+        }
     }
 }
