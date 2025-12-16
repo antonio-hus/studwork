@@ -1,4 +1,5 @@
 /** @format */
+import 'server-only'
 import {cookies} from 'next/headers';
 import {getIronSession, SessionOptions} from 'iron-session';
 import {User} from '@/lib/domain/user';

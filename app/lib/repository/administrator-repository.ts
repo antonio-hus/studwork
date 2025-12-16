@@ -1,12 +1,7 @@
 /** @format */
 import 'server-only'
-import {database} from '@/lib/database'
-import {
-    Administrator,
-    AdministratorCreateType,
-    AdministratorUpdateType
-} from '@/lib/domain/administrator'
-import {Prisma} from '@/prisma/generated/client'
+import {database, TransactionClient} from '@/lib/database'
+import type {Administrator, AdministratorCreateType, AdministratorUpdateType} from '@/lib/domain/administrator'
 
 /**
  * Repository for managing Administrator entities.
@@ -46,7 +41,7 @@ export class AdministratorRepository {
      */
     async create(
         data: AdministratorCreateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Administrator> {
         return tx.administrator.create({data})
     }
@@ -62,7 +57,7 @@ export class AdministratorRepository {
     async update(
         userId: string,
         data: AdministratorUpdateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Administrator> {
         return tx.administrator.update({where: {userId}, data})
     }
@@ -74,7 +69,7 @@ export class AdministratorRepository {
      * @param userId - The ID of the user whose profile to delete.
      * @param tx - Optional transaction client.
      */
-    async delete(userId: string, tx: Prisma.TransactionClient = database): Promise<Administrator> {
+    async delete(userId: string, tx: TransactionClient = database): Promise<Administrator> {
         return tx.administrator.delete({where: {userId}})
     }
 }

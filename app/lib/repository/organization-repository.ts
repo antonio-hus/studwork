@@ -1,13 +1,12 @@
 /** @format */
 import 'server-only'
-import {database} from '@/lib/database'
-import {
+import {database, TransactionClient} from '@/lib/database'
+import type {
     Organization,
     OrganizationCreateType,
     OrganizationUpdateType,
     OrganizationWithUser
 } from '@/lib/domain/organization'
-import {Prisma} from '@/prisma/generated/client'
 
 /**
  * Repository for managing Organization entities.
@@ -60,7 +59,7 @@ export class OrganizationRepository {
      */
     async create(
         data: OrganizationCreateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Organization> {
         return tx.organization.create({data})
     }
@@ -76,7 +75,7 @@ export class OrganizationRepository {
     async update(
         userId: string,
         data: OrganizationUpdateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Organization> {
         return tx.organization.update({where: {userId}, data})
     }
@@ -88,7 +87,7 @@ export class OrganizationRepository {
      * @param userId - The ID of the user whose profile to delete.
      * @param tx - Optional transaction client.
      */
-    async delete(userId: string, tx: Prisma.TransactionClient = database): Promise<Organization> {
+    async delete(userId: string, tx: TransactionClient = database): Promise<Organization> {
         return tx.organization.delete({where: {userId}})
     }
 }

@@ -1,4 +1,5 @@
 /** @format */
+import 'server-only'
 import {LRUCache} from 'lru-cache';
 import {RateLimit} from '@/lib/domain/rate-limit';
 

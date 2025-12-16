@@ -1,13 +1,12 @@
 /** @format */
 import 'server-only'
-import {database} from '@/lib/database'
-import {
+import {database, TransactionClient} from '@/lib/database'
+import type {
     Student,
     StudentCreateType,
     StudentUpdateType,
     StudentWithUser
 } from '@/lib/domain/student'
-import {Prisma} from '@/prisma/generated/client'
 
 /**
  * Repository for managing Student entities.
@@ -47,7 +46,7 @@ export class StudentRepository {
      */
     async create(
         data: StudentCreateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Student> {
         return tx.student.create({data})
     }
@@ -63,7 +62,7 @@ export class StudentRepository {
     async update(
         userId: string,
         data: StudentUpdateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Student> {
         return tx.student.update({where: {userId}, data})
     }
@@ -75,7 +74,7 @@ export class StudentRepository {
      * @param userId - The ID of the user whose profile to delete.
      * @param tx - Optional transaction client.
      */
-    async delete(userId: string, tx: Prisma.TransactionClient = database): Promise<Student> {
+    async delete(userId: string, tx: TransactionClient = database): Promise<Student> {
         return tx.student.delete({where: {userId}})
     }
 }

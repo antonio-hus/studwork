@@ -1,7 +1,7 @@
 /** @format */
 import 'server-only'
 import {database} from '@/lib/database'
-import {
+import type {
     VerificationToken,
     PasswordResetToken,
     VerificationTokenCreateType,

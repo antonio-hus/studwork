@@ -1,13 +1,13 @@
 /** @format */
 import 'server-only'
-import {database} from '@/lib/database'
-import {
+import {database, TransactionClient} from '@/lib/database'
+import type {
     User,
     UserCreateType,
     UserUpdateType,
     UserWithProfile
 } from '@/lib/domain/user'
-import {Prisma} from '@/prisma/generated/client'
+import {UserRole} from '@/lib/domain/user'
 
 /**
  * Repository for managing User entities.
@@ -60,22 +60,22 @@ export class UserRepository {
         if (!partialUser) return null
 
         switch (partialUser.role) {
-            case 'STUDENT':
+            case UserRole.STUDENT:
                 return database.user.findUnique({
                     where: {id},
                     include: {student: true}
                 })
-            case 'COORDINATOR':
+            case UserRole.COORDINATOR:
                 return database.user.findUnique({
                     where: {id},
                     include: {coordinator: true}
                 })
-            case 'ORGANIZATION':
+            case UserRole.ORGANIZATION:
                 return database.user.findUnique({
                     where: {id},
                     include: {organization: true}
                 })
-            case 'ADMINISTRATOR':
+            case UserRole.ADMINISTRATOR:
                 return database.user.findUnique({
                     where: {id},
                     include: {administrator: true}
@@ -96,7 +96,7 @@ export class UserRepository {
      */
     async create(
         data: UserCreateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<User> {
         return tx.user.create({data})
     }
@@ -112,7 +112,7 @@ export class UserRepository {
     async update(
         id: string,
         data: UserUpdateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<User> {
         return tx.user.update({where: {id}, data})
     }
@@ -124,7 +124,7 @@ export class UserRepository {
      * @param tx - Optional transaction client.
      * @returns The deleted user.
      */
-    async delete(id: string, tx: Prisma.TransactionClient = database): Promise<User> {
+    async delete(id: string, tx: TransactionClient = database): Promise<User> {
         return tx.user.delete({where: {id}})
     }
 }

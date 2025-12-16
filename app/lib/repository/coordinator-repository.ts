@@ -1,13 +1,12 @@
 /** @format */
 import 'server-only'
-import {database} from '@/lib/database'
-import {
+import {database, TransactionClient} from '@/lib/database'
+import type {
     Coordinator,
     CoordinatorCreateType,
     CoordinatorUpdateType,
     CoordinatorWithUser
 } from '@/lib/domain/coordinator'
-import {Prisma} from '@/prisma/generated/client'
 
 /**
  * Repository for managing Coordinator entities.
@@ -47,7 +46,7 @@ export class CoordinatorRepository {
      */
     async create(
         data: CoordinatorCreateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Coordinator> {
         return tx.coordinator.create({data})
     }
@@ -63,7 +62,7 @@ export class CoordinatorRepository {
     async update(
         userId: string,
         data: CoordinatorUpdateType,
-        tx: Prisma.TransactionClient = database
+        tx: TransactionClient = database
     ): Promise<Coordinator> {
         return tx.coordinator.update({where: {userId}, data})
     }
@@ -75,7 +74,7 @@ export class CoordinatorRepository {
      * @param userId - The ID of the user whose profile to delete.
      * @param tx - Optional transaction client.
      */
-    async delete(userId: string, tx: Prisma.TransactionClient = database): Promise<Coordinator> {
+    async delete(userId: string, tx: TransactionClient = database): Promise<Coordinator> {
         return tx.coordinator.delete({where: {userId}})
     }
 }
