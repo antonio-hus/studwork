@@ -1,5 +1,6 @@
 /** @format */
 import 'server-only'
+import crypto from 'crypto'
 import {
     createCipheriv,
     createDecipheriv,
@@ -86,4 +87,11 @@ export function decrypt(text: string): string {
     decrypted += decipher.final('utf8')
 
     return decrypted
+}
+
+/**
+ * Generates a cryptographically secure random token string.
+ */
+export function generateToken(byteLength: number): string {
+    return crypto.randomBytes(byteLength).toString('hex')
 }
