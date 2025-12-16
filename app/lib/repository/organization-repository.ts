@@ -7,12 +7,14 @@ import type {
     OrganizationUpdateType,
     OrganizationWithUser
 } from '@/lib/domain/organization'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Repository for managing Organization entities.
  */
 export class OrganizationRepository {
     private static _instance: OrganizationRepository
+    private readonly logger = createLogger('OrganizationRepository')
 
     private constructor() {
     }
@@ -31,10 +33,20 @@ export class OrganizationRepository {
      * @returns The organization profile including the user relation.
      */
     async getByUserId(userId: string): Promise<OrganizationWithUser | null> {
-        return database.organization.findUnique({
-            where: {userId},
-            include: {user: true},
-        })
+        try {
+            const org = await database.organization.findUnique({
+                where: {userId},
+                include: {user: true},
+            })
+
+            if (!org) {
+                this.logger.debug('Organization not found', { userId })
+            }
+            return org
+        } catch (error) {
+            this.logger.error('Failed to retrieve organization by userId', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -43,11 +55,19 @@ export class OrganizationRepository {
      * @returns A list of organizations sorted by creation date descending.
      */
     async getPendingVerification(): Promise<OrganizationWithUser[]> {
-        return database.organization.findMany({
-            where: {isVerified: false},
-            include: {user: true},
-            orderBy: {user: {createdAt: 'desc'}},
-        })
+        try {
+            const pendingOrgs = await database.organization.findMany({
+                where: {isVerified: false},
+                include: {user: true},
+                orderBy: {user: {createdAt: 'desc'}},
+            })
+
+            this.logger.debug('Retrieved pending organizations', { count: pendingOrgs.length })
+            return pendingOrgs
+        } catch (error) {
+            this.logger.error('Failed to retrieve pending organizations', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -61,7 +81,17 @@ export class OrganizationRepository {
         data: OrganizationCreateType,
         tx: TransactionClient = database
     ): Promise<Organization> {
-        return tx.organization.create({data})
+        try {
+            const org = await tx.organization.create({data})
+            this.logger.info('Organization profile created', {
+                userId: data.id,
+                orgId: org.id
+            })
+            return org
+        } catch (error) {
+            this.logger.error('Failed to create organization', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -77,7 +107,14 @@ export class OrganizationRepository {
         data: OrganizationUpdateType,
         tx: TransactionClient = database
     ): Promise<Organization> {
-        return tx.organization.update({where: {userId}, data})
+        try {
+            const org = await tx.organization.update({where: {userId}, data})
+            this.logger.info('Organization profile updated', { userId })
+            return org
+        } catch (error) {
+            this.logger.error('Failed to update organization', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -88,6 +125,13 @@ export class OrganizationRepository {
      * @param tx - Optional transaction client.
      */
     async delete(userId: string, tx: TransactionClient = database): Promise<Organization> {
-        return tx.organization.delete({where: {userId}})
+        try {
+            const org = await tx.organization.delete({where: {userId}})
+            this.logger.info('Organization profile deleted', { userId })
+            return org
+        } catch (error) {
+            this.logger.error('Failed to delete organization', error as Error)
+            throw error
+        }
     }
 }

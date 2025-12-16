@@ -3,6 +3,7 @@ import 'server-only'
 import {database} from '@/lib/database'
 import {encrypt, decrypt} from '@/lib/utils/crypto'
 import type {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/config'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Repository for managing Platform Configuration.
@@ -14,6 +15,8 @@ import type {Config, ConfigCreateType, ConfigUpdateType} from '@/lib/domain/conf
 export class ConfigRepository {
     /** Singleton instance */
     private static _instance: ConfigRepository
+
+    private readonly logger = createLogger('ConfigRepository')
 
     /** In-memory cache for the global configuration */
     private cache: Config | null = null
@@ -43,26 +46,34 @@ export class ConfigRepository {
     async getGlobalConfig(useCache = true): Promise<Config | null> {
         if (useCache && this.cache) return this.cache
 
-        const config = await database.config.findUnique({
-            where: {id: 'global_config'},
-        })
+        try {
+            const config = await database.config.findUnique({
+                where: {id: 'global_config'},
+            })
 
-        if (!config) return null
-
-        if (config.smtpPassword) {
-            try {
-                config.smtpPassword = decrypt(config.smtpPassword)
-            } catch (error) {
-                console.error(
-                    '[ConfigRepository] Failed to decrypt SMTP password. Returning null for safety.',
-                    error
-                )
-                config.smtpPassword = ''
+            if (!config) {
+                this.logger.debug('Global configuration not found in DB')
+                return null
             }
-        }
 
-        this.cache = config
-        return config
+            if (config.smtpPassword) {
+                try {
+                    config.smtpPassword = decrypt(config.smtpPassword)
+                } catch (error) {
+                    this.logger.error(
+                        'Failed to decrypt SMTP password. Returning empty string for safety.',
+                        error as Error
+                    )
+                    config.smtpPassword = ''
+                }
+            }
+
+            this.cache = config
+            return config
+        } catch (error) {
+            this.logger.error('Database error retrieving global config', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -74,18 +85,24 @@ export class ConfigRepository {
      * @returns {Promise<Config>} The newly created configuration record.
      */
     async createConfig(data: ConfigCreateType): Promise<Config> {
-        const payload = {...data}
+        try {
+            const payload = {...data}
 
-        if (payload.smtpPassword) {
-            payload.smtpPassword = encrypt(payload.smtpPassword)
+            if (payload.smtpPassword) {
+                payload.smtpPassword = encrypt(payload.smtpPassword)
+            }
+
+            const createdConfig = await database.config.create({
+                data: payload,
+            })
+
+            this.cache = createdConfig
+            this.logger.info('Global configuration created successfully')
+            return createdConfig
+        } catch (error) {
+            this.logger.error('Failed to create global configuration', error as Error)
+            throw error
         }
-
-        const createdConfig = await database.config.create({
-            data: payload,
-        })
-
-        this.cache = createdConfig
-        return createdConfig
     }
 
     /**
@@ -97,19 +114,25 @@ export class ConfigRepository {
      * @returns {Promise<Config>} The updated configuration record.
      */
     async updateConfig(data: ConfigUpdateType): Promise<Config> {
-        const payload = {...data}
+        try {
+            const payload = {...data}
 
-        if (payload.smtpPassword) {
-            payload.smtpPassword = encrypt(payload.smtpPassword as string)
+            if (payload.smtpPassword) {
+                payload.smtpPassword = encrypt(payload.smtpPassword as string)
+            }
+
+            const updatedConfig = await database.config.update({
+                where: {id: 'global_config'},
+                data: payload,
+            })
+
+            this.cache = updatedConfig
+            this.logger.info('Global configuration updated successfully')
+            return updatedConfig
+        } catch (error) {
+            this.logger.error('Failed to update global configuration', error as Error)
+            throw error
         }
-
-        const updatedConfig = await database.config.update({
-            where: {id: 'global_config'},
-            data: payload,
-        })
-
-        this.cache = updatedConfig
-        return updatedConfig
     }
 
     /**
@@ -118,10 +141,15 @@ export class ConfigRepository {
      * @returns {Promise<boolean>} True if configuration exists, False otherwise.
      */
     async isConfigured(): Promise<boolean> {
-        const count = await database.config.count({
-            where: {id: 'global_config'},
-        })
-        return count > 0
+        try {
+            const count = await database.config.count({
+                where: {id: 'global_config'},
+            })
+            return count > 0
+        } catch (error) {
+            this.logger.error('Failed to check configuration status', error as Error)
+            return false
+        }
     }
 
     /**
@@ -131,5 +159,6 @@ export class ConfigRepository {
      */
     clearCache() {
         this.cache = null
+        this.logger.debug('Configuration cache cleared')
     }
 }

@@ -7,12 +7,14 @@ import type {
     StudentUpdateType,
     StudentWithUser
 } from '@/lib/domain/student'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Repository for managing Student entities.
  */
 export class StudentRepository {
     private static _instance: StudentRepository
+    private readonly logger = createLogger('StudentRepository')
 
     private constructor() {
     }
@@ -31,10 +33,20 @@ export class StudentRepository {
      * @returns The student profile including the user relation.
      */
     async getByUserId(userId: string): Promise<StudentWithUser | null> {
-        return database.student.findUnique({
-            where: {userId},
-            include: {user: true},
-        })
+        try {
+            const student = await database.student.findUnique({
+                where: {userId},
+                include: {user: true},
+            })
+
+            if (!student) {
+                this.logger.debug('Student profile not found', { userId })
+            }
+            return student
+        } catch (error) {
+            this.logger.error('Failed to retrieve student by userId', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -48,7 +60,17 @@ export class StudentRepository {
         data: StudentCreateType,
         tx: TransactionClient = database
     ): Promise<Student> {
-        return tx.student.create({data})
+        try {
+            const student = await tx.student.create({data})
+            this.logger.info('Student profile created', {
+                userId: data.id,
+                studentId: student.id
+            })
+            return student
+        } catch (error) {
+            this.logger.error('Failed to create student profile', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -64,7 +86,14 @@ export class StudentRepository {
         data: StudentUpdateType,
         tx: TransactionClient = database
     ): Promise<Student> {
-        return tx.student.update({where: {userId}, data})
+        try {
+            const student = await tx.student.update({where: {userId}, data})
+            this.logger.info('Student profile updated', { userId })
+            return student
+        } catch (error) {
+            this.logger.error('Failed to update student profile', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -75,6 +104,13 @@ export class StudentRepository {
      * @param tx - Optional transaction client.
      */
     async delete(userId: string, tx: TransactionClient = database): Promise<Student> {
-        return tx.student.delete({where: {userId}})
+        try {
+            const student = await tx.student.delete({where: {userId}})
+            this.logger.info('Student profile deleted', { userId })
+            return student
+        } catch (error) {
+            this.logger.error('Failed to delete student profile', error as Error)
+            throw error
+        }
     }
 }

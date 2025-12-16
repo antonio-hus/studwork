@@ -4,6 +4,7 @@ import {cookies} from 'next/headers';
 import {getIronSession, SessionOptions} from 'iron-session';
 import {User} from '@/lib/domain/user';
 import {SessionData} from '@/lib/domain/session';
+import {createLogger} from '@/lib/utils/logger';
 
 /**
  * Configuration options for iron-session
@@ -21,12 +22,13 @@ const sessionOptions: SessionOptions = {
     },
 }
 
-
 /**
  * Repository for managing user sessions using iron-session
  * Handles session storage in encrypted, signed cookies for stateless authentication
  */
 export class SessionRepository {
+    private readonly logger = createLogger('SessionRepository')
+
     /**
      * Retrieves the current iron-session instance from browser cookies
      * Automatically decrypts and validates the session data
@@ -45,15 +47,25 @@ export class SessionRepository {
      * @param user - The user object to store in the session
      */
     async createSession(user: User) {
-        const session = await this.getSession()
-        const now = Date.now()
+        try {
+            const session = await this.getSession()
+            const now = Date.now()
 
-        session.user = user
-        session.isAuth = true
-        session.createdAt = now
-        session.expiresAt = now + (sessionOptions.ttl! * 1000)
+            session.user = user
+            session.isAuth = true
+            session.createdAt = now
+            session.expiresAt = now + (sessionOptions.ttl! * 1000)
 
-        await session.save()
+            await session.save()
+
+            this.logger.info('Session created successfully', {
+                userId: user.id,
+                expiresAt: new Date(session.expiresAt).toISOString()
+            })
+        } catch (error) {
+            this.logger.error('Failed to create session', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -61,8 +73,17 @@ export class SessionRepository {
      * Effectively logs out the user by clearing all session data
      */
     async destroySession() {
-        const session = await this.getSession()
-        session.destroy()
+        try {
+            const session = await this.getSession()
+            const userId = session.user?.id
+
+            session.destroy()
+
+            this.logger.info('Session destroyed', { userId })
+        } catch (error) {
+            this.logger.error('Failed to destroy session', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -71,13 +92,25 @@ export class SessionRepository {
      * @returns True if session is expired or invalid, false if session is still valid
      */
     async isSessionExpired(): Promise<boolean> {
-        const session = await this.getSession()
+        try {
+            const session = await this.getSession()
 
-        if (!session.isAuth || !session.expiresAt) {
+            if (!session.isAuth || !session.expiresAt) {
+                return true
+            }
+
+            const isExpired = Date.now() > session.expiresAt
+            if (isExpired) {
+                this.logger.debug('Session expired', {
+                    userId: session.user?.id,
+                    expiredAt: new Date(session.expiresAt).toISOString()
+                })
+            }
+            return isExpired
+        } catch (error) {
+            this.logger.error('Error checking session expiration', error as Error)
             return true
         }
-
-        return Date.now() > session.expiresAt
     }
 
     /**
@@ -85,12 +118,18 @@ export class SessionRepository {
      * Only refreshes if the session is currently authenticated
      */
     async refreshSession() {
-        const session = await this.getSession()
+        try {
+            const session = await this.getSession()
 
-        if (session.isAuth) {
-            const now = Date.now()
-            session.expiresAt = now + (sessionOptions.ttl! * 1000)
-            await session.save()
+            if (session.isAuth) {
+                const now = Date.now()
+                session.expiresAt = now + (sessionOptions.ttl! * 1000)
+                await session.save()
+
+                this.logger.debug('Session refreshed', { userId: session.user?.id })
+            }
+        } catch (error) {
+            this.logger.error('Failed to refresh session', error as Error)
         }
     }
 }

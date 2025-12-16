@@ -2,6 +2,7 @@
 import 'server-only'
 import {LRUCache} from 'lru-cache';
 import {RateLimit} from '@/lib/domain/rate-limit';
+import {createLogger} from '@/lib/utils/logger';
 
 /**
  * Repository for managing rate limiting state using an in-memory LRU cache
@@ -9,6 +10,7 @@ import {RateLimit} from '@/lib/domain/rate-limit';
  */
 export class RateLimitRepository {
     private tokenCache: LRUCache<string, RateLimit>;
+    private readonly logger = createLogger('RateLimitRepository');
 
     /**
      * Initializes the rate limit repository with specified options
@@ -21,6 +23,7 @@ export class RateLimitRepository {
             ttl: interval || 60000,
             max: uniqueTokenPerInterval || 500,
         });
+        this.logger.debug('RateLimitRepository initialized', { interval, uniqueTokenPerInterval });
     }
 
     /**
@@ -30,7 +33,11 @@ export class RateLimitRepository {
      * @returns The RateLimit object if found in cache, undefined otherwise
      */
     get(token: string): RateLimit | undefined {
-        return this.tokenCache.get(token);
+        const rateLimit = this.tokenCache.get(token);
+        if (rateLimit) {
+            this.logger.debug('Rate limit retrieved', { token, count: rateLimit.count });
+        }
+        return rateLimit;
     }
 
     /**
@@ -45,6 +52,8 @@ export class RateLimitRepository {
         const resetAt = Date.now() + (this.tokenCache.ttl || 60000);
         const rateLimit: RateLimit = {token, count: 0, limit, resetAt};
         this.save(rateLimit);
+
+        this.logger.debug('New rate limit entry created', { token, limit, resetAt });
         return rateLimit;
     }
 
@@ -57,4 +66,3 @@ export class RateLimitRepository {
         this.tokenCache.set(rateLimit.token, rateLimit);
     }
 }
-

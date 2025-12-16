@@ -2,12 +2,14 @@
 import 'server-only'
 import {database, TransactionClient} from '@/lib/database'
 import type {Administrator, AdministratorCreateType, AdministratorUpdateType} from '@/lib/domain/administrator'
+import {createLogger} from '@/lib/utils/logger'
 
 /**
  * Repository for managing Administrator entities.
  */
 export class AdministratorRepository {
     private static _instance: AdministratorRepository
+    private readonly logger = createLogger('AdministratorRepository')
 
     private constructor() {
     }
@@ -26,10 +28,20 @@ export class AdministratorRepository {
      * @returns The administrator profile including the user relation.
      */
     async getByUserId(userId: string): Promise<Administrator | null> {
-        return database.administrator.findUnique({
-            where: {userId},
-            include: {user: true},
-        })
+        try {
+            const admin = await database.administrator.findUnique({
+                where: {userId},
+                include: {user: true},
+            })
+
+            if (!admin) {
+                this.logger.debug('Administrator not found', { userId })
+            }
+            return admin
+        } catch (error) {
+            this.logger.error('Failed to retrieve administrator by userId', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -43,7 +55,17 @@ export class AdministratorRepository {
         data: AdministratorCreateType,
         tx: TransactionClient = database
     ): Promise<Administrator> {
-        return tx.administrator.create({data})
+        try {
+            const admin = await tx.administrator.create({data})
+            this.logger.info('Administrator created successfully', {
+                userId: data.id,
+                adminId: admin.id
+            })
+            return admin
+        } catch (error) {
+            this.logger.error('Failed to create administrator', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -59,7 +81,14 @@ export class AdministratorRepository {
         data: AdministratorUpdateType,
         tx: TransactionClient = database
     ): Promise<Administrator> {
-        return tx.administrator.update({where: {userId}, data})
+        try {
+            const admin = await tx.administrator.update({where: {userId}, data})
+            this.logger.info('Administrator updated successfully', { userId })
+            return admin
+        } catch (error) {
+            this.logger.error('Failed to update administrator', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -70,6 +99,13 @@ export class AdministratorRepository {
      * @param tx - Optional transaction client.
      */
     async delete(userId: string, tx: TransactionClient = database): Promise<Administrator> {
-        return tx.administrator.delete({where: {userId}})
+        try {
+            const admin = await tx.administrator.delete({where: {userId}})
+            this.logger.info('Administrator deleted successfully', { userId })
+            return admin
+        } catch (error) {
+            this.logger.error('Failed to delete administrator', error as Error)
+            throw error
+        }
     }
 }
