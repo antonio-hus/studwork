@@ -20,6 +20,12 @@ export type UserCreateType = Prisma.UserCreateInput;
 export type UserUpdateType = Prisma.UserUpdateInput;
 
 /**
+ * Type Definition for User Filtering.
+ * Used by repositories to construct strongly-typed 'where' clauses.
+ */
+export type UserWhereInput = Prisma.UserWhereInput;
+
+/**
  * User entity including the specific Student profile relation.
  * Returned when querying a user with the STUDENT role.
  */

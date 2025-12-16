@@ -5,13 +5,31 @@ import type {
     User,
     UserCreateType,
     UserUpdateType,
-    UserWithProfile
+    UserWithProfile,
+    UserWhereInput
 } from '@/lib/domain/user'
 import {UserRole} from '@/lib/domain/user'
 import {createLogger} from '@/lib/utils/logger'
+import {PaginationParams, PaginationResult} from '@/lib/domain/pagination'
+
+/**
+ * Options for filtering users in list queries.
+ */
+export type UserFilterOptions = {
+    role?: UserRole
+    search?: string
+    isSuspended?: boolean
+    isVerified?: boolean
+}
+
+/**
+ * Valid fields for sorting user results.
+ */
+export type UserSortField = 'createdAt' | 'name' | 'email' | 'role'
 
 /**
  * Repository for managing User entities.
+ * Handles direct database interactions for the User model.
  */
 export class UserRepository {
     private static _instance: UserRepository
@@ -25,6 +43,57 @@ export class UserRepository {
             UserRepository._instance = new UserRepository()
         }
         return UserRepository._instance
+    }
+
+    /**
+     * Retrieves paginated users based on filter criteria.
+     *
+     * @param pagination - Pagination parameters (page, pageSize).
+     * @param filters - Optional filters for role, status, and search terms.
+     * @param sort - Sorting preferences (field and direction).
+     * @returns A Promise resolving to a paginated result containing Users.
+     */
+    async findMany(
+        pagination: PaginationParams,
+        filters: UserFilterOptions = {},
+        sort: { field: UserSortField; direction: 'asc' | 'desc' } = {field: 'createdAt', direction: 'desc'}
+    ): Promise<PaginationResult<User>> {
+        const {page, pageSize} = pagination
+        const skip = (page - 1) * pageSize
+
+        try {
+            // Construct strongly-typed Prisma where clause using domain-exported type
+            const where: UserWhereInput = {
+                role: filters.role,
+                isSuspended: filters.isSuspended,
+                emailVerified: filters.isVerified ? {not: null} : undefined,
+                OR: filters.search ? [
+                    {name: {contains: filters.search, mode: 'insensitive'}},
+                    {email: {contains: filters.search, mode: 'insensitive'}}
+                ] : undefined
+            }
+
+            const [items, total] = await Promise.all([
+                database.user.findMany({
+                    where,
+                    skip,
+                    take: pageSize,
+                    orderBy: {[sort.field]: sort.direction}
+                }),
+                database.user.count({where})
+            ])
+
+            return {
+                items,
+                total,
+                page,
+                pageSize,
+                totalPages: Math.ceil(total / pageSize)
+            }
+        } catch (error) {
+            this.logger.error('Failed to find users', error as Error)
+            throw error
+        }
     }
 
     /**
@@ -71,7 +140,7 @@ export class UserRepository {
             })
 
             if (!partialUser) {
-                this.logger.debug('User profile lookup failed (user not found)', { userId: id })
+                this.logger.debug('User profile lookup failed (user not found)', {userId: id})
                 return null
             }
 
@@ -120,7 +189,7 @@ export class UserRepository {
     ): Promise<User> {
         try {
             const user = await tx.user.create({data})
-            this.logger.info('User created', { userId: user.id, role: user.role })
+            this.logger.info('User created', {userId: user.id, role: user.role})
             return user
         } catch (error) {
             this.logger.error('Failed to create user', error as Error)
@@ -143,7 +212,7 @@ export class UserRepository {
     ): Promise<User> {
         try {
             const user = await tx.user.update({where: {id}, data})
-            this.logger.info('User updated', { userId: id })
+            this.logger.info('User updated', {userId: id})
             return user
         } catch (error) {
             this.logger.error('Failed to update user', error as Error)
@@ -161,7 +230,7 @@ export class UserRepository {
     async delete(id: string, tx: TransactionClient = database): Promise<User> {
         try {
             const user = await tx.user.delete({where: {id}})
-            this.logger.info('User deleted', { userId: id })
+            this.logger.info('User deleted', {userId: id})
             return user
         } catch (error) {
             this.logger.error('Failed to delete user', error as Error)
