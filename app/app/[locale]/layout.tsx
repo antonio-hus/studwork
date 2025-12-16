@@ -5,7 +5,7 @@ import type {Metadata} from "next";
 import {routing} from "@/lib/utils/i18n/routing";
 import {notFound} from "next/navigation";
 import {Geist, Geist_Mono} from "next/font/google";
-import {getConfig} from "@/lib/controller/config-controller";
+import {getConfig} from "@/lib/controller/admin/config-controller";
 import {defaultThemeColors, ThemeColors} from "@/lib/domain/config";
 import {NextIntlClientProvider} from "next-intl";
 import {getMessages} from "next-intl/server";

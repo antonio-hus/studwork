@@ -324,6 +324,44 @@ export class AuthService {
     }
 
     /**
+     * Resends verification email for an authenticated user.
+     * Checks if user exists and is not already verified.
+     *
+     * @param userId - The ID of the currently logged-in user.
+     */
+    async resendVerificationEmailAuthenticated(userId: string) {
+        // Rate limit check based on User ID
+        const limitCheck = RateLimitService.emailResendLimiter.check(3, userId)
+        if (!limitCheck.success) {
+            this.logger.warn('Authenticated email resend rate limit exceeded', { userId })
+            throw new Error('auth.rateLimitExceeded')
+        }
+
+        const user = await UserRepository.instance.getById(userId)
+
+        if (!user) {
+            throw new Error('auth.userNotFound')
+        }
+
+        if (user.emailVerified) {
+            this.logger.debug('Attempted resend for already verified user', { userId })
+            return new Error ('auth.emailAlreadyVerified')
+        }
+
+        const verificationToken = await TokenService.instance.createVerificationToken(user.id)
+
+        try {
+            await EmailService.instance.sendVerificationEmail(user.name, user.email, verificationToken.token)
+            this.logger.info('Verification email resent (authenticated)', { userId })
+        } catch (error) {
+            this.logger.error('Failed to resend verification email (authenticated)', error as Error)
+            throw new Error('auth.emailDeliveryFailed')
+        }
+
+        return { user, verificationToken }
+    }
+
+    /**
      * Logs out the current user.
      */
     async signOut() {

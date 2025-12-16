@@ -25,9 +25,8 @@ const PUBLIC_PATHS = [
 
 /**
  * Routes that do not require authentication.
- * Note: We check against the localized path (e.g. /en/login).
  */
-const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/verify-email']
+const AUTH_ROUTES = ['/login', '/register', '/forgot-password', '/verify-email', '/reset-password']
 
 /**
  * Helper to strip locale from pathname for logic checks
@@ -61,34 +60,43 @@ export async function proxy(request: NextRequest): Promise<NextResponse> {
         if (!isSetupPage) {
             return NextResponse.redirect(new URL('/setup', request.url))
         }
-
-        // Allow access to setup if not configured
         return handleI18n(request)
     } else if (isSetupPage) {
-
-        // Block access to setup if already configured
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
     // Authentication & Authorization Guard
     const pathWithoutLocale = getPathWithoutLocale(pathname)
-
-    // Check if the user is authenticated (using the uncached controller method)
     const user = await checkSessionForProxy()
     const isAuthenticated = !!user
 
     // Protect Dashboard/Protected Routes
-    // If the path starts with /dashboard or other protected segments
     if (pathWithoutLocale.startsWith('/dashboard') || pathWithoutLocale.startsWith('/admin')) {
         if (!isAuthenticated) {
-            // Redirect to login, preserving the return URL
             const loginUrl = new URL('/login', request.url)
             return NextResponse.redirect(loginUrl)
         }
+
+        // Role-Based Access Control (RBAC)
+        // Prevent non-admins from accessing /admin routes
+        if (pathWithoutLocale.startsWith('/admin') && user?.role !== UserRole.ADMINISTRATOR) {
+            const accessDeniedUrl = new URL('/access-denied', request.url)
+            accessDeniedUrl.searchParams.set('required', UserRole.ADMINISTRATOR)
+            return NextResponse.redirect(accessDeniedUrl)
+        }
+
+        // Prevent pending verification users from accessing main dashboard (except verification page)
+        if (!user.emailVerified && !pathWithoutLocale.startsWith('/verify-email-pending')) {
+            return NextResponse.redirect(new URL('/verify-email-pending', request.url))
+        }
+
+        // Prevent verified users from going back to pending page
+        if (user.emailVerified && pathWithoutLocale.startsWith('/verify-email-pending')) {
+            return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
     }
 
-    // Redirect authenticated users away from Auth Pages
-    // If user is logged in, they shouldn't see /login or /register
+    // Redirect Authenticated Users away from Auth Pages
     if (isAuthenticated && AUTH_ROUTES.some(route => pathWithoutLocale.startsWith(route))) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }

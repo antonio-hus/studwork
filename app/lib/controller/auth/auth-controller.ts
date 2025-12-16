@@ -258,3 +258,42 @@ export async function resendVerificationEmail(formData: FormData): Promise<Actio
         return {success: false, error: t('errors.auth.resendFailed')};
     }
 }
+
+/**
+ * Resends the verification email for the currently authenticated user.
+ *
+ * @returns {Promise<ActionResponse<{ message: string }>>} Success message.
+ */
+export async function resendVerificationEmailAuthenticated(): Promise<ActionResponse<{ message: string }>> {
+    const t = await getTranslations();
+    const authService = AuthService.instance;
+    const sessionService = SessionService.instance;
+
+    try {
+        const currentUser = await sessionService.getCurrentSessionUser();
+
+        if (!currentUser) {
+            return { success: false, error: t('errors.auth.notAuthenticated') };
+        }
+
+        const result = await authService.resendVerificationEmailAuthenticated(currentUser.id);
+
+        // If result is null, it means user is already verified or not found,
+        // but we return success to avoid leaking state/confusing UI
+        if (!result) {
+            return { success: true, data: { message: t('success.auth.verificationEmailSent') } };
+        }
+
+        return { success: true, data: { message: t('success.auth.verificationEmailSent') } };
+
+    } catch (error) {
+        logger.error('Resend authenticated verification email error', error as Error);
+
+        if (error instanceof Error && error.message === 'auth.rateLimitExceeded') {
+            return { success: false, error: t('errors.auth.tooManyAttempts') };
+        }
+
+        return { success: false, error: t('errors.auth.resendFailed') };
+    }
+}
+
