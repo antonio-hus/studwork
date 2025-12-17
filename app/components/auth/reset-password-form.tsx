@@ -5,15 +5,17 @@ import React, {useState, useEffect} from "react"
 import {useRouter} from "next/navigation"
 import Link from "next/link"
 import {useTranslations} from 'next-intl'
-import * as Label from '@radix-ui/react-label'
 import {resetPassword, verifyResetToken} from "@/lib/controller/auth/auth-controller"
+import {Label} from "@/components/ui/label"
+import {Input} from "@/components/ui/input"
+import {Button} from "@/components/ui/button"
 import {AlertCircle, ArrowRight, Loader2, Lock, XCircle} from 'lucide-react'
 
 /**
  * Reset Password Form Component.
  *
- * Handles the logic for verifying the reset token and submitting the new password.
- * Includes token validation states (checking, valid, invalid).
+ * Verifies the reset token on mount and allows the user to set a new password.
+ * Handles token validation, form submission, and password mismatch errors.
  */
 export function ResetPasswordForm({token}: { token?: string }) {
     const t = useTranslations('pages.auth.resetPassword')
@@ -39,7 +41,6 @@ export function ResetPasswordForm({token}: { token?: string }) {
                     setTokenStatus('valid')
                 } else {
                     setTokenStatus('invalid')
-                    // Use error from result or fallback to generic
                     setError(result.success === false ? result.error : t('invalidToken'))
                 }
             } catch (err) {
@@ -57,7 +58,6 @@ export function ResetPasswordForm({token}: { token?: string }) {
         setLoading(true)
 
         const formData = new FormData(event.currentTarget)
-        // Ensure token is attached
         formData.append("token", token!)
 
         const password = formData.get("password") as string
@@ -76,7 +76,6 @@ export function ResetPasswordForm({token}: { token?: string }) {
                 setError(result.error)
                 setLoading(false)
             } else {
-                // Successful reset
                 router.push("/login?reset=success")
                 router.refresh()
             }
@@ -86,69 +85,74 @@ export function ResetPasswordForm({token}: { token?: string }) {
         }
     }
 
-    // Loading State: Verifying Token
+    // State 1: Loading (Verifying Token)
     if (tokenStatus === 'checking') {
         return (
-            <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                <Loader2 className="h-8 w-8 animate-spin text-primary"/>
-                <p className="text-sm text-muted-foreground">{t('verifyingToken')}</p>
+            <div className="flex flex-col items-center justify-center py-12 space-y-4 animate-in fade-in duration-300">
+                <Loader2 className="h-10 w-10 animate-spin text-primary/80"/>
+                <p className="text-sm font-medium text-muted-foreground animate-pulse">
+                    {t('verifyingToken')}
+                </p>
             </div>
         )
     }
 
-    // Error State: Invalid Token
+    // State 2: Error (Invalid Token)
     if (tokenStatus === 'invalid') {
         return (
-            <div className="space-y-6 text-center animate-in fade-in duration-300">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
-                    <XCircle className="h-8 w-8 text-destructive"/>
+            <div
+                className="flex flex-col items-center justify-center space-y-6 text-center animate-in fade-in zoom-in-95 duration-300 py-4">
+                <div
+                    className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center ring-1 ring-destructive/20 mb-2">
+                    <XCircle className="h-10 w-10 text-destructive"/>
                 </div>
-                <div className="space-y-2">
-                    <h3 className="text-lg font-medium text-foreground">{t('tokenErrorTitle')}</h3>
-                    <p className="text-sm text-muted-foreground">{error}</p>
+                <div className="space-y-2 max-w-[280px]">
+                    <h3 className="text-lg font-semibold text-foreground tracking-tight">
+                        {t('tokenErrorTitle')}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                        {error}
+                    </p>
                 </div>
-                <Link
-                    href="/forgot-password"
-                    className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors shadow-sm"
-                >
-                    {t('requestNew')}
-                    <ArrowRight className="ml-2 h-4 w-4"/>
-                </Link>
+                <Button asChild className="mt-4 shadow-sm" size="lg">
+                    <Link href="/forgot-password">
+                        {t('requestNew')}
+                        <ArrowRight className="ml-2 h-4 w-4"/>
+                    </Link>
+                </Button>
             </div>
         )
     }
 
-    // Success State: Valid Token -> Show Form
+    // State 3: Success (Valid Token -> Show Form)
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Feedback */}
             {error && (
                 <div
-                    className="rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-destructive flex items-center gap-3 animate-in slide-in-from-top-2">
-                    <AlertCircle className="h-5 w-5 shrink-0"/>
-                    <span className="text-sm font-medium">{error}</span>
+                    className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-destructive flex items-start gap-3 animate-in slide-in-from-top-1 text-sm">
+                    <AlertCircle className="h-5 w-5 shrink-0 mt-0.5"/>
+                    <span className="font-medium leading-relaxed">{error}</span>
                 </div>
             )}
 
             <div className="space-y-4">
-                {/* New Password Field */}
+                {/* New Password */}
                 <div className="space-y-2">
-                    <Label.Root
-                        htmlFor="password"
-                        className="text-sm font-medium leading-none text-foreground"
-                    >
+                    <Label htmlFor="password">
                         {t('newPassword')} <span className="text-destructive">*</span>
-                    </Label.Root>
+                    </Label>
                     <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"/>
-                        <input
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground pointer-events-none"/>
+                        <Input
                             id="password"
                             name="password"
                             type="password"
                             required
                             minLength={8}
                             placeholder="••••••••"
-                            className="flex h-11 w-full rounded-xl border border-border bg-muted/50 pl-10 pr-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                            className="pl-10 h-11"
+                            disabled={loading}
                         />
                     </div>
                     <p className="text-[11px] text-muted-foreground pl-1">
@@ -156,34 +160,32 @@ export function ResetPasswordForm({token}: { token?: string }) {
                     </p>
                 </div>
 
-                {/* Confirm Password Field */}
+                {/* Confirm Password */}
                 <div className="space-y-2">
-                    <Label.Root
-                        htmlFor="confirmPassword"
-                        className="text-sm font-medium leading-none text-foreground"
-                    >
+                    <Label htmlFor="confirmPassword">
                         {t('confirmPassword')} <span className="text-destructive">*</span>
-                    </Label.Root>
+                    </Label>
                     <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"/>
-                        <input
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground pointer-events-none"/>
+                        <Input
                             id="confirmPassword"
                             name="confirmPassword"
                             type="password"
                             required
                             minLength={8}
                             placeholder="••••••••"
-                            className="flex h-11 w-full rounded-xl border border-border bg-muted/50 pl-10 pr-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                            className="pl-10 h-11"
+                            disabled={loading}
                         />
                     </div>
                 </div>
             </div>
 
             {/* Submit Button */}
-            <button
+            <Button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-12 shadow-md hover:shadow-lg"
+                className="w-full h-11 text-base shadow-sm"
             >
                 {loading ? (
                     <>
@@ -193,7 +195,7 @@ export function ResetPasswordForm({token}: { token?: string }) {
                 ) : (
                     t('resetPassword')
                 )}
-            </button>
+            </Button>
         </form>
     )
 }

@@ -1,56 +1,66 @@
 /** @format */
-import {getTranslations} from 'next-intl/server'
-import Link from 'next/link'
+import {getTranslations} from 'next-intl/server';
+import Link from 'next/link';
 import {ResendVerificationForm} from "@/components/auth/resend-verification-form";
+import {Mail, ArrowLeft} from 'lucide-react';
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent,
+    CardFooter
+} from "@/components/ui/card";
 
 /**
  * Resend Verification Page Component.
  *
- * Renders the layout for resending the verification email,
- * wrapping the form in a centered, styled card.
+ * Renders the interface for requesting a new verification email.
+ * Uses a centered card layout with a mail icon to clearly indicate the page's purpose.
  */
 export default async function ResendVerificationPage() {
-    const t = await getTranslations('pages.auth.resendVerification')
+    const t = await getTranslations('pages.auth.resendVerification');
 
     return (
-        <div className="min-h-screen w-full flex justify-center items-center bg-background py-10 px-4">
+        <div className="min-h-screen w-full flex flex-col justify-center items-center bg-muted/30 px-4 py-10">
             <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
 
-                {/* Main Card Container */}
-                <div
-                    className="rounded-2xl border border-border bg-card text-card-foreground shadow-2xl overflow-hidden">
+                <Card className="shadow-xl border-border overflow-hidden">
+                    <CardHeader className="flex flex-col items-center space-y-4 pt-10 pb-2 text-center">
+                        <div
+                            className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20 mb-2">
+                            <Mail className="h-7 w-7 text-primary"/>
+                        </div>
 
-                    {/* Header */}
-                    <div className="flex flex-col space-y-1.5 p-8 pb-6 text-center border-b border-border">
-                        <h1 className="text-2xl font-bold leading-none tracking-tight text-foreground">
-                            {t('title')}
-                        </h1>
-                        <p className="text-sm text-muted-foreground">
-                            {t('subtitle')}
-                        </p>
-                    </div>
+                        <div className="space-y-2 w-full">
+                            <CardTitle className="text-2xl font-bold tracking-tight">
+                                {t('title')}
+                            </CardTitle>
+                            <CardDescription className="text-base max-w-[300px] mx-auto">
+                                {t('subtitle')}
+                            </CardDescription>
+                        </div>
+                    </CardHeader>
 
-                    {/* Content */}
-                    <div className="p-8 pt-6">
+                    <CardContent className="p-8">
                         <ResendVerificationForm/>
-                    </div>
+                    </CardContent>
 
-                    {/* Footer */}
-                    <div className="flex items-center justify-center p-6 bg-muted/20 border-t border-border">
+                    <CardFooter className="bg-muted/30 border-t border-border p-6 flex justify-center">
                         <Link
                             href="/login"
-                            className="text-sm font-medium text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
+                            className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors group"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                                 fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"
-                                 strokeLinejoin="round">
-                                <path d="m15 18-6-6 6-6"/>
-                            </svg>
+                            <div
+                                className="rounded-full bg-background border border-border p-1 group-hover:border-foreground/30 transition-colors">
+                                <ArrowLeft className="h-3 w-3"/>
+                            </div>
                             {t('backToLogin')}
                         </Link>
-                    </div>
-                </div>
+                    </CardFooter>
+                </Card>
+
             </div>
         </div>
-    )
+    );
 }

@@ -1,9 +1,18 @@
 /** @format */
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
-import { verifySession } from '@/lib/controller/auth/session-controller'
-import { AlertOctagon, ArrowLeft } from 'lucide-react'
+import {redirect} from 'next/navigation';
+import Link from 'next/link';
+import {getTranslations} from 'next-intl/server';
+import {verifySession} from '@/lib/controller/auth/session-controller';
+import {ShieldAlert, ArrowLeft, Home} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
 
 /**
  * Props for the AccessDeniedPage component.
@@ -11,75 +20,125 @@ import { AlertOctagon, ArrowLeft } from 'lucide-react'
 interface AccessDeniedPageProps {
     searchParams: Promise<{
         /** Comma-separated list of role identifiers required for access. */
-        required?: string
-    }>
+        required?: string;
+    }>;
 }
 
 /**
- * Access Denied Page Component.
+ * Access Denied (403) Page Component.
  *
- * Displays a 403 Forbidden style message for authenticated users who
- * attempt to access a route they are not authorized for.
+ * Displays a clear error message when an authenticated user attempts to access
+ * a route they are not authorized for, providing context and navigation options.
  */
-export default async function AccessDeniedPage({ searchParams }: AccessDeniedPageProps) {
-    const t = await getTranslations('pages.auth.accessControl')
-    const params = await searchParams
+export default async function AccessDeniedPage({searchParams}: AccessDeniedPageProps) {
+    const t = await getTranslations('pages.auth.accessControl');
+    const params = await searchParams;
 
-    // Verify session - if not logged in, they should go to login, not access denied
-    const user = await verifySession()
+    const user = await verifySession();
     if (!user) {
-        redirect('/login')
+        redirect('/login');
     }
 
+    const requiredRoles = params.required ? params.required.split(',') : [];
+
     return (
-        <div className="min-h-screen w-full flex justify-center items-center bg-background py-10 px-4">
-            <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
+        <div className="min-h-screen w-full flex flex-col justify-center items-center bg-muted/30 px-4 py-10">
+            <div className="w-full max-w-lg animate-in fade-in zoom-in-95 duration-500">
 
-                {/* Main Card Container */}
-                <div className="rounded-2xl border border-border bg-card text-card-foreground shadow-2xl overflow-hidden text-center">
+                {/* Standardized Card Border to match Login/Register pages */}
+                <Card className="shadow-xl border-border overflow-hidden w-full">
 
-                    <div className="p-8 pt-10 pb-8 flex flex-col items-center">
-                        {/* Error Icon */}
-                        <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center ring-1 ring-destructive/20 mb-6">
-                            <AlertOctagon className="h-10 w-10 text-destructive" />
+                    {/* Subtle red indicator strip at the top only */}
+                    <div className="bg-destructive/5 h-2 w-full"/>
+
+                    <CardHeader className="flex flex-col items-center text-center pt-8 pb-2 px-6">
+                        <div
+                            className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 ring-1 ring-destructive/20">
+                            <ShieldAlert className="h-8 w-8 text-destructive"/>
                         </div>
+                        <div className="space-y-2 w-full">
+                            <CardTitle className="text-2xl font-bold tracking-tight">
+                                {t('accessDenied')}
+                            </CardTitle>
+                            <CardDescription className="text-base mt-2 break-words">
+                                {t('noPermission')}
+                            </CardDescription>
+                        </div>
+                    </CardHeader>
 
-                        {/* Heading */}
-                        <h1 className="text-2xl font-bold text-foreground mb-2">
-                            {t('accessDenied')}
-                        </h1>
+                    <CardContent className="space-y-6 pt-4 px-8 text-center">
+                        <div
+                            className="rounded-lg border border-border bg-muted/50 p-4 text-sm text-muted-foreground break-words w-full">
+                            <p className="mb-2 font-medium text-foreground">
+                                {t('whyHapped')}
+                            </p>
+                            <p>
+                                {t('roleRestrictionMessage', {
+                                    role: user.role.toLowerCase()
+                                })}
+                            </p>
 
-                        {/* Description */}
-                        <p className="text-muted-foreground mb-6 max-w-[280px] mx-auto">
-                            {t('noPermission')}
-                        </p>
+                            {requiredRoles.length > 0 && (
+                                <div className="mt-4 pt-4 border-t border-border/50">
+                                    <p className="text-xs uppercase tracking-wider font-semibold mb-2">
+                                        {t('requiredRoles')}:
+                                    </p>
+                                    <div className="flex flex-wrap justify-center gap-2">
+                                        {requiredRoles.map((role) => (
+                                            <span
+                                                key={role}
+                                                className="inline-flex items-center rounded-md bg-background border border-border px-2.5 py-1 text-xs font-medium text-foreground shadow-sm whitespace-nowrap max-w-full truncate"
+                                            >
+                                                {role.trim()}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
 
-                        {/* Optional Role Info */}
-                        {params.required && (
-                            <div className="mb-8 rounded-lg bg-muted/50 px-4 py-2 text-xs font-mono text-muted-foreground border border-border inline-block">
-                                <span className="font-semibold mr-2">{t('requiredRoles')}:</span>
-                                {params.required.split(',').join(', ')}
-                            </div>
-                        )}
-
-                        {/* Action Button */}
-                        <Link
-                            href="/dashboard"
-                            className="inline-flex h-11 items-center justify-center rounded-xl bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                    <CardFooter className="flex flex-col gap-3 p-6 bg-muted/30 border-t border-border">
+                        <Button
+                            variant="default"
+                            className="w-full justify-center gap-2 truncate"
+                            asChild
                         >
-                            <ArrowLeft className="mr-2 h-4 w-4" />
-                            {t('goToDashboard')}
-                        </Link>
-                    </div>
+                            <Link href="/dashboard">
+                                <ArrowLeft className="h-4 w-4 shrink-0"/>
+                                <span className="truncate">{t('backToSafety')}</span>
+                            </Link>
+                        </Button>
 
-                    {/* Footer Info */}
-                    <div className="bg-muted/20 border-t border-border p-4">
-                        <p className="text-xs text-muted-foreground">
-                            {t('errorId')}: <span className="font-mono">403_FORBIDDEN</span>
-                        </p>
-                    </div>
+                        <Button
+                            variant="outline"
+                            className="w-full justify-center gap-2 truncate bg-background"
+                            asChild
+                        >
+                            <Link href="/">
+                                <Home className="h-4 w-4 shrink-0"/>
+                                <span className="truncate">{t('goToHome')}</span>
+                            </Link>
+                        </Button>
+                    </CardFooter>
+                </Card>
+
+                <div className="mt-6 text-center text-sm text-muted-foreground px-4 break-words max-w-full">
+                    <p>
+                        {t('switchAccountPrompt')}{' '}
+                        <Link
+                            href="/logout"
+                            className="font-medium text-primary hover:underline underline-offset-4 transition-colors whitespace-nowrap"
+                        >
+                            {t('signOut')}
+                        </Link>
+                    </p>
+                    <p className="mt-2 text-xs font-mono text-muted-foreground/60 break-all">
+                        Error Code: 403_FORBIDDEN • ID: {user.id.slice(0, 8)}
+                    </p>
                 </div>
+
             </div>
         </div>
-    )
+    );
 }

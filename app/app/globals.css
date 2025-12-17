@@ -1,5 +1,6 @@
 /* globals.css */
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -13,11 +14,9 @@
 }
 
 @layer base {
-    * {
-        @apply border-border outline-ring/50;
-    }
     body {
-        @apply bg-background text-foreground;
+        background-color: var(--color-background);
+        color: var(--color-foreground);
     }
 }
 
@@ -27,37 +26,46 @@
     --radius-lg: var(--radius);
     --radius-xl: calc(var(--radius) + 4px);
 
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-card: var(--card);
-    --color-card-foreground: var(--card-foreground);
-    --color-popover: var(--popover);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-accent: var(--accent);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-destructive: var(--destructive);
-    --color-border: var(--border);
-    --color-input: var(--input);
-    --color-ring: var(--ring);
-    --color-chart-1: var(--chart-1);
-    --color-chart-2: var(--chart-2);
-    --color-chart-3: var(--chart-3);
-    --color-chart-4: var(--chart-4);
-    --color-chart-5: var(--chart-5);
-    --color-sidebar: var(--sidebar);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-ring: var(--sidebar-ring);
+    --color-background: var(--color-background);
+    --color-foreground: var(--color-foreground);
+    --color-surface: var(--color-surface);
+    --color-surface-elevated: var(--color-surface-elevated);
+    --color-primary: var(--color-primary);
+    --color-primary-hover: var(--color-primary-hover);
+    --color-primary-light: var(--color-primary-light);
+    --color-primary-dark: var(--color-primary-dark);
+    --color-primary-foreground: var(--color-primary-foreground);
+    --color-secondary: var(--color-secondary);
+    --color-secondary-hover: var(--color-secondary-hover);
+    --color-secondary-light: var(--color-secondary-light);
+    --color-secondary-dark: var(--color-secondary-dark);
+    --color-secondary-foreground: var(--color-secondary-foreground);
+    --color-accent: var(--color-accent);
+    --color-accent-hover: var(--color-accent-hover);
+    --color-accent-light: var(--color-accent-light);
+    --color-accent-dark: var(--color-accent-dark);
+    --color-accent-foreground: var(--color-accent-foreground);
+    --color-success: var(--color-success);
+    --color-success-light: var(--color-success-light);
+    --color-success-foreground: var(--color-success-foreground);
+    --color-error: var(--color-error);
+    --color-error-light: var(--color-error-light);
+    --color-error-foreground: var(--color-error-foreground);
+    --color-warning: var(--color-warning);
+    --color-warning-light: var(--color-warning-light);
+    --color-warning-foreground: var(--color-warning-foreground);
+    --color-info: var(--color-info);
+    --color-info-light: var(--color-info-light);
+    --color-info-foreground: var(--color-info-foreground);
+    --color-muted: var(--color-muted);
+    --color-muted-foreground: var(--color-muted-foreground);
+    --color-border: var(--color-border);
+    --color-input: var(--color-input);
+    --color-ring: var(--color-ring);
+    --color-text-primary: var(--color-text-primary);
+    --color-text-secondary: var(--color-text-secondary);
+    --color-text-tertiary: var(--color-text-tertiary);
+    --color-text-disabled: var(--color-text-disabled);
 }
 
 body {
@@ -72,10 +80,5 @@ button {
 }
 
 a {
-    color: var(--primary);
     text-decoration: none;
-}
-
-a:hover {
-    color: var(--primary-hover);
 }

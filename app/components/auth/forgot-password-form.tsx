@@ -1,61 +1,68 @@
 /** @format */
-'use client'
+'use client';
 
-import React, {useState} from 'react'
-import {useTranslations} from 'next-intl'
-import * as Label from '@radix-ui/react-label'
-import {requestPasswordReset} from '@/lib/controller/auth/auth-controller'
-import {AlertCircle, CheckCircle2, Loader2, Mail, Send} from 'lucide-react'
+import React, {useState} from 'react';
+import {useTranslations} from 'next-intl';
+import {Label} from '@/components/ui/label';
+import {Input} from '@/components/ui/input';
+import {Button} from '@/components/ui/button';
+import {requestPasswordReset} from '@/lib/controller/auth/auth-controller';
+import {AlertCircle, CheckCircle2, Loader2, Mail, Send} from 'lucide-react';
 
 /**
  * Forgot Password Form Component.
  *
- * Handles the password reset request submission with validation feedback,
- * utilizing the system's design tokens and accessibility primitives.
+ * Handles the submission of password reset requests.
+ * Features validation feedback and a clear success state upon email dispatch.
  */
 export function ForgotPasswordForm() {
-    const t = useTranslations('pages.auth.forgotPassword')
+    const t = useTranslations('pages.auth.forgotPassword');
 
-    const [message, setMessage] = useState('')
-    const [error, setError] = useState('')
-    const [loading, setLoading] = useState(false)
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault()
-        setError('')
-        setMessage('')
-        setLoading(true)
+        event.preventDefault();
+        setError('');
+        setMessage('');
+        setLoading(true);
 
-        const formData = new FormData(event.currentTarget)
+        const formData = new FormData(event.currentTarget);
 
         try {
-            const result = await requestPasswordReset(formData)
+            const result = await requestPasswordReset(formData);
 
             if (!result.success) {
-                setError(result.error)
+                setError(result.error);
             } else {
-                setMessage(result.data?.message || t('success'))
+                setMessage(result.data?.message || t('success'));
             }
         } catch (err) {
-            setError(t('errors.unexpected'))
+            setError(t('errors.unexpected'));
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 
     if (message) {
         return (
             <div
-                className="flex flex-col items-center justify-center space-y-4 text-center animate-in fade-in duration-300">
-                <div className="h-12 w-12 rounded-full bg-success/20 flex items-center justify-center text-success">
-                    <CheckCircle2 className="h-6 w-6"/>
+                className="flex flex-col items-center justify-center space-y-4 text-center animate-in fade-in zoom-in-95 duration-300 py-4">
+                <div
+                    className="h-16 w-16 rounded-full bg-success/10 flex items-center justify-center text-success ring-1 ring-success/20 mb-2">
+                    <CheckCircle2 className="h-8 w-8"/>
                 </div>
                 <div className="space-y-2">
-                    <h3 className="font-semibold text-foreground">{t('checkEmailTitle')}</h3>
-                    <p className="text-sm text-muted-foreground">{message}</p>
+                    <h3 className="text-lg font-semibold text-foreground tracking-tight">
+                        {t('checkEmailTitle')}
+                    </h3>
+                    <p className="text-sm text-muted-foreground max-w-[260px] mx-auto leading-relaxed">
+                        {message}
+                    </p>
                 </div>
             </div>
-        )
+        );
     }
 
     return (
@@ -63,40 +70,36 @@ export function ForgotPasswordForm() {
             {/* Error Alert */}
             {error && (
                 <div
-                    className="rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-destructive flex items-center gap-3 animate-in slide-in-from-top-2">
-                    <AlertCircle className="h-5 w-5 shrink-0"/>
-                    <span className="text-sm font-medium">{error}</span>
+                    className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-destructive flex items-start gap-3 animate-in slide-in-from-top-1 text-sm">
+                    <AlertCircle className="h-5 w-5 shrink-0 mt-0.5"/>
+                    <span className="font-medium leading-relaxed">{error}</span>
                 </div>
             )}
 
             <div className="space-y-4">
-                {/* Email Field */}
                 <div className="space-y-2">
-                    <Label.Root
-                        htmlFor="email"
-                        className="text-sm font-medium leading-none text-foreground"
-                    >
+                    <Label htmlFor="email">
                         {t('emailLabel')}
-                    </Label.Root>
+                    </Label>
                     <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"/>
-                        <input
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground pointer-events-none"/>
+                        <Input
                             id="email"
                             name="email"
                             type="email"
                             required
                             placeholder="user@example.com"
-                            className="flex h-11 w-full rounded-xl border border-border bg-muted/50 pl-10 pr-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                            className="pl-10 h-11"
+                            disabled={loading}
                         />
                     </div>
                 </div>
             </div>
 
-            {/* Submit Button */}
-            <button
+            <Button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-12 shadow-md hover:shadow-lg"
+                className="w-full h-11 text-base shadow-sm"
             >
                 {loading ? (
                     <>
@@ -108,7 +111,7 @@ export function ForgotPasswordForm() {
                         {t('sendButton')} <Send className="ml-2 h-4 w-4"/>
                     </>
                 )}
-            </button>
+            </Button>
         </form>
-    )
+    );
 }

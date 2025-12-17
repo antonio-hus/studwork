@@ -2,15 +2,17 @@
 "use client"
 import React, {useState, useEffect} from "react"
 import {useTranslations} from 'next-intl'
-import * as Label from '@radix-ui/react-label'
 import {resendVerificationEmail} from '@/lib/controller/auth/auth-controller'
+import {Label} from "@/components/ui/label"
+import {Input} from "@/components/ui/input"
+import {Button} from "@/components/ui/button"
 import {AlertCircle, CheckCircle2, Loader2, Mail, Send, Timer} from 'lucide-react'
 
 /**
  * Resend Verification Form Component.
  *
- * Handles the logic for requesting a new verification email, including
- * a cooldown timer to prevent spamming and proper UI feedback states.
+ * Handles requests for new verification emails with spam protection (cooldown timer)
+ * and clear user feedback.
  */
 export function ResendVerificationForm() {
     const t = useTranslations('pages.auth.resendVerification')
@@ -66,20 +68,20 @@ export function ResendVerificationForm() {
             {/* Error Feedback */}
             {error && (
                 <div
-                    className="rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-destructive flex items-center gap-3 animate-in slide-in-from-top-2">
-                    <AlertCircle className="h-5 w-5 shrink-0"/>
-                    <span className="text-sm font-medium">{error}</span>
+                    className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-destructive flex items-start gap-3 animate-in slide-in-from-top-1 text-sm">
+                    <AlertCircle className="h-5 w-5 shrink-0 mt-0.5"/>
+                    <span className="font-medium leading-relaxed">{error}</span>
                 </div>
             )}
 
             {/* Success Feedback */}
             {success && (
                 <div
-                    className="rounded-xl border border-success/20 bg-success/10 p-4 text-success flex items-start gap-3 animate-in slide-in-from-top-2">
-                    <CheckCircle2 className="h-5 w-5 mt-0.5 shrink-0"/>
+                    className="rounded-lg border border-success/40 bg-success/10 p-3 text-success flex items-start gap-3 animate-in slide-in-from-top-1 text-sm">
+                    <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5"/>
                     <div className="space-y-1">
-                        <p className="text-sm font-medium">{success}</p>
-                        <p className="text-xs opacity-90">{t('checkInbox')}</p>
+                        <p className="font-medium leading-none">{success}</p>
+                        <p className="opacity-90 leading-relaxed text-xs">{t('checkInbox')}</p>
                     </div>
                 </div>
             )}
@@ -87,22 +89,19 @@ export function ResendVerificationForm() {
             <div className="space-y-4">
                 {/* Email Field */}
                 <div className="space-y-2">
-                    <Label.Root
-                        htmlFor="email"
-                        className="text-sm font-medium leading-none text-foreground"
-                    >
+                    <Label htmlFor="email">
                         {t('emailLabel')} <span className="text-destructive">*</span>
-                    </Label.Root>
+                    </Label>
                     <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground"/>
-                        <input
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground pointer-events-none"/>
+                        <Input
                             id="email"
                             name="email"
                             type="email"
                             required
                             disabled={loading || countdown > 0}
                             placeholder={t('emailPlaceholder')}
-                            className="flex h-11 w-full rounded-xl border border-border bg-muted/50 pl-10 pr-3 py-2 text-sm text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+                            className="pl-10 h-11"
                         />
                     </div>
                 </div>
@@ -110,10 +109,10 @@ export function ResendVerificationForm() {
 
             {/* Submit Button */}
             <div className="space-y-3">
-                <button
+                <Button
                     type="submit"
                     disabled={loading || countdown > 0}
-                    className="inline-flex items-center justify-center w-full whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-12 shadow-md hover:shadow-lg"
+                    className="w-full h-11 text-base shadow-sm"
                 >
                     {loading ? (
                         <>
@@ -122,7 +121,7 @@ export function ResendVerificationForm() {
                         </>
                     ) : countdown > 0 ? (
                         <>
-                            <Timer className="mr-2 h-4 w-4"/>
+                            <Timer className="mr-2 h-4 w-4 animate-pulse"/>
                             {t('resendIn', {seconds: countdown})}
                         </>
                     ) : (
@@ -130,10 +129,10 @@ export function ResendVerificationForm() {
                             {t('sendButton')} <Send className="ml-2 h-4 w-4"/>
                         </>
                     )}
-                </button>
+                </Button>
 
                 {countdown > 0 && (
-                    <p className="text-[11px] text-center text-muted-foreground animate-pulse">
+                    <p className="text-[11px] text-center text-muted-foreground animate-pulse font-medium">
                         {t('waitMessage')}
                     </p>
                 )}

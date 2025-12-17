@@ -1,59 +1,64 @@
 /** @format */
-import {redirect} from 'next/navigation'
-import {getTranslations} from 'next-intl/server'
-import {verifySession} from '@/lib/controller/auth/session-controller'
-import {Mail} from 'lucide-react'
+import {redirect} from 'next/navigation';
+import {getTranslations} from 'next-intl/server';
+import {verifySession} from '@/lib/controller/auth/session-controller';
+import {Mail} from 'lucide-react';
 import {VerifyEmailPendingForm} from "@/components/auth/verify-email-pending-form";
+import {
+    Card,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardContent
+} from "@/components/ui/card";
 
 /**
  * Verify Email Pending Page Component.
  *
- * Renders the state where a user has registered but needs to verify their email.
- * Guards against unauthenticated access or already verified users.
+ * Displays a notice to registered users who need to verify their email address.
+ * Includes instructions and options to resend the verification link.
+ * Redirects verified users to the dashboard.
  */
 export default async function VerifyEmailPendingPage() {
-    const t = await getTranslations('pages.auth.verifyEmailPending')
+    const t = await getTranslations('pages.auth.verifyEmailPending');
 
     // Verify authentication using session controller
-    const user = await verifySession()
+    const user = await verifySession();
 
     // Must be logged in to see this pending state
     if (!user) {
-        redirect('/login')
+        redirect('/login');
     }
 
     // If already verified, redirect to dashboard
     if (user.emailVerified) {
-        redirect('/dashboard')
+        redirect('/dashboard');
     }
 
     return (
-        <div className="min-h-screen w-full flex justify-center items-center bg-background py-10 px-4">
+        <div className="min-h-screen w-full flex flex-col justify-center items-center bg-muted/30 px-4 py-10">
             <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
 
-                {/* Main Card Container */}
-                <div
-                    className="rounded-2xl border border-border bg-card text-card-foreground shadow-2xl overflow-hidden">
+                <Card className="shadow-xl border-border overflow-hidden">
 
-                    {/* Header with Icon */}
-                    <div
-                        className="flex flex-col items-center space-y-4 p-8 pb-6 text-center border-b border-border bg-muted/5">
+                    <CardHeader
+                        className="flex flex-col items-center space-y-4 pt-10 pb-2 text-center bg-muted/5 border-b border-border/50">
                         <div
-                            className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center ring-1 ring-primary/20">
+                            className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 ring-1 ring-primary/20 mb-2">
                             <Mail className="h-8 w-8 text-primary"/>
                         </div>
-                        <div className="space-y-2">
-                            <h1 className="text-2xl font-bold leading-none tracking-tight text-foreground">
+                        <div className="space-y-2 w-full">
+                            <CardTitle className="text-2xl font-bold tracking-tight">
                                 {t('title')}
-                            </h1>
-                            <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                                {t('subtitle')} <span className="font-medium text-foreground">{user.email}</span>
-                            </p>
+                            </CardTitle>
+                            <CardDescription className="text-sm max-w-xs mx-auto text-muted-foreground">
+                                {t('subtitle')} <span
+                                className="font-medium text-foreground block mt-1">{user.email}</span>
+                            </CardDescription>
                         </div>
-                    </div>
+                    </CardHeader>
 
-                    {/* Content Steps */}
-                    <div className="p-8 space-y-6">
+                    <CardContent className="p-8 space-y-6">
                         <div className="rounded-xl border border-border bg-muted/50 p-4">
                             <h2 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                                 {t('nextSteps')}
@@ -66,7 +71,7 @@ export default async function VerifyEmailPendingPage() {
                         </div>
 
                         {/* Interactive Form Area */}
-                        <div className="space-y-4">
+                        <div className="space-y-4 pt-2">
                             <div className="text-center">
                                 <p className="text-sm text-muted-foreground">
                                     {t('didNotReceive')}
@@ -74,9 +79,11 @@ export default async function VerifyEmailPendingPage() {
                             </div>
                             <VerifyEmailPendingForm/>
                         </div>
-                    </div>
-                </div>
+                    </CardContent>
+
+                </Card>
+
             </div>
         </div>
-    )
+    );
 }

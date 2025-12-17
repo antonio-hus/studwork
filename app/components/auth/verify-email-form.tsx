@@ -6,13 +6,14 @@ import {useRouter} from "next/navigation"
 import Link from "next/link"
 import {useTranslations} from 'next-intl'
 import {verifyEmail} from "@/lib/controller/auth/auth-controller"
+import {Button} from "@/components/ui/button"
 import {CheckCircle2, Loader2, XCircle, ArrowRight} from "lucide-react"
 
 /**
  * Verify Email Form Component.
  *
- * Handles the automatic verification of the email token upon mounting.
- * Displays Loading, Success, or Error states with appropriate UI feedback.
+ * Automatically verifies the email token upon mounting.
+ * Provides rich visual feedback for Loading, Success (with auto-redirect), and Error states.
  */
 export function VerifyEmailForm({token}: { token?: string }) {
     const t = useTranslations('pages.auth.verifyEmail')
@@ -25,14 +26,14 @@ export function VerifyEmailForm({token}: { token?: string }) {
         let timeoutId: NodeJS.Timeout
 
         async function verify() {
-            // 1. Missing Token Check
+            // Missing Token Check
             if (!token) {
                 setStatus('error')
                 setMessage(t('noToken'))
                 return
             }
 
-            // 2. Attempt Verification
+            // Attempt Verification
             try {
                 const result = await verifyEmail(token)
 
@@ -63,11 +64,11 @@ export function VerifyEmailForm({token}: { token?: string }) {
         }
     }, [token, router, t])
 
-    // Loading State
+    // Loading
     if (status === 'loading') {
         return (
-            <div className="flex flex-col items-center justify-center space-y-4 py-4 animate-in fade-in duration-300">
-                <div className="relative">
+            <div className="flex flex-col items-center justify-center space-y-6 py-8 animate-in fade-in duration-300">
+                <div className="relative flex items-center justify-center">
                     <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl animate-pulse"/>
                     <Loader2 className="relative h-12 w-12 animate-spin text-primary"/>
                 </div>
@@ -78,30 +79,30 @@ export function VerifyEmailForm({token}: { token?: string }) {
         )
     }
 
-    // Success State
+    // Success
     if (status === 'success') {
         return (
             <div
-                className="flex flex-col items-center justify-center space-y-6 text-center animate-in zoom-in-95 duration-300">
+                className="flex flex-col items-center justify-center space-y-6 text-center animate-in zoom-in-95 duration-300 py-4">
                 <div
-                    className="h-20 w-20 rounded-full bg-success/10 flex items-center justify-center ring-1 ring-success/20">
+                    className="h-20 w-20 rounded-full bg-success/10 flex items-center justify-center ring-1 ring-success/20 mb-2">
                     <CheckCircle2 className="h-10 w-10 text-success"/>
                 </div>
 
                 <div className="space-y-2">
-                    <h3 className="text-xl font-semibold text-foreground">
+                    <h3 className="text-xl font-bold tracking-tight text-foreground">
                         {t('verifiedTitle')}
                     </h3>
-                    <p className="text-muted-foreground text-sm">
+                    <p className="text-muted-foreground text-sm leading-relaxed">
                         {message}
                     </p>
                 </div>
 
-                <div className="w-full pt-2">
-                    <div className="h-1 w-full bg-muted overflow-hidden rounded-full">
+                <div className="w-full pt-4 space-y-3">
+                    <div className="h-1.5 w-full bg-muted overflow-hidden rounded-full">
                         <div className="h-full bg-primary w-full origin-left animate-[progress_3s_ease-in-out]"/>
                     </div>
-                    <p className="text-[10px] text-muted-foreground mt-2 uppercase tracking-wider font-medium">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
                         {t('redirecting')}
                     </p>
                 </div>
@@ -109,35 +110,35 @@ export function VerifyEmailForm({token}: { token?: string }) {
         )
     }
 
-    // Error State
+    // Error
     return (
         <div
-            className="flex flex-col items-center justify-center space-y-6 text-center animate-in zoom-in-95 duration-300">
+            className="flex flex-col items-center justify-center space-y-6 text-center animate-in zoom-in-95 duration-300 py-4">
             <div
-                className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center ring-1 ring-destructive/20">
+                className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center ring-1 ring-destructive/20 mb-2">
                 <XCircle className="h-10 w-10 text-destructive"/>
             </div>
 
             <div className="space-y-2">
-                <h3 className="text-xl font-semibold text-foreground">
+                <h3 className="text-xl font-bold tracking-tight text-foreground">
                     {t('failedTitle')}
                 </h3>
-                <p className="text-muted-foreground text-sm max-w-[280px] mx-auto">
+                <p className="text-muted-foreground text-sm max-w-[280px] mx-auto leading-relaxed">
                     {message}
                 </p>
             </div>
 
-            <div className="pt-2 w-full">
-                <Link
-                    href="/login"
-                    className="inline-flex w-full items-center justify-center rounded-xl bg-primary h-11 px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                >
-                    {t('backToLogin')} <ArrowRight className="ml-2 h-4 w-4"/>
-                </Link>
+            <div className="pt-4 w-full space-y-4">
+                <Button asChild className="w-full h-11 text-base shadow-sm">
+                    <Link href="/login">
+                        {t('backToLogin')} <ArrowRight className="ml-2 h-4 w-4"/>
+                    </Link>
+                </Button>
 
-                <p className="mt-4 text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                     {t('resendPrompt')}{" "}
-                    <Link href="/resend-verification" className="text-primary hover:underline underline-offset-4">
+                    <Link href="/resend-verification"
+                          className="text-primary hover:text-primary/80 font-medium hover:underline underline-offset-4 transition-colors">
                         {t('resendLink')}
                     </Link>
                 </p>

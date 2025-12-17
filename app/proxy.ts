@@ -3,7 +3,7 @@ import {NextResponse} from 'next/server'
 import type {NextRequest} from 'next/server'
 import createIntlMiddleware from 'next-intl/middleware'
 import {routing} from '@/lib/utils/i18n/routing'
-import {isConfigured} from '@/lib/controller/admin/config-controller'
+import {isConfigured} from '@/lib/controller/config-controller'
 import {checkSessionForProxy} from '@/lib/controller/auth/session-controller'
 import {UserRole} from '@/lib/domain/user'
 

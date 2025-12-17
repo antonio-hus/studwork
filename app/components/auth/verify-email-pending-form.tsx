@@ -6,14 +6,14 @@ import {useRouter} from 'next/navigation'
 import {useTranslations} from 'next-intl'
 import {resendVerificationEmailAuthenticated} from '@/lib/controller/auth/auth-controller'
 import {signOut} from '@/lib/controller/auth/auth-controller'
-
+import {Button} from "@/components/ui/button"
 import {AlertCircle, CheckCircle2, Loader2, LogOut, Send, Timer} from 'lucide-react'
 
 /**
  * Verify Email Pending Form Component.
  *
- * Provides actions to resend the verification email (with cooldown)
- * or sign out if the user wants to switch accounts.
+ * Allows users to resend the verification email or sign out.
+ * Includes a cooldown timer to prevent spamming and visual feedback states.
  */
 export function VerifyEmailPendingForm() {
     const t = useTranslations('pages.auth.verifyEmailPending')
@@ -74,26 +74,26 @@ export function VerifyEmailPendingForm() {
         <div className="space-y-4">
             {/* Feedback Message */}
             {message && (
-                <div className={`rounded-xl border p-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-1 ${
-                    message.type === 'success'
+                <div
+                    className={`rounded-lg border p-3 flex items-start gap-3 animate-in fade-in slide-in-from-top-1 text-sm ${message.type === 'success'
                         ? 'bg-success/10 border-success/20 text-success'
                         : 'bg-destructive/10 border-destructive/20 text-destructive'
-                }`}>
+                    }`}>
                     {message.type === 'success' ? (
-                        <CheckCircle2 className="h-5 w-5 shrink-0"/>
+                        <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5"/>
                     ) : (
-                        <AlertCircle className="h-5 w-5 shrink-0"/>
+                        <AlertCircle className="h-5 w-5 shrink-0 mt-0.5"/>
                     )}
-                    <span className="text-sm font-medium">{message.text}</span>
+                    <span className="font-medium leading-relaxed">{message.text}</span>
                 </div>
             )}
 
             {/* Resend Button */}
-            <div className="space-y-2">
-                <button
+            <div className="space-y-3">
+                <Button
                     onClick={handleResend}
                     disabled={loading || countdown > 0 || signingOut}
-                    className="inline-flex w-full items-center justify-center rounded-xl bg-primary h-11 px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                    className="w-full h-11 text-base shadow-sm"
                 >
                     {loading ? (
                         <>
@@ -102,7 +102,7 @@ export function VerifyEmailPendingForm() {
                         </>
                     ) : countdown > 0 ? (
                         <>
-                            <Timer className="mr-2 h-4 w-4"/>
+                            <Timer className="mr-2 h-4 w-4 animate-pulse"/>
                             {t('resendIn')} {countdown}s
                         </>
                     ) : (
@@ -110,10 +110,10 @@ export function VerifyEmailPendingForm() {
                             {t('resendButton')} <Send className="ml-2 h-4 w-4"/>
                         </>
                     )}
-                </button>
+                </Button>
 
                 {countdown > 0 && (
-                    <p className="text-[11px] text-center text-muted-foreground animate-pulse">
+                    <p className="text-[11px] text-center text-muted-foreground animate-pulse font-medium">
                         {t('waitMessage')}
                     </p>
                 )}
@@ -133,10 +133,11 @@ export function VerifyEmailPendingForm() {
 
             {/* Sign Out Section */}
             <div className="space-y-3">
-                <button
+                <Button
+                    variant="outline"
                     onClick={handleSignOut}
                     disabled={signingOut || loading}
-                    className="inline-flex w-full items-center justify-center rounded-xl border border-input bg-background h-11 px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+                    className="w-full h-11 text-sm font-medium"
                 >
                     {signingOut ? (
                         <>
@@ -148,7 +149,7 @@ export function VerifyEmailPendingForm() {
                             {t('signOut')} <LogOut className="ml-2 h-4 w-4"/>
                         </>
                     )}
-                </button>
+                </Button>
                 <p className="text-[11px] text-center text-muted-foreground">
                     {t('signOutHelp')}
                 </p>
