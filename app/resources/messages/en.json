@@ -361,5 +361,24 @@
         }
       }
     }
+  },
+  "dashboard": {
+    "student": {
+      "welcome": "Welcome back, {name}!",
+      "subtitle": "Track your practical work progress and find new opportunities."
+    },
+    "admin": {
+      "welcome": "System Administration",
+      "subtitle": "Manage users, organizations, and platform settings."
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "users": "User Management",
+      "settings": "Settings",
+      "opportunities": "Opportunities",
+      "applications": "Applications",
+      "profile": "Profile",
+      "signOut": "Sign Out"
+    }
   }
 }
