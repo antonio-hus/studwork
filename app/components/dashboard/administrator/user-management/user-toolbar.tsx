@@ -41,9 +41,29 @@ export function UserToolbar({initialSearch, initialRole, roles, isPending, onFil
     const t = useTranslations('admin.users');
     const [searchTerm, setSearchTerm] = useState(initialSearch);
 
+    // Initialize with the full placeholder to match server-side rendering
+    const [placeholder, setPlaceholder] = useState(t('searchPlaceholder'));
+
     useEffect(() => {
         setSearchTerm(initialSearch);
     }, [initialSearch]);
+
+    // Update placeholder text based on screen width
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 640) {
+                setPlaceholder(t('search'));
+            } else {
+                setPlaceholder(t('searchPlaceholder'));
+            }
+        };
+
+        // Run immediately on mount
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [t]);
 
     const handleSearch = () => {
         if (searchTerm !== initialSearch) {
@@ -58,7 +78,7 @@ export function UserToolbar({initialSearch, initialRole, roles, isPending, onFil
                     <Search
                         className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors"/>
                     <Input
-                        placeholder={t('searchPlaceholder')}
+                        placeholder={placeholder}
                         className="pl-10 h-10 bg-background border-input focus:ring-1 focus:ring-primary/20 transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
@@ -83,11 +103,14 @@ export function UserToolbar({initialSearch, initialRole, roles, isPending, onFil
                     <div className="flex items-center gap-2 text-muted-foreground">
                         <Filter className="h-3.5 w-3.5"/>
                         <span className="text-foreground">
-							<SelectValue placeholder={t('filterRole')}/>
-						</span>
+                            <SelectValue placeholder={t('filterRole')}/>
+                        </span>
                     </div>
                 </SelectTrigger>
-                <SelectContent className="bg-background border-border shadow-xl min-w-[200px]">
+                <SelectContent
+                    className="bg-background border-border shadow-xl min-w-[200px] z-50 isolate opacity-100"
+                    style={{backgroundColor: "var(--color-background, #ffffff)", opacity: 1}}
+                >
                     <SelectItem value="ALL">{t('roles.all')}</SelectItem>
                     <SelectItem value={roles.STUDENT}>{t('roles.student')}</SelectItem>
                     <SelectItem value={roles.ORGANIZATION}>

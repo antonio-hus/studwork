@@ -115,7 +115,7 @@ export function RegisterForm() {
                             <SelectTrigger id="role" className="pl-10 h-11 w-full">
                                 <SelectValue placeholder={t('roleSelect')}/>
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="bg-background border-background">
                                 <SelectItem value="STUDENT">{t('roleStudent')}</SelectItem>
                                 <SelectItem value="COORDINATOR">{t('roleCoordinator')}</SelectItem>
                                 <SelectItem value="ORGANIZATION">{t('roleOrganization')}</SelectItem>

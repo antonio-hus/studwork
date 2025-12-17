@@ -29,6 +29,7 @@ interface Props {
     user: User;
     roles: typeof UserRole;
     onSuspendClick: () => void;
+    onViewClick: () => void;
 }
 
 /**
@@ -43,7 +44,7 @@ interface Props {
  * @param {() => void} props.onSuspendClick Callback for the suspend/unsuspend action.
  * @returns {React.JSX.Element} A dropdown menu with user-specific actions.
  */
-export function UserActionsMenu({user, roles, onSuspendClick}: Props): React.JSX.Element {
+export function UserActionsMenu({user, roles, onSuspendClick, onViewClick}: Props): React.JSX.Element {
     const t = useTranslations('admin.users');
     const router = useRouter();
 
@@ -71,13 +72,17 @@ export function UserActionsMenu({user, roles, onSuspendClick}: Props): React.JSX
 
             <DropdownMenuContent
                 align="end"
-                className="w-[200px] bg-background border-border shadow-xl z-100"
+                className="w-[200px] bg-white dark:bg-zinc-950 border-border shadow-xl z-50 isolate opacity-100"
+                style={{backgroundColor: "var(--color-background, #ffffff)", opacity: 1}}
             >
                 <DropdownMenuLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {t('actions.label')}
                 </DropdownMenuLabel>
 
-                <DropdownMenuItem className="cursor-pointer focus:bg-muted">
+                <DropdownMenuItem
+                    onClick={onViewClick}
+                    className="cursor-pointer focus:bg-muted"
+                >
                     <UserCog className="mr-2 h-4 w-4 text-muted-foreground"/>
                     {t('actions.viewProfile')}
                 </DropdownMenuItem>

@@ -6,16 +6,12 @@ import {useRouter, usePathname, useSearchParams} from "next/navigation";
 import {useTranslations} from "next-intl";
 import type {User, UserRole} from "@/lib/domain/user";
 import {Users} from "lucide-react";
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardFooter,
-} from "@/components/ui/card";
-import {UserToolbar} from "./user-toolbar";
-import {UserTable} from "./user-table";
-import {PaginationFooter} from "./pagination-footer";
-import {SuspendUserDialog} from "./suspend-user-dialog";
+import {Card, CardContent, CardHeader, CardFooter} from "@/components/ui/card";
+import {UserToolbar} from "@/components/dashboard/administrator/user-management/user-toolbar";
+import {UserTable} from "@/components/dashboard/administrator/user-management/user-table";
+import {PaginationFooter} from "@/components/dashboard/administrator/user-management/pagination-footer";
+import {SuspendUserDialog} from "@/components/dashboard/administrator/user-management/suspend-user-dialog";
+import {UserProfileDialog} from "@/components/dashboard/administrator/user-management/user-profile-dialog";
 
 interface PageProps {
     roles: typeof UserRole;
@@ -44,10 +40,9 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
     const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
 
-    // Local state for modal interactions
     const [suspensionTarget, setSuspensionTarget] = useState<User | null>(null);
+    const [viewTarget, setViewTarget] = useState<User | null>(null);
 
-    // URL State Management
     const updateUrl = useCallback(
         (updates: Record<string, string | number | null>) => {
             const params = new URLSearchParams(searchParams.toString());
@@ -59,7 +54,6 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
                 }
             });
 
-            // Reset to page 1 if filters change (search or role), but not if page changes
             if (updates.search !== undefined || updates.role !== undefined) {
                 params.set("page", "1");
             } else if (!updates.page) {
@@ -77,7 +71,6 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
         <div className="min-h-screen w-full bg-background p-4 sm:p-6 lg:p-8">
             <div className="mx-auto max-w-7xl animate-in fade-in zoom-in-95 duration-500 space-y-6">
 
-                {/* Header Section */}
                 <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center gap-4">
                         <div
@@ -95,7 +88,6 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
                     </div>
                 </div>
 
-                {/* Main Content Card */}
                 <Card className="shadow-xl border-border overflow-hidden bg-surface">
                     <CardHeader className="bg-surface/50 pb-4 pt-6 px-6">
                         <UserToolbar
@@ -113,6 +105,7 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
                             roles={roles}
                             isPending={isPending}
                             onSuspendClick={setSuspensionTarget}
+                            onViewClick={setViewTarget}
                         />
                     </CardContent>
 
@@ -120,21 +113,27 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
                         <PaginationFooter
                             currentCount={initialUsers.length}
                             pagination={initialPagination}
-                            onPageChange={(page) => updateUrl({page})}
+                            onPageChange={(page: number) => updateUrl({page})}
                             disabled={isPending}
                         />
                     </CardFooter>
                 </Card>
             </div>
 
-            {/* Suspend User Modal */}
             <SuspendUserDialog
                 target={suspensionTarget}
-                onOpenChange={(open) => !open && setSuspensionTarget(null)}
+                onOpenChange={(open: boolean) => !open && setSuspensionTarget(null)}
                 onSuccess={() => {
                     setSuspensionTarget(null);
                     router.refresh();
                 }}
+            />
+
+            <UserProfileDialog
+                user={viewTarget}
+                open={!!viewTarget}
+                onOpenChange={(open: boolean) => !open && setViewTarget(null)}
+                roles={roles}
             />
         </div>
     );

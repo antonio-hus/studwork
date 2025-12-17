@@ -277,7 +277,7 @@
         "fullName": "Full Name",
         "fullNamePlaceholder": "John Doe",
         "email": "Email Address",
-        "role": "I am a...",
+        "role": "I am a(n)...",
         "roleSelect": "Select your role",
         "roleStudent": "Student",
         "roleCoordinator": "Coordinator",
@@ -363,6 +363,10 @@
     }
   },
   "dashboard": {
+    "user": {
+      "profile": "Profile",
+      "logout": "Log Out"
+    },
     "student": {
       "welcome": "Welcome back, {name}!",
       "subtitle": "Track your practical work progress and find new opportunities."
@@ -374,11 +378,14 @@
     "nav": {
       "dashboard": "Dashboard",
       "users": "User Management",
+      "organizations": "Organization Management",
       "settings": "Settings",
       "opportunities": "Opportunities",
       "applications": "Applications",
       "profile": "Profile",
-      "signOut": "Sign Out"
+      "signOut": "Sign Out",
+      "collapse": "Collapse",
+      "expand": "Expand"
     }
   },
   "admin": {
@@ -402,6 +409,35 @@
         "organization": "Organization",
         "coordinator": "Coordinator",
         "administrator": "Administrator"
+      },
+      "profile": {
+        "sections": {
+          "general": "Account Information",
+          "studentDetails": "Student Profile",
+          "orgDetails": "Organization Profile",
+          "coordinatorDetails": "Coordinator Profile"
+        },
+        "labels": {
+          "id": "User ID",
+          "joined": "Member Since",
+          "bio": "Biography",
+          "studyProgram": "Study Program",
+          "yearOfStudy": "Year of Study",
+          "skills": "Skills",
+          "interests": "Interests",
+          "resume": "Resume Link",
+          "address": "Address",
+          "title": "Job Title",
+          "department": "Department",
+          "expertise": "Areas of Expertise",
+          "type": "Organization Type",
+          "verified": "Verification Status",
+          "contactPerson": "Contact Person",
+          "phone": "Phone Number",
+          "contactEmail": "Contact Email",
+          "website": "Website",
+          "facebook": "Facebook Page"
+        }
       },
       "columns": {
         "user": "User",
@@ -430,9 +466,47 @@
       "modals": {
         "suspendTitle": "Suspend User",
         "unsuspendTitle": "Restore User Access",
-        "targetUser": "You are about to change the access status for {name}.",
+        "targetUser": "You are about to change the access status for this user.",
         "reasonLabel": "Reason",
-        "reasonPlaceholder": "Please provide a reason for this action (optional)..."
+        "reasonPlaceholder": "Please provide a reason for this action (optional)...",
+        "trigger": "Trigger"
+      }
+    },
+    "organizations": {
+      "pending": {
+        "title": "Pending Approvals",
+        "subtitle": "{count} organizations waiting for verification",
+        "listDescription": "Review and verify organization identities. Approved organizations gain full platform access.",
+        "empty": "No pending applications found."
+      },
+      "columns": {
+        "organization": "Organization",
+        "type": "Type",
+        "contact": "Contact Person",
+        "applied": "Applied On",
+        "actions": "Actions"
+      },
+      "actions": {
+        "label": "Actions",
+        "viewProfile": "View Details",
+        "approve": "Approve",
+        "reject": "Reject"
+      },
+      "success": {
+        "approved": "Organization approved successfully."
+      },
+      "modals": {
+        "reject": {
+          "title": "Reject Application",
+          "description": "Are you sure you want to reject this organization? This action cannot be undone and the account will be deleted.",
+          "reasonLabel": "Reason for Rejection",
+          "reasonPlaceholder": "Please explain why the application was rejected...",
+          "reasonRequired": "A rejection reason is required.",
+          "cancel": "Cancel",
+          "confirm": "Reject Application",
+          "submitting": "Rejecting...",
+          "success": "Application rejected and user notified."
+        }
       }
     }
   }

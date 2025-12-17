@@ -1,8 +1,8 @@
 /** @format */
-
+"use server"
 import React from 'react';
 import {getUsers} from '@/lib/controller/admin/user-management-controller';
-import {UserManagementClient} from '@/components/dashboard/admin/user-management/user-management-client';
+import {UserManagementClient} from '@/components/dashboard/administrator/user-management/user-management-client';
 import {UserRole} from '@/lib/domain/user';
 
 type Props = {

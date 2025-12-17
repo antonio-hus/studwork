@@ -10,6 +10,7 @@ import {signOut} from "@/lib/controller/auth/auth-controller";
 import {
     LayoutDashboard,
     Users,
+    LucideBuilding2,
     Settings,
     Briefcase,
     FileText,
@@ -40,6 +41,7 @@ import {cn} from "@/lib/utils";
 const ICON_MAP: Record<string, LucideIcon> = {
     "/dashboard": LayoutDashboard,
     "/dashboard/admin/users": Users,
+    "/dashboard/admin/organizations": LucideBuilding2,
     "/dashboard/opportunities": Briefcase,
     "/dashboard/applications": FileText,
     "/dashboard/organization/profile": Building2,
@@ -302,7 +304,7 @@ export function DashboardShell({user, config, navItems, children,}: DashboardShe
                 </aside>
 
                 {mobileOpen && (
-                    <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm lg:hidden"
+                    <div className="fixed inset-0 z-40 bg-background backdrop-blur-sm lg:hidden"
                          onClick={() => setMobileOpen(false)}/>
                 )}
 

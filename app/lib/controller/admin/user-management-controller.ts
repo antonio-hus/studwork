@@ -8,8 +8,11 @@ import {UserService} from '@/lib/service/user-service'
 import {UserFilterOptions, UserSortField} from '@/lib/repository/user-repository'
 import {createLogger} from '@/lib/utils/logger'
 import {ActionResponse} from '@/lib/domain/actions'
-import {User, UserRole} from '@/lib/domain/user'
+import {User, UserRole, UserWithProfile} from '@/lib/domain/user'
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination'
+import {OrganizationWithUser} from "@/lib/domain/organization";
+import {OrganizationService} from "@/lib/service/organization-service";
+import {EmailService} from "@/lib/service/email-service";
 
 const logger = createLogger('UserManagementController')
 
@@ -56,11 +59,23 @@ export async function getUsers(
 }
 
 /**
- * Verifies an organization account and triggers the approval notification.
- * Restricted to administrators.
- *
- * @param userId - The ID of the organization user to verify.
- * @returns A response indicating success or failure.
+ * Retrieves all organizations waiting for approval.
+ */
+export async function getPendingOrganizations(): Promise<ActionResponse<OrganizationWithUser[]>> {
+    const t = await getTranslations()
+    try {
+        await ensureAdmin(t)
+        const pending = await OrganizationService.instance.getPendingVerifications()
+        return { success: true, data: pending }
+    } catch (error) {
+        logger.error('Failed to fetch pending organizations', error as Error)
+        return { success: false, error: (error as Error).message || t('errors.unexpected') }
+    }
+}
+
+/**
+ * Verifies (Approves) an organization account.
+ * Marks both the User as email-verified and the Organization as verified.
  */
 export async function verifyOrganization(userId: string): Promise<ActionResponse<void>> {
     const t = await getTranslations()
@@ -68,19 +83,54 @@ export async function verifyOrganization(userId: string): Promise<ActionResponse
         await ensureAdmin(t)
 
         const userService = UserService.instance
+        const orgService = OrganizationService.instance
+
         const targetUser = await userService.getUserById(userId)
 
         if (!targetUser) return {success: false, error: t('errors.auth.user_not_found')}
         if (targetUser.role !== UserRole.ORGANIZATION) return {success: false, error: 'Not an organization'}
-        if (targetUser.emailVerified) return {success: false, error: t('auth.emailAlreadyVerified')}
 
-        await userService.verifyOrganization(userId)
+        // Mark Organization entity as verified
+        await orgService.verifyOrganization(userId)
+
+        // Mark User email as verified and trigger approval email
+        if (!targetUser.emailVerified) {
+            await userService.verifyOrganization(userId)
+        }
 
         revalidatePath('/admin/users')
+        revalidatePath('/admin/organizations/pending')
         return {success: true, data: undefined}
     } catch (error) {
         logger.error('Failed to verify organization', error as Error)
-        return {success: false, error: (error as Error).message || t('errors.unexpected')}
+        return {success: false, error: (error as Error).message || t('errors.unexpected') }
+    }
+}
+
+/**
+ * Rejects an organization application.
+ * Deletes the account and sends a rejection email.
+ */
+export async function rejectOrganization(userId: string, reason: string): Promise<ActionResponse<void>> {
+    const t = await getTranslations()
+    try {
+        await ensureAdmin(t)
+
+        const user = await UserService.instance.getUserById(userId)
+        if (!user) return { success: false, error: t('errors.auth.user_not_found') }
+
+        // Send Rejection Email
+        await EmailService.instance.sendOrganizationRejected(user.email, user.name || 'Applicant', reason)
+
+        // Delete the account
+        await OrganizationService.instance.deleteOrganizationAccount(userId)
+
+        revalidatePath('/admin/users')
+        revalidatePath('/admin/organizations/pending')
+        return { success: true, data: undefined }
+    } catch (error) {
+        logger.error('Failed to reject organization', error as Error)
+        return { success: false, error: (error as Error).message || t('errors.unexpected') }
     }
 }
 
@@ -119,5 +169,31 @@ export async function toggleUserSuspension(
     } catch (error) {
         logger.error('Failed to toggle suspension', error as Error)
         return {success: false, error: (error as Error).message || t('errors.unexpected')}
+    }
+}
+
+/**
+ * Fetches the complete user profile including role-specific details.
+ * Restricted to administrators.
+ *
+ * @param userId - The ID of the user to fetch.
+ * @returns The full user object with nested profile relations.
+ */
+export async function getUserDetails(userId: string): Promise<ActionResponse<UserWithProfile>> {
+    const t = await getTranslations()
+    try {
+        await ensureAdmin(t)
+
+        const userService = UserService.instance
+        const userProfile = await userService.getUserProfile(userId)
+
+        if (!userProfile) {
+            return { success: false, error: t('errors.auth.user_not_found') }
+        }
+
+        return { success: true, data: userProfile }
+    } catch (error) {
+        logger.error('Failed to fetch user details', error as Error)
+        return { success: false, error: (error as Error).message || t('errors.unexpected') }
     }
 }

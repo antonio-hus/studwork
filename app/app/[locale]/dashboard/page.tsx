@@ -2,10 +2,10 @@
 import {redirect} from 'next/navigation';
 import {requireAuth} from '@/lib/controller/auth/session-controller';
 import {UserRole} from '@/lib/domain/user';
-import {StudentDashboard} from '@/components/dashboard/student-dashboard';
-import {CoordinatorDashboard} from '@/components/dashboard/coordinator-dashboard';
-import {OrganizationDashboard} from '@/components/dashboard/organization-dashboard';
-import {AdminDashboard} from '@/components/dashboard/admin/admin-dashboard';
+import {StudentDashboard} from '@/components/dashboard/student/student-dashboard';
+import {CoordinatorDashboard} from '@/components/dashboard/coordinator/coordinator-dashboard';
+import {OrganizationDashboard} from '@/components/dashboard/organization/organization-dashboard';
+import {AdminDashboard} from '@/components/dashboard/administrator/admin-dashboard';
 import {JSX} from "react";
 
 /**
