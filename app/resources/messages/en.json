@@ -380,5 +380,60 @@
       "profile": "Profile",
       "signOut": "Sign Out"
     }
+  },
+  "admin": {
+    "users": {
+      "title": "User Management",
+      "subtitle": "Manage system access, roles, and account statuses.",
+      "searchPlaceholder": "Search by name or email...",
+      "search": "Search",
+      "filterRole": "Filter by Role",
+      "noResults": "No users found",
+      "tryDifferentSearch": "Try adjusting your search terms or filters.",
+      "prev": "Previous",
+      "next": "Next",
+      "paginationInfo": "Showing {current} of {total} users",
+      "cancel": "Cancel",
+      "confirmSuspend": "Suspend User",
+      "confirmUnsuspend": "Restore Access",
+      "roles": {
+        "all": "All Roles",
+        "student": "Student",
+        "organization": "Organization",
+        "coordinator": "Coordinator",
+        "administrator": "Administrator"
+      },
+      "columns": {
+        "user": "User",
+        "role": "Role",
+        "status": "Status",
+        "joined": "Joined",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "pending": "Pending",
+        "suspended": "Suspended"
+      },
+      "actions": {
+        "label": "Actions",
+        "viewProfile": "View Profile",
+        "verifyOrg": "Verify Organization",
+        "suspend": "Suspend User",
+        "unsuspend": "Restore Access"
+      },
+      "success": {
+        "orgVerified": "Organization verified successfully.",
+        "suspended": "User account has been suspended.",
+        "restored": "User access has been restored."
+      },
+      "modals": {
+        "suspendTitle": "Suspend User",
+        "unsuspendTitle": "Restore User Access",
+        "targetUser": "You are about to change the access status for {name}.",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Please provide a reason for this action (optional)..."
+      }
+    }
   }
 }

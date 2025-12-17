@@ -39,11 +39,11 @@ import {cn} from "@/lib/utils";
  */
 const ICON_MAP: Record<string, LucideIcon> = {
     "/dashboard": LayoutDashboard,
-    "/admin/users": Users,
-    "/opportunities": Briefcase,
-    "/applications": FileText,
-    "/organization/profile": Building2,
-    "/settings": Settings,
+    "/dashboard/admin/users": Users,
+    "/dashboard/opportunities": Briefcase,
+    "/dashboard/applications": FileText,
+    "/dashboard/organization/profile": Building2,
+    "/dashboard/settings": Settings,
 };
 
 /**

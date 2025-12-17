@@ -5,7 +5,7 @@ import {UserRole} from '@/lib/domain/user';
 import {StudentDashboard} from '@/components/dashboard/student-dashboard';
 import {CoordinatorDashboard} from '@/components/dashboard/coordinator-dashboard';
 import {OrganizationDashboard} from '@/components/dashboard/organization-dashboard';
-import {AdminDashboard} from '@/components/dashboard/admin-dashboard';
+import {AdminDashboard} from '@/components/dashboard/admin/admin-dashboard';
 import {JSX} from "react";
 
 /**
