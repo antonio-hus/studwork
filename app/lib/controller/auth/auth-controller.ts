@@ -143,11 +143,16 @@ export async function verifyEmail(token: string): Promise<ActionResponse<void>> 
             return {success: false, error: t('errors.auth.invalidToken')};
         }
 
-        await authService.verifyEmail(token);
-        const currentSessionUser = await sessionService.getCurrentSessionUser();
+        const currentUser = await sessionService.getCurrentSessionUser();
+        if (currentUser && currentUser.emailVerified) {
+            logger.info('Email verification skipped - User already verified', { userId: currentUser.id });
+            return {success: true, data: undefined};
+        }
 
-        if (currentSessionUser) {
-            const freshUser = await UserService.instance.getUserById(currentSessionUser.id);
+        await authService.verifyEmail(token);
+
+        if (currentUser) {
+            const freshUser = await UserService.instance.getUserById(currentUser.id);
             if (freshUser) {
                 await sessionService.createSession(freshUser);
                 logger.debug('Session updated with verified status', { userId: freshUser.id });
