@@ -7,6 +7,11 @@ datasource db {
   provider = "postgresql"
 }
 
+// ============================================================================
+// SYSTEM CONFIGURATION
+// ============================================================================
+
+/// Global system settings. Only one row should exist with id="global_config".
 model Config {
   id String @id @default("global_config")
 
@@ -14,18 +19,24 @@ model Config {
   logo        String
   themeColors Json
 
+  // SMTP Settings for system emails
   smtpHost     String
   smtpPort     Int
   smtpUser     String
   smtpPassword String
   emailFrom    String
 
+  // Access Control Settings
   allowPublicRegistration Boolean
-  studentEmailDomain      String?
-  staffEmailDomain        String?
+  studentEmailDomain      String? // e.g., "@student.university.edu"
+  staffEmailDomain        String? // e.g., "@university.edu"
 
   updatedAt DateTime @updatedAt
 }
+
+// ============================================================================
+// ENUMS
+// ============================================================================
 
 enum UserRole {
   STUDENT
@@ -43,6 +54,49 @@ enum OrganizationType {
   OTHER
 }
 
+enum ProjectStatus {
+  DRAFT // Created by Org, not visible yet
+  PENDING_REVIEW // Submitted by Org, waiting for Coordinator/Admin
+  COORDINATOR_ASSIGNED // Coordinator took ownership
+  PUBLISHED // Visible to students
+  IN_PROGRESS // Students selected, work ongoing
+  COMPLETED // Work finished
+  ARCHIVED // Old projects
+}
+
+enum ProjectCategory {
+  DIGITALIZATION
+  COMMUNICATION
+  RESEARCH
+  COMMUNITY_SERVICES
+  MARKETING
+  DESIGN
+  SOFTWARE_DEVELOPMENT
+  DATA_ANALYSIS
+  EVENT_MANAGEMENT
+  OTHER
+}
+
+enum PerformanceRating {
+  EXCELLENT
+  VERY_GOOD
+  GOOD
+  SATISFACTORY
+  NEEDS_IMPROVEMENT
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+// ============================================================================
+// USER MANAGEMENT
+// ============================================================================
+
+/// Base user entity containing authentication and common profile data.
 model User {
   id             String    @id @default(cuid())
   email          String    @unique
@@ -54,14 +108,16 @@ model User {
   profilePictureUrl String?
   bio               String? @db.Text
 
+  isSuspended Boolean @default(false)
+
+  // Security tokens
   verificationTokens  VerificationToken[]
   passwordResetTokens PasswordResetToken[]
-
-  isSuspended Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Role-specific profiles (1:1 relations)
   student       Student?
   coordinator   Coordinator?
   organization  Organization?
@@ -72,6 +128,7 @@ model User {
   @@map("users")
 }
 
+/// Profile for students seeking projects.
 model Student {
   id     String @id @default(cuid())
   userId String @unique
@@ -84,11 +141,16 @@ model Student {
   interests String[]
   resumeUrl String?
 
+  // Relations
+  applications       Application[]
+  projectCompletions ProjectCompletion[]
+
   @@index([userId])
   @@index([studyProgram])
   @@map("students")
 }
 
+/// Profile for university staff managing projects.
 model Coordinator {
   id     String @id @default(cuid())
   userId String @unique
@@ -98,11 +160,16 @@ model Coordinator {
   title            String?
   areasOfExpertise String[]
 
+  // Relations
+  // FIX: Added the relation name here to match the Project model
+  projects Project[] @relation("CoordinatorProjects")
+
   @@index([userId])
   @@index([department])
   @@map("coordinators")
 }
 
+/// Profile for external partners proposing projects.
 model Organization {
   id     String @id @default(cuid())
   userId String @unique
@@ -110,18 +177,24 @@ model Organization {
 
   type OrganizationType @default(OTHER)
 
+  // Contact details specific to the organization entity
   contactPerson String?
   contactEmail  String?
   contactPhone  String?
   websiteUrl    String?
   facebookUrl   String?
 
+  // Location
   address String?
   city    String?
   country String?
 
+  // Verification status (Approved by Admin)
   isVerified Boolean   @default(false)
   verifiedAt DateTime?
+
+  // Relations
+  projects Project[]
 
   @@index([userId])
   @@index([isVerified])
@@ -129,6 +202,7 @@ model Organization {
   @@map("organizations")
 }
 
+/// Profile for system administrators.
 model Administrator {
   id     String @id @default(cuid())
   userId String @unique
@@ -137,6 +211,10 @@ model Administrator {
   @@index([userId])
   @@map("administrators")
 }
+
+// ============================================================================
+// SECURITY TOKENS
+// ============================================================================
 
 model VerificationToken {
   id        String   @id @default(cuid())
@@ -163,4 +241,115 @@ model PasswordResetToken {
   @@index([userId])
   @@index([token])
   @@map("password_reset_tokens")
+}
+
+// ============================================================================
+// PROJECT DOMAIN
+// ============================================================================
+
+/// Represents a practical learning opportunity proposed by an Organization.
+model Project {
+  id String @id @default(cuid())
+
+  title       String
+  description String          @db.Text
+  category    ProjectCategory
+
+  // Requirements
+  requiredSkills         String[]
+  estimatedHoursPerWeek  Int?
+  estimatedDurationWeeks Int?
+  numberOfStudents       Int      @default(1)
+
+  // Lifecycle
+  status          ProjectStatus @default(DRAFT)
+  rejectionReason String?       @db.Text
+
+  // Relations
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  coordinatorId  String?
+  coordinator    Coordinator? @relation("CoordinatorProjects", fields: [coordinatorId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  publishedAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  applications Application[]
+  completions  ProjectCompletion[]
+
+  @@index([organizationId])
+  @@index([coordinatorId])
+  @@index([status])
+  @@index([category])
+  @@index([createdAt])
+  @@map("projects")
+}
+
+/// A student's application to a specific project.
+model Application {
+  id String @id @default(cuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  motivationStatement String            @db.Text
+  status              ApplicationStatus @default(PENDING)
+
+  // Review details
+  reviewedBy      String? // Could be User ID of Coordinator
+  reviewedAt      DateTime?
+  rejectionReason String?   @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([studentId, projectId])
+  @@index([studentId])
+  @@index([projectId])
+  @@index([status])
+  @@map("applications")
+}
+
+/// Final record of a student completing a project, including evaluations.
+model ProjectCompletion {
+  id String @id @default(cuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  // Student's Output
+  roleDescription     String   @db.Text
+  keyAchievements     String[]
+  skillsDeveloped     String[]
+  actualHoursWorked   Int?
+  actualDurationWeeks Int?
+
+  // Academic Evaluation (by Coordinator)
+  coordinatorPerformanceRating PerformanceRating
+  coordinatorWrittenEvaluation String            @db.Text
+
+  // Partner Evaluation (by Organization)
+  organizationPerformanceRating PerformanceRating
+  organizationWrittenEvaluation String            @db.Text
+
+  isVisibleInPortfolio Boolean @default(true)
+
+  completedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([projectId, studentId])
+  @@index([studentId])
+  @@index([projectId])
+  @@index([completedAt])
+  @@map("project_completions")
 }
