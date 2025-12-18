@@ -83,9 +83,9 @@ export function SuspendUserDialog({target, onOpenChange, onSuccess}: Props) {
 
                 <DialogFooter className="gap-2 sm:gap-0">
                     <Button
-                        variant="ghost"
+                        variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="hover:bg-muted"
+                        className="mr-2"
                     >
                         {t("cancel")}
                     </Button>

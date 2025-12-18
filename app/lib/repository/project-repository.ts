@@ -6,7 +6,7 @@ import type {
     ProjectCreateType,
     ProjectUpdateType,
     ProjectWhereInput,
-    ProjectStatus
+    ProjectStatus, ProjectWithDetails
 } from '@/lib/domain/project';
 import {createLogger} from '@/lib/utils/logger';
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination';
@@ -84,7 +84,60 @@ export class ProjectRepository {
                     skip,
                     take: pageSize,
                     orderBy: {[sort.field]: sort.direction},
-                    include: {organization: {include: {user: true}}}
+                }),
+                database.project.count({where})
+            ]);
+
+            return {
+                items,
+                total,
+                page,
+                pageSize,
+                totalPages: Math.ceil(total / pageSize)
+            };
+        } catch (error) {
+            this.logger.error('Failed to find projects', error as Error);
+            throw error;
+        }
+    }
+
+    /**
+     * Retrieves a paginated list of projects (with details) matching the provided filters.
+     *
+     * @param {PaginationParams} pagination Page number and size configuration.
+     * @param {ProjectFilterOptions} [filters={}] Search, status, and organization filters.
+     * @param {object} [sort] Sorting configuration defaults to created descending.
+     * @returns {Promise<PaginationResult<ProjectWithDetails>>} Paginated projects with metadata.
+     */
+    async findManyWithDetails(
+        pagination: PaginationParams,
+        filters: ProjectFilterOptions = {},
+        sort: { field: ProjectSortField; direction: 'asc' | 'desc' } = {
+            field: 'createdAt',
+            direction: 'desc'
+        }
+    ): Promise<PaginationResult<ProjectWithDetails>> {
+        const {page, pageSize} = pagination;
+        const skip = (page - 1) * pageSize;
+
+        try {
+            const where: ProjectWhereInput = {
+                status: filters.status,
+                organizationId: filters.organizationId,
+                OR: filters.search
+                    ? [
+                        {title: {contains: filters.search, mode: 'insensitive'}},
+                    ]
+                    : undefined
+            };
+
+            const [items, total] = await Promise.all([
+                database.project.findMany({
+                    where,
+                    skip,
+                    take: pageSize,
+                    orderBy: {[sort.field]: sort.direction},
+                    include: {organization: {include: {user: true}}, coordinator: {include: {user: true}}}
                 }),
                 database.project.count({where})
             ]);

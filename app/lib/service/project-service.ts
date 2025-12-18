@@ -1,6 +1,6 @@
 /** @format */
 import 'server-only';
-import type {Project, ProjectCreateType, ProjectUpdateType} from '@/lib/domain/project';
+import type {Project, ProjectCreateType, ProjectUpdateType, ProjectWithDetails} from '@/lib/domain/project';
 import {ProjectRepository, ProjectFilterOptions, ProjectSortField} from '@/lib/repository/project-repository';
 import {createLogger} from '@/lib/utils/logger';
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination';
@@ -38,6 +38,22 @@ export class ProjectService {
         sort: { field: ProjectSortField; direction: 'asc' | 'desc' } = {field: 'createdAt', direction: 'desc'}
     ): Promise<PaginationResult<Project>> {
         return ProjectRepository.instance.findMany(pageParams, filters, sort);
+    }
+
+    /**
+     * Retrieves paginated projects (with details) with support for filtering and sorting.
+     *
+     * @param pageParams - Pagination settings (page, pageSize).
+     * @param filters - Optional filtering criteria.
+     * @param sort - Sorting configuration.
+     * @returns A paginated list of projects.
+     */
+    async getProjectsWithDetails(
+        pageParams: PaginationParams,
+        filters: ProjectFilterOptions = {},
+        sort: { field: ProjectSortField; direction: 'asc' | 'desc' } = {field: 'createdAt', direction: 'desc'}
+    ): Promise<PaginationResult<ProjectWithDetails>> {
+        return ProjectRepository.instance.findManyWithDetails(pageParams, filters, sort);
     }
 
     /**

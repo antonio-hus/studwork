@@ -78,6 +78,7 @@ export function RejectOrganizationDialog({target, onOpenChange, onSuccess}: Prop
                         variant="destructive"
                         onClick={handleConfirm}
                         disabled={isSubmitting}
+                        className="bg-error hover:bg-error/90"
                     >
                         {isSubmitting ? t("submitting") : t("confirm")}
                     </Button>

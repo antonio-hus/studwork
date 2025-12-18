@@ -532,6 +532,7 @@
         "header": {
           "title": "Title",
           "organization": "Organization",
+          "coordinator": "Coordinator",
           "status": "Status",
           "createdAt": "Created At",
           "actions": "Actions"
@@ -545,12 +546,48 @@
           "COMPLETED": "Completed",
           "ARCHIVED": "Archived"
         },
+        "noResults": "No projects found",
+        "tryDifferentSearch": "Try adjusting your search terms or filters.",
+        "unassigned": "Unassigned",
+        "viewDetails": "View Details",
         "delete": "Delete",
         "archive": "Archive",
         "deleteSuccess": "Project deleted successfully.",
         "deleteError": "Failed to delete project.",
         "archiveSuccess": "Project archived successfully.",
-        "archiveError": "Failed to archive project."
+        "archiveError": "Failed to archive project.",
+        "archiveWarning": "Are you sure you want to archive this project?",
+        "deleteWarning": "Are you sure you want to delete this project? This action is permanent.",
+        "confirmArchive": "Archive",
+        "confirmDelete": "Delete",
+        "cancel": "Cancel"
+      },
+      "details": {
+        "title": "Project Details",
+        "projectDetails": "Project Details",
+        "projectTitle": "Title",
+        "projectDescription": "Description",
+        "requiredSkills": "Required Skills (comma-separated)",
+        "relatedParties": "Related Parties",
+        "organization": "Organization",
+        "orgName": "Name",
+        "orgEmail": "Email",
+        "orgPhone": "Phone",
+        "orgAddress": "Address",
+        "orgWebsite": "Website",
+        "coordinator": "Coordinator",
+        "coordName": "Name",
+        "coordEmail": "Email",
+        "coordDepartment": "Department",
+        "saveChanges": "Save Changes",
+        "editMode": "Edit",
+        "cancel": "Cancel",
+        "updateSuccess": "Project updated successfully.",
+        "updateError": "Failed to update project.",
+        "category": "Category",
+        "estHours": "Est. Hours/Week",
+        "estWeeks": "Est. Duration (Weeks)",
+        "numStudents": "Number of Students"
       }
     }
   }

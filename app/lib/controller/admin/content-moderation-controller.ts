@@ -63,6 +63,33 @@ export async function getProjects(
 }
 
 /**
+ * Retrieves a paginated list of projects (with details) based on the provided filters.
+ * Restricted to administrators.
+ *
+ * @param pageParams - Pagination configuration (page, pageSize).
+ * @param filters - Filtering criteria (role, search, status).
+ * @param sort - Sorting configuration.
+ * @returns A response containing the paginated project list.
+ */
+export async function getProjectsWithDetails(
+    pageParams: PaginationParams,
+    filters: ProjectFilterOptions = {},
+    sort: { field: ProjectSortField; direction: 'asc' | 'desc' } = {field: 'createdAt', direction: 'desc'}
+): Promise<ActionResponse<PaginationResult<ProjectWithDetails>>> {
+    const t = await getTranslations()
+    try {
+        await ensureAdmin(t)
+
+        const result = await ProjectService.instance.getProjectsWithDetails(pageParams, filters, sort)
+
+        return {success: true, data: result}
+    } catch (error) {
+        logger.error('Failed to fetch projects', error as Error)
+        return {success: false, error: (error as Error).message || t('errors.unexpected')}
+    }
+}
+
+/**
  * Updates an existing project.
  *
  * @param id - The project ID.
