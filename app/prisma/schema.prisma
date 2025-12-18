@@ -55,13 +55,13 @@ enum OrganizationType {
 }
 
 enum ProjectStatus {
-  DRAFT // Created by Org, not visible yet
-  PENDING_REVIEW // Submitted by Org, waiting for Coordinator/Admin
-  COORDINATOR_ASSIGNED // Coordinator took ownership
-  PUBLISHED // Visible to students
-  IN_PROGRESS // Students selected, work ongoing
-  COMPLETED // Work finished
-  ARCHIVED // Old projects
+  DRAFT
+  PENDING_REVIEW
+  COORDINATOR_ASSIGNED
+  PUBLISHED
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
 }
 
 enum ProjectCategory {
@@ -161,7 +161,6 @@ model Coordinator {
   areasOfExpertise String[]
 
   // Relations
-  // FIX: Added the relation name here to match the Project model
   projects Project[] @relation("CoordinatorProjects")
 
   @@index([userId])
@@ -302,7 +301,7 @@ model Application {
   status              ApplicationStatus @default(PENDING)
 
   // Review details
-  reviewedBy      String? // Could be User ID of Coordinator
+  reviewedBy      String?
   reviewedAt      DateTime?
   rejectionReason String?   @db.Text
 
