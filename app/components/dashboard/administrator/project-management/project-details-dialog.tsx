@@ -2,7 +2,7 @@
 "use client";
 import React, {useState, useEffect, isValidElement, cloneElement} from "react";
 import {useTranslations} from "next-intl";
-import {ProjectWithDetails, ProjectUpdateType} from "@/lib/domain/project";
+import {ProjectWithDetails, ProjectUpdateType, ProjectStatus} from "@/lib/domain/project";
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
@@ -33,17 +33,19 @@ import {Badge} from "@/components/ui/badge";
 import {cn} from "@/lib/utils";
 
 interface Props {
+    statuses: typeof ProjectStatus;
     project: ProjectWithDetails | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
-export function ProjectDetailsDialog({project, open, onOpenChange}: Props) {
+export function ProjectDetailsDialog({statuses, project, open, onOpenChange}: Props) {
     const t = useTranslations("admin.projects.details");
     const router = useRouter();
     const [isEditMode, setIsEditMode] = useState(false);
     const [formData, setFormData] = useState<ProjectUpdateType>({});
     const [activeProject, setActiveProject] = useState<ProjectWithDetails | null>(project);
+    const isArchived = project?.status === statuses.ARCHIVED;
 
     useEffect(() => {
         setActiveProject(project);
@@ -216,8 +218,11 @@ export function ProjectDetailsDialog({project, open, onOpenChange}: Props) {
                             <Button onClick={handleSave}><Save className="mr-2 h-4 w-4"/>{t("saveChanges")}</Button>
                         </div>
                     ) : (
-                        <Button onClick={() => setIsEditMode(true)}><Pencil
-                            className="mr-2 h-4 w-4"/>{t("editMode")}</Button>
+                        !isArchived && (
+                            <Button onClick={() => setIsEditMode(true)}>
+                                <Pencil className="mr-2 h-4 w-4"/>{t("editMode")}
+                            </Button>
+                        )
                     )}
                 </DialogFooter>
             </DialogContent>

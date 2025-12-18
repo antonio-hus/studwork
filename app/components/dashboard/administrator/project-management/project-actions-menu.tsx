@@ -2,20 +2,28 @@
 "use client";
 import React from "react";
 import {useTranslations} from "next-intl";
-import {ProjectWithDetails} from "@/lib/domain/project";
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import type {ProjectWithDetails, ProjectStatus} from "@/lib/domain/project";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import {Button} from "@/components/ui/button";
 import {MoreHorizontal, Archive, Trash2, Eye} from "lucide-react";
 
 interface Props {
+    statuses: typeof ProjectStatus;
     project: ProjectWithDetails;
     onViewClick: () => void;
     onArchiveClick: () => void;
     onDeleteClick: () => void;
 }
 
-export function ProjectActionsMenu({project, onViewClick, onArchiveClick, onDeleteClick}: Props) {
+export function ProjectActionsMenu({statuses, project, onViewClick, onArchiveClick, onDeleteClick}: Props) {
     const t = useTranslations("admin.projects.table");
+    const isArchived = project.status === statuses.ARCHIVED;
 
     return (
         <DropdownMenu>
@@ -43,13 +51,17 @@ export function ProjectActionsMenu({project, onViewClick, onArchiveClick, onDele
                     <Eye className="mr-2 h-4 w-4 text-muted-foreground"/>
                     {t("viewDetails")}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={onArchiveClick}
-                    className="cursor-pointer focus:bg-muted"
-                >
-                    <Archive className="mr-2 h-4 w-4 text-muted-foreground"/>
-                    {t("archive")}
-                </DropdownMenuItem>
+
+                {!isArchived && (
+                    <DropdownMenuItem
+                        onClick={onArchiveClick}
+                        className="cursor-pointer focus:bg-muted"
+                    >
+                        <Archive className="mr-2 h-4 w-4 text-muted-foreground"/>
+                        {t("archive")}
+                    </DropdownMenuItem>
+                )}
+
                 <DropdownMenuItem
                     onClick={onDeleteClick}
                     className="cursor-pointer text-error focus:text-error focus:bg-error/10"

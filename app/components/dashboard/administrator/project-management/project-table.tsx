@@ -59,9 +59,9 @@ export function ProjectTable({projects, statuses, isPending, onViewClick, onArch
                                 </div>
                             </div>
 
-                            {/* Actions Menu - Fixed width container to prevent squash */}
                             <div className="shrink-0 -mr-2">
                                 <ProjectActionsMenu
+                                    statuses={statuses}
                                     project={project}
                                     onViewClick={() => onViewClick(project)}
                                     onArchiveClick={() => onArchiveClick(project)}
@@ -180,6 +180,7 @@ export function ProjectTable({projects, statuses, isPending, onViewClick, onArch
                                 </TableCell>
                                 <TableCell className="text-right pr-6">
                                     <ProjectActionsMenu
+                                        statuses={statuses}
                                         project={project}
                                         onViewClick={() => onViewClick(project)}
                                         onArchiveClick={() => onArchiveClick(project)}

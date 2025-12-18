@@ -123,6 +123,7 @@ export function ProjectManagementClient({statuses, initialProjects, initialPagin
                 </Card>
             </div>
             <ProjectDetailsDialog
+                statuses={statuses}
                 project={viewTarget}
                 open={!!viewTarget}
                 onOpenChange={(open: boolean) => !open && setViewTarget(null)}
