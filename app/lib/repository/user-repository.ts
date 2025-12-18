@@ -46,6 +46,37 @@ export class UserRepository {
     }
 
     /**
+     * Retrieves a count of users for each role.
+     * @returns A Promise resolving to a map of UserRole to count.
+     */
+    async countByRole(): Promise<Record<UserRole, number>> {
+        try {
+            const counts = await database.user.groupBy({
+                by: ['role'],
+                _count: {
+                    role: true,
+                },
+            });
+
+            const result: Record<UserRole, number> = {
+                [UserRole.STUDENT]: 0,
+                [UserRole.COORDINATOR]: 0,
+                [UserRole.ORGANIZATION]: 0,
+                [UserRole.ADMINISTRATOR]: 0,
+            };
+
+            for (const count of counts) {
+                result[count.role] = count._count.role;
+            }
+
+            return result;
+        } catch (error) {
+            this.logger.error('Failed to count users by role', error as Error);
+            throw error;
+        }
+    }
+
+    /**
      * Retrieves paginated users based on filter criteria.
      *
      * @param pagination - Pagination parameters (page, pageSize).

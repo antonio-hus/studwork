@@ -1,6 +1,12 @@
 /** @format */
 import 'server-only';
-import type {Project, ProjectCreateType, ProjectUpdateType, ProjectWithDetails} from '@/lib/domain/project';
+import type {
+    Project,
+    ProjectCreateType,
+    ProjectStatus,
+    ProjectUpdateType,
+    ProjectWithDetails
+} from '@/lib/domain/project';
 import {ProjectRepository, ProjectFilterOptions, ProjectSortField} from '@/lib/repository/project-repository';
 import {createLogger} from '@/lib/utils/logger';
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination';
@@ -22,6 +28,19 @@ export class ProjectService {
             ProjectService._instance = new ProjectService();
         }
         return ProjectService._instance;
+    }
+
+    /**
+     * Retrieves a count of projects for each status.
+     * @returns A Promise resolving to a map of ProjectStatus to count.
+     */
+    async countProjectsByStatus(): Promise<Record<ProjectStatus, number>> {
+        try {
+            return await ProjectRepository.instance.countByStatus();
+        } catch (error) {
+            this.logger.error('Failed to count projects by status', error as Error);
+            throw error;
+        }
     }
 
     /**

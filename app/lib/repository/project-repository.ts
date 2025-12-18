@@ -6,8 +6,9 @@ import type {
     ProjectCreateType,
     ProjectUpdateType,
     ProjectWhereInput,
-    ProjectStatus, ProjectWithDetails
+    ProjectWithDetails
 } from '@/lib/domain/project';
+import {ProjectStatus} from '@/lib/domain/project';
 import {createLogger} from '@/lib/utils/logger';
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination';
 
@@ -45,6 +46,40 @@ export class ProjectRepository {
             ProjectRepository._instance = new ProjectRepository();
         }
         return ProjectRepository._instance;
+    }
+
+    /**
+     * Retrieves a count of projects for each status.
+     * @returns A Promise resolving to a map of ProjectStatus to count.
+     */
+    async countByStatus(): Promise<Record<ProjectStatus, number>> {
+        try {
+            const counts = await database.project.groupBy({
+                by: ['status'],
+                _count: {
+                    status: true,
+                },
+            });
+
+            const result: Record<ProjectStatus, number> = {
+                [ProjectStatus.DRAFT]: 0,
+                [ProjectStatus.PENDING_REVIEW]: 0,
+                [ProjectStatus.COORDINATOR_ASSIGNED]: 0,
+                [ProjectStatus.PUBLISHED]: 0,
+                [ProjectStatus.IN_PROGRESS]: 0,
+                [ProjectStatus.COMPLETED]: 0,
+                [ProjectStatus.ARCHIVED]: 0,
+            };
+
+            for (const count of counts) {
+                result[count.status] = count._count.status;
+            }
+
+            return result;
+        } catch (error) {
+            this.logger.error('Failed to count projects by status', error as Error);
+            throw error;
+        }
     }
 
     /**

@@ -5,9 +5,9 @@ import type {
     Application,
     ApplicationCreateType,
     ApplicationUpdateType,
-    ApplicationWhereInput,
-    ApplicationStatus
+    ApplicationWhereInput
 } from '@/lib/domain/application';
+import {ApplicationStatus} from '@/lib/domain/application';
 import {createLogger} from '@/lib/utils/logger';
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination';
 
@@ -46,6 +46,37 @@ export class ApplicationRepository {
             ApplicationRepository._instance = new ApplicationRepository();
         }
         return ApplicationRepository._instance;
+    }
+
+    /**
+     * Retrieves a count of applications for each status.
+     * @returns A Promise resolving to a map of ApplicationStatus to count.
+     */
+    async countByStatus(): Promise<Record<ApplicationStatus, number>> {
+        try {
+            const counts = await database.application.groupBy({
+                by: ['status'],
+                _count: {
+                    status: true,
+                },
+            });
+
+            const result: Record<ApplicationStatus, number> = {
+                [ApplicationStatus.PENDING]: 0,
+                [ApplicationStatus.ACCEPTED]: 0,
+                [ApplicationStatus.REJECTED]: 0,
+                [ApplicationStatus.WITHDRAWN]: 0,
+            };
+
+            for (const count of counts) {
+                result[count.status] = count._count.status;
+            }
+
+            return result;
+        } catch (error) {
+            this.logger.error('Failed to count applications by status', error as Error);
+            throw error;
+        }
     }
 
     /**

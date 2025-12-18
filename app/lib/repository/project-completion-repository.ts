@@ -46,6 +46,19 @@ export class ProjectCompletionRepository {
         }
         return ProjectCompletionRepository._instance;
     }
+    
+    /**
+     * Retrieves a count of all project completions.
+     * @returns A Promise resolving to the total number of project completions.
+     */
+    async countAll(): Promise<number> {
+        try {
+            return await database.projectCompletion.count();
+        } catch (error) {
+            this.logger.error('Failed to count project completions', error as Error);
+            throw error;
+        }
+    }
 
     /**
      * Retrieves a paginated list of project completions based on filters.

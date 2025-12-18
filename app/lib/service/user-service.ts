@@ -5,6 +5,7 @@ import {UserRepository, UserFilterOptions, UserSortField} from '@/lib/repository
 import {createLogger} from '@/lib/utils/logger'
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination'
 import {EmailService} from '@/lib/service/email-service'
+import {UserRole} from "@/lib/domain/user";
 
 /**
  * Service for generic User operations.
@@ -23,6 +24,19 @@ export class UserService {
             UserService._instance = new UserService()
         }
         return UserService._instance
+    }
+
+    /**
+     * Retrieves a count of users for each role.
+     * @returns A Promise resolving to a map of UserRole to count.
+     */
+    async countUsersByRole(): Promise<Record<UserRole, number>> {
+        try {
+            return await UserRepository.instance.countByRole();
+        } catch (error) {
+            this.logger.error('Failed to count users by role', error as Error);
+            throw error;
+        }
     }
 
     /**

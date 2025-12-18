@@ -4,6 +4,7 @@ import type {Application, ApplicationCreateType, ApplicationUpdateType} from '@/
 import {ApplicationRepository, ApplicationFilterOptions, ApplicationSortField} from '@/lib/repository/application-repository';
 import {createLogger} from '@/lib/utils/logger';
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination';
+import {ApplicationStatus} from "@/lib/domain/application";
 
 /**
  * Service for managing project applications.
@@ -21,6 +22,19 @@ export class ApplicationService {
             ApplicationService._instance = new ApplicationService();
         }
         return ApplicationService._instance;
+    }
+
+    /**
+     * Retrieves a count of applications for each status.
+     * @returns A Promise resolving to a map of ApplicationStatus to count.
+     */
+    async countApplicationsByStatus(): Promise<Record<ApplicationStatus, number>> {
+        try {
+            return await ApplicationRepository.instance.countByStatus();
+        } catch (error) {
+            this.logger.error('Failed to count applications by status', error as Error);
+            throw error;
+        }
     }
 
     /**
