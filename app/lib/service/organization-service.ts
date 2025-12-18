@@ -10,6 +10,7 @@ import {OrganizationRepository} from '@/lib/repository/organization-repository'
 import {UserRepository} from '@/lib/repository/user-repository'
 import {hashPassword} from '@/lib/utils/password'
 import {createLogger} from '@/lib/utils/logger'
+import {EmailService} from "@/lib/service/email-service";
 
 /**
  * Service for managing Organization-related business logic.
@@ -108,6 +109,15 @@ export class OrganizationService {
                 isVerified: true,
                 verifiedAt: new Date(),
             })
+
+            const user = await UserRepository.instance.update(userId, {
+                emailVerified: new Date()
+            })
+
+            await EmailService.instance.sendOrganizationApproved(
+                user.email,
+                user.name || 'Organization'
+            )
 
             this.logger.info('Organization verified', { userId })
         } catch (error) {

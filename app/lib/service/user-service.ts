@@ -145,31 +145,6 @@ export class UserService {
     }
 
     /**
-     * Verifies an organization account and sends an approval email.
-     *
-     * @param userId - The ID of the organization user to verify.
-     * @returns The updated verified user.
-     */
-    async verifyOrganization(userId: string): Promise<User> {
-        try {
-            const user = await UserRepository.instance.update(userId, {
-                emailVerified: new Date()
-            })
-
-            await EmailService.instance.sendOrganizationApproved(
-                user.email,
-                user.name || 'Organization'
-            )
-
-            this.logger.info('Organization verified', {userId})
-            return user
-        } catch (error) {
-            this.logger.error('Failed to verify organization', error as Error)
-            throw error
-        }
-    }
-
-    /**
      * Permanently deletes a user account.
      *
      * @param userId - The ID of the user to delete.

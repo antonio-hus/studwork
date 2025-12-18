@@ -90,13 +90,7 @@ export async function verifyOrganization(userId: string): Promise<ActionResponse
         if (!targetUser) return {success: false, error: t('errors.auth.user_not_found')}
         if (targetUser.role !== UserRole.ORGANIZATION) return {success: false, error: 'Not an organization'}
 
-        // Mark Organization entity as verified
         await orgService.verifyOrganization(userId)
-
-        // Mark User email as verified and trigger approval email
-        if (!targetUser.emailVerified) {
-            await userService.verifyOrganization(userId)
-        }
 
         revalidatePath('/admin/users')
         revalidatePath('/admin/organizations/pending')
