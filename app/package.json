@@ -9,6 +9,7 @@
     "lint": "eslint",
     "admin:add": "tsx -r dotenv/config lib/scripts/create-admin.ts",
     "seed:users": "tsx -r dotenv/config lib/scripts/seed-users.ts",
+    "seed:projects": "tsx -r dotenv/config lib/scripts/seed-projects.ts",
     "setup": "tsx -r dotenv/config lib/scripts/setup.ts"
   },
   "dependencies": {

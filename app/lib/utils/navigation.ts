@@ -45,6 +45,11 @@ export const NAVIGATION_ITEMS: NavItem[] = [
         roles: [UserRole.ADMINISTRATOR]
     },
     {
+        titleKey: 'projects',
+        href: '/dashboard/admin/projects',
+        roles: [UserRole.ADMINISTRATOR]
+    },
+    {
         titleKey: 'opportunities',
         href: '/dashboard/opportunities',
         roles: [UserRole.STUDENT, UserRole.COORDINATOR, UserRole.ORGANIZATION]

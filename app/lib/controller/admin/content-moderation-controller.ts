@@ -12,7 +12,7 @@ import {ApplicationFilterOptions, ApplicationSortField} from '@/lib/repository/a
 import {CompletionFilterOptions, CompletionSortField} from '@/lib/repository/project-completion-repository'
 import {createLogger} from '@/lib/utils/logger'
 import {ActionResponse} from '@/lib/domain/actions'
-import {Project, ProjectStatus, ProjectUpdateType} from '@/lib/domain/project'
+import {Project, ProjectStatus, ProjectUpdateType, ProjectWithDetails} from '@/lib/domain/project'
 import {Application, ApplicationUpdateType} from '@/lib/domain/application'
 import {ProjectCompletion, ProjectCompletionUpdateType} from '@/lib/domain/project-completion'
 import {PaginationParams, PaginationResult} from '@/lib/domain/pagination'

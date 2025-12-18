@@ -379,6 +379,7 @@
       "dashboard": "Dashboard",
       "users": "User Management",
       "organizations": "Organization Management",
+      "projects": "Project Management",
       "settings": "Settings",
       "opportunities": "Opportunities",
       "applications": "Applications",
@@ -507,6 +508,49 @@
           "submitting": "Rejecting...",
           "success": "Application rejected and user notified."
         }
+      }
+    },
+    "projects": {
+      "title": "Project Management",
+      "subtitle": "Oversee all projects on the platform.",
+      "toolbar": {
+        "searchPlaceholder": "Search by title...",
+        "search": "Search",
+        "statusSelect": {
+          "placeholder": "Filter by status",
+          "all": "All Statuses",
+          "DRAFT": "Draft",
+          "PENDING_REVIEW": "Pending Review",
+          "COORDINATOR_ASSIGNED": "Coordinator Assigned",
+          "PUBLISHED": "Published",
+          "IN_PROGRESS": "In Progress",
+          "COMPLETED": "Completed",
+          "ARCHIVED": "Archived"
+        }
+      },
+      "table": {
+        "header": {
+          "title": "Title",
+          "organization": "Organization",
+          "status": "Status",
+          "createdAt": "Created At",
+          "actions": "Actions"
+        },
+        "status": {
+          "DRAFT": "Draft",
+          "PENDING_REVIEW": "Pending",
+          "COORDINATOR_ASSIGNED": "Assigned",
+          "PUBLISHED": "Published",
+          "IN_PROGRESS": "In Progress",
+          "COMPLETED": "Completed",
+          "ARCHIVED": "Archived"
+        },
+        "delete": "Delete",
+        "archive": "Archive",
+        "deleteSuccess": "Project deleted successfully.",
+        "deleteError": "Failed to delete project.",
+        "archiveSuccess": "Project archived successfully.",
+        "archiveError": "Failed to archive project."
       }
     }
   }
