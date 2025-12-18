@@ -4,7 +4,7 @@ import {database} from '../database'
 import {hashPassword} from '../utils/password'
 
 /**
- * Creates a set of test users with different roles.
+ * Creates a set of test users with different roles and their corresponding profiles.
  * Each user will have the password 'Test1234'.
  * Skips creation if the user email already exists.
  */
@@ -47,7 +47,7 @@ async function seedTestUsers() {
                 continue
             }
 
-            await database.user.create({
+            const user = await database.user.create({
                 data: {
                     email: userData.email,
                     name: userData.name,
@@ -59,6 +59,28 @@ async function seedTestUsers() {
             })
 
             console.log(`Created ${userData.role}: ${userData.email}`)
+
+            // Create role-specific profile
+            switch (user.role) {
+                case UserRole.STUDENT:
+                    await database.student.create({
+                        data: {userId: user.id, studyProgram: 'Computer Science', yearOfStudy: 3},
+                    })
+                    console.log(`Created student profile for ${user.email}`)
+                    break
+                case UserRole.COORDINATOR:
+                    await database.coordinator.create({
+                        data: {userId: user.id, department: 'Faculty of Engineering'},
+                    })
+                    console.log(`Created coordinator profile for ${user.email}`)
+                    break
+                case UserRole.ORGANIZATION:
+                    await database.organization.create({
+                        data: {userId: user.id, isVerified: true},
+                    })
+                    console.log(`Created organization profile for ${user.email}`)
+                    break
+            }
         } catch (error) {
             console.error(`Failed to create ${userData.email}:`, error)
         }
