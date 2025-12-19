@@ -245,28 +245,6 @@ export function AdminDashboardClient({
                                     </h3>
                                     <div className="space-y-8">
                                         <StatRow
-                                            label={t("studentCoordinatorRatio")}
-                                            value={
-                                                userCounts[userRoles.COORDINATOR] > 0
-                                                    ? `${Math.round(userCounts[userRoles.STUDENT] / userCounts[userRoles.COORDINATOR])} : 1`
-                                                    : "N/A"
-                                            }
-                                            barColor="bg-accent"
-                                            percentage={75}
-                                            icon={Scale}
-                                        />
-                                        <StatRow
-                                            label={t("avgProjectsPerOrg")}
-                                            value={
-                                                userCounts[userRoles.ORGANIZATION] > 0
-                                                    ? (stats.totalProjects / userCounts[userRoles.ORGANIZATION]).toFixed(1)
-                                                    : "0"
-                                            }
-                                            barColor="bg-secondary"
-                                            percentage={45}
-                                            icon={Building2}
-                                        />
-                                        <StatRow
                                             label={t("coordinatorLoad")}
                                             value={stats.coordinatorLoad.toFixed(1)}
                                             barColor="bg-warning"
