@@ -58,6 +58,8 @@ export async function updateConfig(input: ConfigUpdateType): Promise<ActionRespo
 
     try {
         const config = await ConfigService.instance.updateConfig(input)
+        ConfigService.instance.clearCache()
+
         logger.info('Platform configuration updated')
         return {success: true, data: config}
     } catch (error) {

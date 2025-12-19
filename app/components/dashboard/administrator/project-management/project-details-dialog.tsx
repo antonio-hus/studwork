@@ -3,7 +3,14 @@
 import React, {useState, useEffect, isValidElement, cloneElement} from "react";
 import {useTranslations} from "next-intl";
 import {ProjectWithDetails, ProjectUpdateType, ProjectStatus} from "@/lib/domain/project";
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogDescription
+} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
@@ -112,7 +119,7 @@ export function ProjectDetailsDialog({statuses, project, open, onOpenChange}: Pr
                     <ScrollArea className="h-[400px] pr-4">
                         <div className="space-y-8">
                             <InfoSection title={t("projectDetails")}>
-                                {isEditMode ? (
+                                {!isArchived && isEditMode ? (
                                     <>
                                         <div className="sm:col-span-2">
                                             <label className="text-sm font-medium">{t("projectTitle")}</label>
@@ -211,10 +218,11 @@ export function ProjectDetailsDialog({statuses, project, open, onOpenChange}: Pr
                     </ScrollArea>
                 </div>
                 <DialogFooter className="px-6 py-4 bg-muted/30 border-t border-border">
-                    {isEditMode ? (
+                    {!isArchived && isEditMode ? (
                         <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => setIsEditMode(false)}><X
-                                className="mr-2 h-4 w-4"/>{t("cancel")}</Button>
+                            <Button variant="outline" className="border-muted" onClick={() => setIsEditMode(false)}>
+                                <X className="mr-2 h-4 w-4"/>{t("cancel")}
+                            </Button>
                             <Button onClick={handleSave}><Save className="mr-2 h-4 w-4"/>{t("saveChanges")}</Button>
                         </div>
                     ) : (
@@ -259,7 +267,9 @@ function ProfileInfoItem({icon, label, value, code, colSpan2, isLink, isArray, c
     return (
         <div className={cn('flex flex-col gap-1.5', colSpan2 && 'sm:col-span-2')}>
             <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-                {isValidElement(icon) && cloneElement(icon as React.ReactElement<{ className?: string }>, {className: 'w-3.5 h-3.5 opacity-70'})}
+                {isValidElement(icon) && cloneElement(icon as React.ReactElement<{
+                    className?: string
+                }>, {className: 'w-3.5 h-3.5 opacity-70'})}
                 {label}
             </span>
             {isEmpty ? (

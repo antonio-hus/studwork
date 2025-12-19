@@ -629,5 +629,54 @@
         "numStudents": "Number of Students"
       }
     }
+  },
+  "settings": {
+    "admin": {
+      "title": "Admin Settings",
+      "subtitle": "Manage global configuration, branding, and security settings for the application.",
+      "success_message": "Settings saved successfully.",
+      "error_message": "Failed to save settings. Please try again.",
+      "error_unexpected": "An unexpected error occurred.",
+      "errors": {
+        "fetch_failed": "Failed to load configuration settings."
+      },
+      "tabs": {
+        "branding": "Branding",
+        "system": "System",
+        "security": "Security"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save_changes": "Save Changes",
+        "edit_mode": "Edit Mode"
+      },
+      "branding": {
+        "general_info": "General Information",
+        "org_name": "Organization Name",
+        "logo": "Logo",
+        "colors": "Theme Colors",
+        "reset_defaults": "Reset to Defaults",
+        "theme_reset_toast": "Theme colors reset to defaults. Click save to apply.",
+        "light_mode": "Light Mode",
+        "dark_mode": "Dark Mode"
+      },
+      "system": {
+        "smtp_details": "SMTP Configuration",
+        "smtp_host": "SMTP Host",
+        "smtp_port": "SMTP Port",
+        "smtp_user": "SMTP User",
+        "smtp_password": "SMTP Password",
+        "sender_email": "Sender Email"
+      },
+      "security": {
+        "domain_restrictions": "Domain Restrictions",
+        "student_domain": "Student Email Domain",
+        "staff_domain": "Staff Email Domain",
+        "public_access": "Public Access",
+        "registration_status": "Registration Status",
+        "allow_public": "Allow Public Registration",
+        "allow_public_desc": "If enabled, anyone can create an account without an invitation."
+      }
+    }
   }
 }

@@ -71,7 +71,7 @@ export function RejectOrganizationDialog({target, onOpenChange, onSuccess}: Prop
                 </div>
 
                 <DialogFooter>
-                    <Button variant="ghost" onClick={() => onOpenChange(false)}>
+                    <Button variant="ghost" className="border-muted" onClick={() => onOpenChange(false)}>
                         {t("cancel")}
                     </Button>
                     <Button

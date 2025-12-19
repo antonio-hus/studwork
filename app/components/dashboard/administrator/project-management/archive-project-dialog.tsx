@@ -60,7 +60,7 @@ export function ArchiveProjectDialog({target, onOpenChange, onSuccess}: Props) {
                     <Button
                         variant="outline"
                         onClick={() => onOpenChange(false)}
-                        className="mr-2"
+                        className="mr-2 border-muted"
                     >
                         {t("cancel")}
                     </Button>

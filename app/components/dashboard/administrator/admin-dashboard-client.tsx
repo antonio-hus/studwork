@@ -247,14 +247,14 @@ export function AdminDashboardClient({
                                         <StatRow
                                             label={t("coordinatorLoad")}
                                             value={stats.coordinatorLoad.toFixed(1)}
-                                            barColor="bg-warning"
+                                            barColor="bg-primary"
                                             percentage={(stats.coordinatorLoad / 10) * 100}
                                             icon={UserCog}
                                         />
                                         <StatRow
                                             label={t("marketDemand")}
                                             value={stats.applicantsPerProject.toFixed(1)}
-                                            barColor="bg-primary"
+                                            barColor="bg-secondary"
                                             percentage={(stats.applicantsPerProject / 20) * 100}
                                             icon={TrendingUp}
                                         />
