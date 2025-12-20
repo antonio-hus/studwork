@@ -678,5 +678,45 @@
         "allow_public_desc": "If enabled, anyone can create an account without an invitation."
       }
     }
+  },
+  "profile": {
+    "base": {
+      "header": {
+        "label": "Profile Configuration"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "save_changes": "Save Changes",
+        "edit_profile": "Edit Profile"
+      }
+    },
+    "admin": {
+      "title": "Administrator Profile",
+      "subtitle": "Manage your administrator account details",
+      "sections": {
+        "basic_info": "User Information",
+        "admin_details": "Administrator Details"
+      },
+      "fields": {
+        "name": "Full name",
+        "email": "E-mail",
+        "bio": "Biography"
+      },
+      "hints": {
+        "email_locked": "Email cannot be changed after registration"
+      },
+      "placeholders": {
+        "bio": "Tell us about yourself...",
+        "no_bio": "No biography provided."
+      },
+      "actions": {
+        "change": "Change",
+        "change_photo": "Upload Photo",
+        "remove_photo": "Remove photo"
+      },
+      "success_message": "Profile updated successfully!",
+      "error_message": "Failed to update profile. Please try again.",
+      "error_unexpected": "An unexpected error occurred. Please try again."
+    }
   }
 }

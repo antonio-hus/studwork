@@ -1,7 +1,12 @@
 /** @format */
 import 'server-only'
 import {database, TransactionClient} from '@/lib/database'
-import type {Administrator, AdministratorCreateType, AdministratorUpdateType} from '@/lib/domain/administrator'
+import type {
+    Administrator,
+    AdministratorCreateType,
+    AdministratorUpdateType,
+    AdministratorWithUser
+} from '@/lib/domain/administrator'
 import {createLogger} from '@/lib/utils/logger'
 
 /**
@@ -27,7 +32,7 @@ export class AdministratorRepository {
      * @param userId - The ID of the user.
      * @returns The administrator profile including the user relation.
      */
-    async getByUserId(userId: string): Promise<Administrator | null> {
+    async getByUserId(userId: string): Promise<AdministratorWithUser | null> {
         try {
             const admin = await database.administrator.findUnique({
                 where: {userId},

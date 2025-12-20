@@ -49,7 +49,10 @@ export function UserTable({users, roles, isPending, onSuspendClick, onViewClick}
                         <div className="flex items-start justify-between gap-3">
                             <div className="flex items-center gap-3 overflow-hidden">
                                 <Avatar className="h-10 w-10 border border-border">
-                                    <AvatarImage src={user.profilePictureUrl || undefined}/>
+                                    <AvatarImage
+                                        className="h-full w-full object-cover"
+                                        src={user.profilePictureUrl || undefined}
+                                    />
                                     <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                                         {user.name?.charAt(0) || "U"}
                                     </AvatarFallback>
@@ -123,7 +126,7 @@ export function UserTable({users, roles, isPending, onSuspendClick, onViewClick}
                                 <TableCell className="pl-6 py-3">
                                     <div className="flex items-center gap-4">
                                         <Avatar className="h-9 w-9 border border-border bg-white">
-                                            <AvatarImage src={user.profilePictureUrl || undefined}/>
+                                            <AvatarImage className="h-full w-full object-cover" src={user.profilePictureUrl || undefined}/>
                                             <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                                                 {user.name?.charAt(0) || "U"}
                                             </AvatarFallback>

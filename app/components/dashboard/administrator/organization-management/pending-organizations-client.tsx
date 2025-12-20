@@ -99,7 +99,7 @@ export function PendingOrganizationsClient({initialData, roles}: Props) {
                                             <div className="flex items-start justify-between gap-3">
                                                 <div className="flex items-center gap-3">
                                                     <Avatar className="h-10 w-10 border border-border">
-                                                        <AvatarImage src={org.user.profilePictureUrl || undefined}/>
+                                                        <AvatarImage className="h-full w-full object-cover" src={org.user.profilePictureUrl || undefined}/>
                                                         <AvatarFallback
                                                             className="bg-primary/5 text-primary text-xs font-bold">
                                                             {org.user.name?.charAt(0) || "O"}

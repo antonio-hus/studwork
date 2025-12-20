@@ -134,7 +134,9 @@ export function ProjectTable({projects, statuses, isPending, onViewClick, onArch
                                     <div className="flex items-center gap-4">
                                         <Avatar className="h-9 w-9 border border-border bg-white">
                                             <AvatarImage
-                                                src={project.organization.user.profilePictureUrl || undefined}/>
+                                                src={project.organization.user.profilePictureUrl || undefined}
+                                                className="h-full w-full object-cover"
+                                            />
                                             <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                                                 {project.organization.user.name?.charAt(0) || "O"}
                                             </AvatarFallback>
@@ -153,7 +155,9 @@ export function ProjectTable({projects, statuses, isPending, onViewClick, onArch
                                         <div className="flex items-center gap-4">
                                             <Avatar className="h-9 w-9 border border-border bg-white">
                                                 <AvatarImage
-                                                    src={project.coordinator.user.profilePictureUrl || undefined}/>
+                                                    src={project.coordinator.user.profilePictureUrl || undefined}
+                                                    className="h-full w-full object-cover"
+                                                />
                                                 <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold">
                                                     {project.coordinator.user.name?.charAt(0) || "C"}
                                                 </AvatarFallback>

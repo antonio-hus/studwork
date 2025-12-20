@@ -132,13 +132,13 @@ export function AdminSettings({user}: AdminSettingsProps) {
     if (!configForm) return null;
 
     // Helper for safe theme access
-    const safeThemeColors = (configForm.themeColors as unknown as ThemeColors) || defaultConfig.themeColors;
+    const safeThemeColors = (configForm.themeColors as ThemeColors) || defaultConfig.themeColors;
 
     return (
         <div className="min-h-screen w-full bg-background p-4 sm:p-6 lg:p-8">
             <div className="mx-auto max-w-7xl animate-in fade-in zoom-in-95 duration-500 space-y-6 sm:space-y-8">
 
-                {/* Page Header */}
+            {/* Page Header */}
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <div className="flex items-center gap-4">
                         <div

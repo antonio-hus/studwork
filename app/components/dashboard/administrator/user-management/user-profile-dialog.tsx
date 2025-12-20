@@ -89,7 +89,7 @@ export function UserProfileDialog({user, open, onOpenChange, roles}: Props) {
                 <div className="relative h-32 bg-muted/30 border-b border-border">
                     <div className="absolute -bottom-10 left-6">
                         <Avatar className="h-20 w-20 border-4 border-background shadow-sm bg-background">
-                            <AvatarImage src={user.profilePictureUrl || undefined}/>
+                            <AvatarImage className="h-full w-full object-cover" src={user.profilePictureUrl || undefined}/>
                             <AvatarFallback className="text-xl bg-primary/10 text-primary">
                                 {user.name?.charAt(0) || 'U'}
                             </AvatarFallback>

@@ -222,15 +222,19 @@ export function DashboardShell({user, config, navItems, children,}: DashboardShe
                         <Tooltip delayDuration={0}>
                             <TooltipTrigger asChild>
                                 <Link
-                                    href="/profile"
+                                    href="/dashboard/profile"
                                     className={cn(
                                         "flex items-center rounded-lg transition-all duration-200",
                                         "hover:bg-muted/50 border border-transparent",
                                         collapsed ? "justify-center p-2" : "gap-3 p-2 hover:border-border/50"
                                     )}
                                 >
-                                    <Avatar className="h-9 w-9 border border-border">
-                                        <AvatarImage src={user.profilePictureUrl || undefined}/>
+                                    <Avatar className="h-9 w-9 border border-border overflow-hidden">
+                                        <AvatarImage
+                                            src={user.profilePictureUrl || undefined}
+                                            className="h-full w-full object-cover"
+                                            alt={initials}
+                                        />
                                         <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
                                             {initials}
                                         </AvatarFallback>
@@ -341,7 +345,7 @@ export function DashboardShell({user, config, navItems, children,}: DashboardShe
                     </div>
 
                     <div className="p-4 border-t border-border bg-muted/5">
-                        <Link href="/profile"
+                        <Link href="/dashboard/profile"
                               className="flex items-center gap-3 mb-4 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                             <Avatar className="h-10 w-10 border border-border">
                                 <AvatarImage src={user.profilePictureUrl || undefined}/>
