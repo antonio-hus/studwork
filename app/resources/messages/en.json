@@ -630,6 +630,26 @@
       }
     }
   },
+  "organization": {
+    "disclaimer": {
+      "organization": {
+        "title": "Organization Setup Required",
+        "subtitle": "Your organization profile is incomplete. Please finish the setup to unlock full platform access.",
+        "why_is_this_required": "Why is this required?",
+        "explanation": "To ensure the safety and validity of internships on our platform, all organizations must verify their identity and contact information before posting opportunities.",
+        "steps_to_complete": "Required Information",
+        "steps": {
+          "basic_info": "Organization Name & Logo",
+          "contact_details": "Address & VAT Number",
+          "verification": "Representative Contact Info"
+        },
+        "buttons": {
+          "complete_profile": "Complete Profile Now"
+        },
+        "footer_note": "This process usually takes less than 2 minutes."
+      }
+    }
+  },
   "settings": {
     "admin": {
       "title": "Admin Settings",
