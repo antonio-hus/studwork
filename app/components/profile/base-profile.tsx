@@ -1,18 +1,30 @@
 /** @format */
 "use client";
 
-import React from "react";
+import React, {useState} from "react";
 import {
     Save,
     X,
     Pencil,
     Loader2,
     User as UserIcon,
+    AlertTriangle,
+    Trash2
 } from "lucide-react";
 import {useTranslations} from "next-intl";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
 import {Label} from "@/components/ui/label";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogClose
+} from "@/components/ui/dialog";
 
 interface BaseProfileProps {
     title: string;
@@ -27,6 +39,7 @@ interface BaseProfileProps {
     onToggleEdit: () => void;
     onCancel: () => void;
     onSave: () => void;
+    onDelete?: () => void;
 
     // Optional: translation namespace, defaults to "profile.base"
     translationNamespace?: string;
@@ -44,10 +57,12 @@ export function BaseProfile({
                                 onToggleEdit,
                                 onCancel,
                                 onSave,
+                                onDelete,
                                 children,
                                 translationNamespace = "profile.base",
                             }: BaseProfileProps) {
     const t = useTranslations(translationNamespace);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     return (
         <div className="min-h-screen w-full bg-background p-4 sm:p-6 lg:p-8">
@@ -126,6 +141,67 @@ export function BaseProfile({
                     {/* Content Area */}
                     <CardContent className="p-4 sm:p-6 space-y-8">
                         {children}
+
+                        {/* Dangerous Zone */}
+                        {onDelete && (
+                            <div className="mt-6 border-t border-background">
+                                <div className="rounded-lg border border-error/30 bg-error/5 p-6">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+                                        <div className="flex items-start gap-4">
+                                            <div className="p-2 bg-error/10 rounded-lg">
+                                                <AlertTriangle className="w-6 h-6 text-error" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <h3 className="font-semibold text-error">
+                                                    {t("danger_zone.title") || "Danger Zone"}
+                                                </h3>
+                                                <p className="text-sm text-muted-foreground max-w-md">
+                                                    {t("danger_zone.description") || "Permanently delete your account and all associated data. This action cannot be undone."}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button variant="destructive" size="sm" className="shrink-0 mt-4 sm:mt-0 bg-error text-error-foreground hover:bg-error/90 border-error/20">
+                                                    <Trash2 className="w-4 h-4 mr-2" />
+                                                    {t("danger_zone.button") || "Delete Account"}
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="bg-background border-border shadow-2xl sm:max-w-[425px] gap-6 z-[100]">
+                                                <DialogHeader className="gap-2">
+                                                    <DialogTitle className="text-xl font-bold tracking-tight">
+                                                        {t("danger_zone.confirm_title") || "Are you absolutely sure?"}
+                                                    </DialogTitle>
+                                                    <DialogDescription className="text-muted-foreground">
+                                                        {t("danger_zone.confirm_description") || "This action cannot be undone. This will permanently delete your account and remove your data from our servers."}
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <DialogFooter className="gap-2 sm:gap-0">
+                                                    <DialogClose asChild>
+                                                        <Button 
+                                                            variant="outline" 
+                                                            className="mr-2 border-muted"
+                                                        >
+                                                            {t("buttons.cancel") || "Cancel"}
+                                                        </Button>
+                                                    </DialogClose>
+                                                    <Button 
+                                                        variant="destructive" 
+                                                        onClick={() => {
+                                                            onDelete();
+                                                            setIsDeleteDialogOpen(false);
+                                                        }}
+                                                        className="bg-error hover:bg-error/90"
+                                                    >
+                                                        {t("danger_zone.confirm_button") || "Delete Account"}
+                                                    </Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </div>

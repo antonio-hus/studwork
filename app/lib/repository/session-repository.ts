@@ -51,7 +51,10 @@ export class SessionRepository {
             const session = await this.getSession()
             const now = Date.now()
 
-            session.user = user
+            session.user = {
+                ...user,
+                profilePictureUrl: null
+            }
             session.isAuth = true
             session.createdAt = now
             session.expiresAt = now + (sessionOptions.ttl! * 1000)

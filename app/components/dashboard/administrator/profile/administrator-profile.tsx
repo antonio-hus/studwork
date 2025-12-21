@@ -7,7 +7,10 @@ import {toast} from "sonner";
 
 // Domain & Controller
 import {AdministratorWithUser} from "@/lib/domain/administrator";
-import {updateMyAdministratorProfile} from "@/lib/controller/admin/admin-profile-controller";
+import {
+    deleteMyAdministratorAccount,
+    updateMyAdministratorProfile
+} from "@/lib/controller/admin/admin-profile-controller";
 
 // Components
 import {BaseProfile} from "@/components/profile/base-profile";
@@ -68,6 +71,18 @@ export function AdminProfile({admin}: AdminProfileProps) {
         }
     };
 
+    const handleDelete = async () => {
+        try {
+            const result = await deleteMyAdministratorAccount();
+            if (!result.success) {
+                toast.error(result.error || t("error_message"));
+            }
+        } catch (e) {
+            console.error(e);
+            toast.error(t("error_unexpected"));
+        }
+    };
+
     return (
         <BaseProfile
             title={t("title")}
@@ -77,6 +92,7 @@ export function AdminProfile({admin}: AdminProfileProps) {
             onToggleEdit={() => setIsEditMode(true)}
             onCancel={handleCancel}
             onSave={handleSave}
+            onDelete={handleDelete}
         >
             <CommonUserFields
                 data={formData.user}

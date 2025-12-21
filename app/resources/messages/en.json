@@ -465,7 +465,7 @@
           "yearOfStudy": "Year of Study",
           "skills": "Skills",
           "interests": "Interests",
-          "resume": "Resume Link",
+          "linkedin": "LinkedIn Link",
           "address": "Address",
           "title": "Job Title",
           "department": "Department",
@@ -688,6 +688,14 @@
         "cancel": "Cancel",
         "save_changes": "Save Changes",
         "edit_profile": "Edit Profile"
+      },
+      "danger_zone": {
+        "title": "Danger Zone",
+        "description": "Permanently delete your account and all associated data. This action cannot be undone.",
+        "button": "Delete Account",
+        "confirm_title": "Are you absolutely sure?",
+        "confirm_description": "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+        "confirm_button": "Delete Account"
       }
     },
     "admin": {
@@ -708,6 +716,129 @@
       "placeholders": {
         "bio": "Tell us about yourself...",
         "no_bio": "No biography provided."
+      },
+      "actions": {
+        "change": "Change",
+        "change_photo": "Upload Photo",
+        "remove_photo": "Remove photo"
+      },
+      "success_message": "Profile updated successfully!",
+      "error_message": "Failed to update profile. Please try again.",
+      "error_unexpected": "An unexpected error occurred. Please try again."
+    },
+    "student": {
+      "title": "Student Profile",
+      "subtitle": "Manage your student account details",
+      "sections": {
+        "basic_info": "User Information",
+        "student_details": "Academic Details"
+      },
+      "fields": {
+        "name": "Full name",
+        "email": "E-mail",
+        "bio": "Biography",
+        "studyProgram": "Study Program",
+        "yearOfStudy": "Year of Study",
+        "skills": "Skills",
+        "interests": "Interests",
+        "linkedinUrl": "LinkedIn URL"
+      },
+      "hints": {
+        "email_locked": "Email cannot be changed after registration",
+        "skills_hint": "Comma separated list of skills",
+        "interests_hint": "Comma separated list of interests"
+      },
+      "placeholders": {
+        "bio": "Tell us about yourself...",
+        "no_bio": "No biography provided.",
+        "studyProgram": "e.g. Computer Science",
+        "yearOfStudy": "e.g. 3",
+        "skills": "e.g. Java, Python, React",
+        "interests": "e.g. AI, Web Development",
+        "linkedinUrl": "https://www.linkedin.com/in/..."
+      },
+      "actions": {
+        "change": "Change",
+        "change_photo": "Upload Photo",
+        "remove_photo": "Remove photo"
+      },
+      "success_message": "Profile updated successfully!",
+      "error_message": "Failed to update profile. Please try again.",
+      "error_unexpected": "An unexpected error occurred. Please try again."
+    },
+    "coordinator": {
+      "title": "Coordinator Profile",
+      "subtitle": "Manage your coordinator account details",
+      "sections": {
+        "basic_info": "User Information",
+        "coordinator_details": "Professional Details"
+      },
+      "fields": {
+        "name": "Full name",
+        "email": "E-mail",
+        "bio": "Biography",
+        "department": "Department",
+        "title": "Job Title",
+        "areasOfExpertise": "Areas of Expertise"
+      },
+      "hints": {
+        "email_locked": "Email cannot be changed after registration",
+        "expertise_hint": "Comma separated list of expertise areas"
+      },
+      "placeholders": {
+        "bio": "Tell us about yourself...",
+        "no_bio": "No biography provided.",
+        "department": "e.g. Faculty of Engineering",
+        "title": "e.g. Senior Lecturer",
+        "areasOfExpertise": "e.g. Software Engineering, Data Science"
+      },
+      "actions": {
+        "change": "Change",
+        "change_photo": "Upload Photo",
+        "remove_photo": "Remove photo"
+      },
+      "success_message": "Profile updated successfully!",
+      "error_message": "Failed to update profile. Please try again.",
+      "error_unexpected": "An unexpected error occurred. Please try again."
+    },
+    "organization": {
+      "title": "Organization Profile",
+      "subtitle": "Manage your organization account details",
+      "sections": {
+        "basic_info": "User Information",
+        "organization_details": "Organization Details",
+        "contact_info": "Contact Information",
+        "location": "Location"
+      },
+      "fields": {
+        "name": "Organization Name",
+        "email": "Account E-mail",
+        "bio": "Description",
+        "type": "Organization Type",
+        "contactPerson": "Contact Person",
+        "contactEmail": "Contact Email",
+        "contactPhone": "Contact Phone",
+        "websiteUrl": "Website URL",
+        "facebookUrl": "Facebook URL",
+        "address": "Address",
+        "city": "City",
+        "country": "Country"
+      },
+      "hints": {
+        "email_locked": "Email cannot be changed after registration"
+      },
+      "placeholders": {
+        "bio": "Describe your organization...",
+        "no_bio": "No description provided.",
+        "type": "Organization Type",
+        "contactPerson": "e.g. Jane Doe",
+        "contactEmail": "contact@example.com",
+        "contactPhone": "+1234567890",
+        "websiteUrl": "https://...",
+        "facebookUrl": "https://facebook.com/...",
+        "address": "123 Main St",
+        "city": "New York",
+        "country": "USA"
       },
       "actions": {
         "change": "Change",

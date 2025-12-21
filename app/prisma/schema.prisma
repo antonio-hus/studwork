@@ -137,9 +137,9 @@ model Student {
   studyProgram String?
   yearOfStudy  Int?
 
-  skills    String[]
-  interests String[]
-  resumeUrl String?
+  skills      String[]
+  interests   String[]
+  linkedinUrl String?
 
   // Relations
   applications       Application[]

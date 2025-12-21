@@ -3,12 +3,15 @@ import React, {JSX} from "react";
 import {redirect} from 'next/navigation';
 import {requireAuth} from '@/lib/controller/auth/session-controller';
 import {UserRole} from '@/lib/domain/user';
-import {StudentDashboard} from '@/components/dashboard/student/student-dashboard';
-import {CoordinatorDashboard} from '@/components/dashboard/coordinator/coordinator-dashboard';
-import {OrganizationDashboard} from '@/components/dashboard/organization/organization-dashboard';
-import {AdminSettings} from "@/components/dashboard/administrator/settings/admin-settings";
 import {AdminProfile} from "@/components/dashboard/administrator/profile/administrator-profile";
+import {StudentProfile} from "@/components/dashboard/student/student-profile";
+import {CoordinatorProfile} from "@/components/dashboard/coordinator/coordinator-profile";
+import {OrganizationProfile} from "@/components/dashboard/organization/organization-profile";
 import {getMyAdministratorProfile} from "@/lib/controller/admin/admin-profile-controller";
+import {getMyStudentProfile} from "@/lib/controller/student/student-profile-controller";
+import {getMyCoordinatorProfile} from "@/lib/controller/coordinator/coordinator-profile-controller";
+import {getMyOrganizationProfile} from "@/lib/controller/organization/organization-profile-controller";
+import {OrganizationType} from "@/lib/domain/organization";
 
 /**
  * Profile Page
@@ -36,27 +39,52 @@ export default async function ProfilePage(): Promise<JSX.Element> {
             const result = await getMyAdministratorProfile();
 
             if (result.success) {
-                return <AdminProfile admin={result.data} />;
+                return <AdminProfile admin={result.data}/>;
             }
 
             console.error("Failed to load admin profile:", result.error);
             redirect('/dashboard');
+            break;
         }
 
-        case UserRole.STUDENT:
-            // Future: const student = await getMyStudentProfile();
-            // return <StudentProfile student={student.data} />;
-            return <StudentDashboard user={user} />;
+        case UserRole.STUDENT: {
+            const result = await getMyStudentProfile();
 
-        case UserRole.COORDINATOR:
-            // Future: const coordinator = await getMyCoordinatorProfile();
-            return <CoordinatorDashboard user={user} />;
+            if (result.success) {
+                return <StudentProfile student={result.data}/>;
+            }
 
-        case UserRole.ORGANIZATION:
-            // Future: const org = await getMyOrganizationProfile();
-            return <OrganizationDashboard user={user} />;
+            console.error("Failed to load student profile:", result.error);
+            redirect('/dashboard');
+            break;
+        }
+
+        case UserRole.COORDINATOR: {
+            const result = await getMyCoordinatorProfile();
+
+            if (result.success) {
+                return <CoordinatorProfile coordinator={result.data}/>;
+            }
+
+            console.error("Failed to load coordinator profile:", result.error);
+            redirect('/dashboard');
+            break;
+        }
+
+        case UserRole.ORGANIZATION: {
+            const result = await getMyOrganizationProfile();
+
+            if (result.success) {
+                return <OrganizationProfile organization={result.data} organizationTypes={OrganizationType}/>;
+            }
+
+            console.error("Failed to load organization profile:", result.error);
+            redirect('/dashboard');
+            break;
+        }
 
         default:
             redirect('/login');
+            break;
     }
 }
