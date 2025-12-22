@@ -64,6 +64,14 @@ enum ProjectStatus {
   ARCHIVED
 }
 
+enum ProjectCompletionStatus {
+  DRAFT
+  COORDINATOR_REVIEWED
+  ORGANIZATION_REVIEWED
+  PUBLISHED
+  ARCHIVED
+}
+
 enum ProjectCategory {
   DIGITALIZATION
   COMMUNICATION
@@ -340,7 +348,8 @@ model ProjectCompletion {
   organizationPerformanceRating PerformanceRating
   organizationWrittenEvaluation String            @db.Text
 
-  isVisibleInPortfolio Boolean @default(true)
+  status               ProjectCompletionStatus @default(DRAFT)
+  isVisibleInPortfolio Boolean                 @default(true)
 
   completedAt DateTime @default(now())
   createdAt   DateTime @default(now())

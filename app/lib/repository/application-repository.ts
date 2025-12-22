@@ -18,6 +18,7 @@ export type ApplicationFilterOptions = {
     studentId?: string;
     projectId?: string;
     status?: ApplicationStatus;
+    organizationId?: string;
 };
 
 /**
@@ -50,12 +51,16 @@ export class ApplicationRepository {
 
     /**
      * Retrieves a count of applications for each status.
+     * @param organizationId - Optional organization ID to filter by.
      * @returns A Promise resolving to a map of ApplicationStatus to count.
      */
-    async countByStatus(): Promise<Record<ApplicationStatus, number>> {
+    async countByStatus(organizationId?: string): Promise<Record<ApplicationStatus, number>> {
         try {
+            const where: ApplicationWhereInput = organizationId ? {project: {organizationId}} : {};
+            
             const counts = await database.application.groupBy({
                 by: ['status'],
+                where,
                 _count: {
                     status: true,
                 },
@@ -102,7 +107,8 @@ export class ApplicationRepository {
             const where: ApplicationWhereInput = {
                 studentId: filters.studentId,
                 projectId: filters.projectId,
-                status: filters.status
+                status: filters.status,
+                project: filters.organizationId ? {organizationId: filters.organizationId} : undefined
             };
 
             const [items, total] = await Promise.all([

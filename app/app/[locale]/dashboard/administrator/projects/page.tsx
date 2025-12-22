@@ -1,7 +1,7 @@
 /** @format */
 "use server"
 import React from 'react';
-import {getProjects, getProjectsWithDetails} from '@/lib/controller/admin/content-moderation-controller';
+import {getProjectsWithDetails} from '@/lib/controller/admin/content-moderation-controller';
 import {ProjectManagementClient} from '@/components/dashboard/administrator/project-management/project-management-client';
 import {ProjectStatus} from '@/lib/domain/project';
 

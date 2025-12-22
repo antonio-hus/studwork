@@ -219,6 +219,15 @@
       "reasonLabel": "Reason for Rejection",
       "guidance": "You are welcome to submit a new application once the issues above have been addressed."
     },
+    "newOrgSignup": {
+      "from": "Platform Notifications",
+      "subject": "Action Required: New Organization Registration",
+      "greeting": "Hello Admin",
+      "body": "A new organization named \"{name}\" has registered on the platform and is awaiting approval.",
+      "actionRequired": "Please review their profile and take appropriate action.",
+      "buttonText": "Review Application",
+      "footer": "You can approve or reject this application from the admin dashboard."
+    },
     "suspended": {
       "from": "Platform Security",
       "subject": "Action Required: Account Suspended",
@@ -227,6 +236,22 @@
       "reasonTitle": "Reason for Suspension",
       "impact": "While suspended, you will not be able to log in or access platform features.",
       "footer": "If you believe this decision was made in error, please contact our support team immediately."
+    },
+    "coordinatorReviewSubmitted": {
+      "from": "Project Updates",
+      "subject": "Coordinator Review Submitted",
+      "greeting": "Hello {name}",
+      "body": "The coordinator has submitted their review for your project \"{project}\".",
+      "nextSteps": "You can view the feedback and grade in your dashboard.",
+      "buttonText": "View Review"
+    },
+    "organizationReviewSubmitted": {
+      "from": "Project Updates",
+      "subject": "Organization Review Submitted",
+      "greeting": "Hello {name}",
+      "body": "The organization has submitted their review for your project \"{project}\".",
+      "nextSteps": "You can view the feedback and grade in your dashboard.",
+      "buttonText": "View Review"
     }
   },
   "pages": {
@@ -419,6 +444,7 @@
       "users": "User Management",
       "organizations": "Organization Management",
       "projects": "Project Management",
+      "completions": "Project Completions",
       "settings": "Settings",
       "opportunities": "Opportunities",
       "applications": "Applications",
@@ -465,7 +491,7 @@
           "yearOfStudy": "Year of Study",
           "skills": "Skills",
           "interests": "Interests",
-          "linkedin": "LinkedIn Link",
+          "linkedin": "LinkedIn URL",
           "address": "Address",
           "title": "Job Title",
           "department": "Department",
@@ -496,6 +522,7 @@
         "viewProfile": "View Profile",
         "verifyOrg": "Verify Organization",
         "suspend": "Suspend User",
+        "delete": "Delete User",
         "unsuspend": "Restore Access"
       },
       "success": {
@@ -504,6 +531,11 @@
         "restored": "User access has been restored."
       },
       "modals": {
+        "delete": "Delete User",
+        "deleteWarning": "Are you sure you want to delete this user? This action is permanent.",
+        "deleteSuccess": "User deleted successfully.",
+        "cancel": "Cancel",
+        "confirmDelete": "Delete",
         "suspendTitle": "Suspend User",
         "unsuspendTitle": "Restore User Access",
         "targetUser": "You are about to change the access status for this user.",
@@ -568,27 +600,10 @@
         }
       },
       "table": {
-        "header": {
-          "title": "Title",
-          "organization": "Organization",
-          "coordinator": "Coordinator",
-          "status": "Status",
-          "createdAt": "Created At",
-          "actions": "Actions"
-        },
-        "status": {
-          "DRAFT": "Draft",
-          "PENDING_REVIEW": "Pending",
-          "COORDINATOR_ASSIGNED": "Assigned",
-          "PUBLISHED": "Published",
-          "IN_PROGRESS": "In Progress",
-          "COMPLETED": "Completed",
-          "ARCHIVED": "Archived"
-        },
-        "noResults": "No projects found",
-        "tryDifferentSearch": "Try adjusting your search terms or filters.",
-        "unassigned": "Unassigned",
-        "viewDetails": "View Details",
+        "title": "Title",
+        "status": "Status",
+        "created_at": "Created At",
+        "actions": "Actions",
         "delete": "Delete",
         "archive": "Archive",
         "deleteSuccess": "Project deleted successfully.",
@@ -631,22 +646,181 @@
     }
   },
   "organization": {
-    "disclaimer": {
-      "organization": {
-        "title": "Organization Setup Required",
-        "subtitle": "Your organization profile is incomplete. Please finish the setup to unlock full platform access.",
-        "why_is_this_required": "Why is this required?",
-        "explanation": "To ensure the safety and validity of internships on our platform, all organizations must verify their identity and contact information before posting opportunities.",
-        "steps_to_complete": "Required Information",
-        "steps": {
-          "basic_info": "Organization Name & Logo",
-          "contact_details": "Address & VAT Number",
-          "verification": "Representative Contact Info"
+    "unverified": {
+      "title": "Verification Pending",
+      "subtitle": "Your organization account is currently under review by our administration team.",
+      "status_label": "Current Status",
+      "status_pending": "Pending Review",
+      "review_progress_label": "Review Progress",
+      "waiting_approval": "Awaiting Approval",
+      "admins_notified_title": "Admins Notified",
+      "admins_notified_desc": "Our team has received your submission. We are currently reviewing your request.",
+      "note_label": "Note",
+      "footer_note": "You will receive an email notification once the verification process is complete.",
+      "tips_header": "Maximize Approval Chances",
+      "tips_subtitle": "Please ensure the following details are complete:",
+      "tips": {
+        "org_type": "Organization Type",
+        "org_type_desc": "Ensure the correct entity type is selected.",
+        "contact_info": "Contact Information",
+        "contact_info_desc": "Provide a valid email and phone number.",
+        "profile_details": "Profile Details",
+        "profile_details_desc": "Upload a logo and provide a description."
+      },
+      "buttons": {
+        "update_details": "Update Details"
+      }
+    },
+    "projects": {
+      "title": "Project Management",
+      "subtitle": "Manage your organization's projects and opportunities.",
+      "create_button": "Create Project",
+      "list_title": "Project List",
+      "filter_status": "Filter by Status",
+      "no_projects": "No projects found. Create your first one!",
+      "toolbar": {
+        "searchPlaceholder": "Search by title...",
+        "search": "Search"
+      },
+      "status": {
+        "all": "All Statuses",
+        "draft": "Draft",
+        "pending_review": "Pending Review",
+        "coordinator_assigned": "Coordinator Assigned",
+        "published": "Published",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "archived": "Archived"
+      },
+      "table": {
+        "title": "Title",
+        "status": "Status",
+        "created_at": "Created At",
+        "actions": "Actions",
+        "delete": "Delete",
+        "deleteWarning": "Are you sure you want to delete this project? This action is permanent.",
+        "confirmDelete": "Delete",
+        "cancel": "Cancel"
+      },
+      "actions": {
+        "label": "Actions",
+        "edit": "Edit",
+        "delete": "Delete",
+        "publish": "Publish for Review",
+        "revert_to_draft": "Revert to Draft"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {current} of {total}"
+      },
+      "toolbar": {
+        "searchPlaceholder": "Search by title...",
+        "search": "Search"
+      },
+      "create": {
+        "title": "Create New Project",
+        "subtitle": "Fill in the details to create a new project opportunity."
+      },
+      "edit": {
+        "title": "Edit Project",
+        "subtitle": "Update the details of your project."
+      },
+      "form": {
+        "create_title": "Create Project",
+        "create_subtitle": "Enter the project details below.",
+        "edit_title": "Edit Project",
+        "edit_subtitle": "Update the project details below.",
+        "sections": {
+          "general_info": "General Information",
+          "details": "Project Details"
+        },
+        "fields": {
+          "title": {
+            "label": "Project Title",
+            "placeholder": "Enter project title"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Describe the project..."
+          },
+          "category": {
+            "label": "Category",
+            "placeholder": "Select a category"
+          },
+          "numberOfStudents": {
+            "label": "Number of Students"
+          }
+        },
+        "categories": {
+          "digitalization": "Digitalization",
+          "communication": "Communication",
+          "community_services": "Community Services",
+          "data_analysis": "Data Analysis",
+          "event_management": "Event Management",
+          "software_development": "Software Development",
+          "data_science": "Data Science",
+          "marketing": "Marketing",
+          "design": "Design",
+          "research": "Research",
+          "other": "Other"
         },
         "buttons": {
-          "complete_profile": "Complete Profile Now"
+          "cancel": "Cancel",
+          "create": "Create Project",
+          "save": "Save Changes"
         },
-        "footer_note": "This process usually takes less than 2 minutes."
+        "create_success": "Project created successfully!",
+        "update_success": "Project updated successfully!",
+        "publish_success": "Project published for review successfully!",
+        "revert_success": "Project reverted to draft successfully!",
+        "unexpected_error": "An unexpected error occurred."
+      },
+      "delete_dialog": {
+        "title": "Delete Project",
+        "description": "Are you sure you want to delete this project? This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "success": "Project deleted successfully.",
+        "error": "Failed to delete project."
+      }
+    },
+    "completions": {
+      "title": "Project Completions",
+      "subtitle": "Review and approve student project completions.",
+      "list_title": "Completion List",
+      "no_completions": "No completions found.",
+      "toolbar": {
+        "searchPlaceholder": "Search by project name...",
+        "search": "Search"
+      },
+      "advanced_search": {
+        "toggle": "Advanced Search",
+        "student_name": "Student Name/Email",
+        "student_name_placeholder": "Search by student...",
+        "coordinator_name": "Coordinator Name/Email",
+        "coordinator_name_placeholder": "Search by coordinator..."
+      },
+      "table": {
+        "project": "Project",
+        "student": "Student",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "submitted": "Submitted",
+        "coordinator_reviewed": "Coordinator Reviewed",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "actions": {
+        "label": "Actions",
+        "view": "View Details"
+      },
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {current} of {total}"
       }
     }
   },

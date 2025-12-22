@@ -36,33 +36,43 @@ export const NAVIGATION_ITEMS: NavItem[] = [
     },
     {
         titleKey: 'users',
-        href: '/dashboard/admin/users',
+        href: '/dashboard/administrator/users',
         roles: [UserRole.ADMINISTRATOR]
     },
     {
         titleKey: 'organizations',
-        href: '/dashboard/admin/organizations',
+        href: '/dashboard/administrator/organizations',
         roles: [UserRole.ADMINISTRATOR]
     },
     {
         titleKey: 'projects',
-        href: '/dashboard/admin/projects',
+        href: '/dashboard/administrator/projects',
         roles: [UserRole.ADMINISTRATOR]
+    },
+    {
+        titleKey: 'projects',
+        href: '/dashboard/projects',
+        roles: [UserRole.ORGANIZATION]
+    },
+    {
+        titleKey: 'completions',
+        href: '/dashboard/completions',
+        roles: [UserRole.ORGANIZATION]
     },
     {
         titleKey: 'opportunities',
         href: '/dashboard/opportunities',
-        roles: [UserRole.STUDENT, UserRole.COORDINATOR, UserRole.ORGANIZATION]
+        roles: [UserRole.STUDENT, UserRole.COORDINATOR]
     },
     {
         titleKey: 'applications',
         href: '/dashboard/applications',
-        roles: [UserRole.STUDENT, UserRole.ORGANIZATION]
+        roles: [UserRole.STUDENT]
     },
     {
         titleKey: 'settings',
         href: '/dashboard/settings',
-        roles: [UserRole.STUDENT, UserRole.COORDINATOR, UserRole.ORGANIZATION, UserRole.ADMINISTRATOR]
+        roles: [UserRole.ADMINISTRATOR]
     }
 ]
 

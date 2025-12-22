@@ -23,6 +23,15 @@ export class AdministratorService {
     }
 
     /**
+     * Retrieves all administrator users.
+     *
+     * @returns A list of all administrator profiles.
+     */
+    async getAdministrators(): Promise<AdministratorWithUser[]> {
+        return AdministratorRepository.instance.getMany()
+    }
+
+    /**
      * Retrieves a administrator's full profile by their User ID.
      *
      * @param userId - The unique identifier of the user.

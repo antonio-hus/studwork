@@ -5,7 +5,7 @@ import type {Prisma} from "@/prisma/generated/client";
  * Re-exporting generated Prisma types for the ProjectCompletion entity.
  */
 export type {ProjectCompletion} from "@/prisma/generated/client";
-export {PerformanceRating} from "@/prisma/generated/client";
+export {ProjectCompletionStatus, PerformanceRating} from "@/prisma/generated/client";
 
 /**
  * Data Transfer Object (DTO) for creating a new Project Completion record.
@@ -34,6 +34,9 @@ export type ProjectCompletionWithDetails = Prisma.ProjectCompletionGetPayload<{
         project: {
             include: {
                 organization: {
+                    include: { user: true }
+                };
+                coordinator: {
                     include: { user: true }
                 };
             }

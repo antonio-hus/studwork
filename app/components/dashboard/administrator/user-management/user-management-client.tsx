@@ -12,6 +12,7 @@ import {UserTable} from "@/components/dashboard/administrator/user-management/us
 import {PaginationFooter} from "@/components/dashboard/administrator/user-management/pagination-footer";
 import {SuspendUserDialog} from "@/components/dashboard/administrator/user-management/suspend-user-dialog";
 import {UserProfileDialog} from "@/components/dashboard/administrator/user-management/user-profile-dialog";
+import {DeleteUserDialog} from "@/components/dashboard/administrator/user-management/delete-user-dialog";
 
 interface PageProps {
     roles: typeof UserRole;
@@ -41,6 +42,7 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
     const [isPending, startTransition] = useTransition();
 
     const [suspensionTarget, setSuspensionTarget] = useState<User | null>(null);
+    const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
     const [viewTarget, setViewTarget] = useState<User | null>(null);
 
     const updateUrl = useCallback(
@@ -105,6 +107,7 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
                             roles={roles}
                             isPending={isPending}
                             onSuspendClick={setSuspensionTarget}
+                            onDeleteClick={setDeleteTarget}
                             onViewClick={setViewTarget}
                         />
                     </CardContent>
@@ -125,6 +128,15 @@ export function UserManagementClient({roles, initialUsers, initialPagination, in
                 onOpenChange={(open: boolean) => !open && setSuspensionTarget(null)}
                 onSuccess={() => {
                     setSuspensionTarget(null);
+                    router.refresh();
+                }}
+            />
+
+            <DeleteUserDialog
+                target={deleteTarget}
+                onOpenChange={(open: boolean) => !open && setDeleteTarget(null)}
+                onSuccess={() => {
+                    setDeleteTarget(null);
                     router.refresh();
                 }}
             />

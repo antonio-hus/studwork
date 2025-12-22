@@ -21,6 +21,8 @@ import {
     X,
     PanelLeftClose,
     PanelLeftOpen,
+    FolderKanban,
+    FileCheck,
     type LucideIcon,
 } from "lucide-react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
@@ -41,10 +43,12 @@ import {cn} from "@/lib/utils";
  */
 const ICON_MAP: Record<string, LucideIcon> = {
     "/dashboard": LayoutDashboard,
-    "/dashboard/admin/users": Users,
-    "/dashboard/admin/organizations": LucideBuilding2,
-    "/dashboard/admin/projects": LucideBriefcase,
+    "/dashboard/administrator/users": Users,
+    "/dashboard/administrator/organizations": LucideBuilding2,
+    "/dashboard/administrator/projects": LucideBriefcase,
+    "/dashboard/projects": FolderKanban,
     "/dashboard/opportunities": Briefcase,
+    "/dashboard/completions": FileCheck,
     "/dashboard/applications": FileText,
     "/dashboard/organization/profile": Building2,
     "/dashboard/settings": Settings,

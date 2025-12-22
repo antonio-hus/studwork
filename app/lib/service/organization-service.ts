@@ -11,6 +11,7 @@ import {UserRepository} from '@/lib/repository/user-repository'
 import {hashPassword} from '@/lib/utils/password'
 import {createLogger} from '@/lib/utils/logger'
 import {EmailService} from "@/lib/service/email-service";
+import {AdministratorService} from "@/lib/service/admin-service";
 
 /**
  * Service for managing Organization-related business logic.
@@ -59,6 +60,24 @@ export class OrganizationService {
                 userId: result.user.id,
                 orgId: result.id
             })
+
+            // Send notification to admins
+            AdministratorService.instance.getAdministrators().then(admins => {
+                if (admins.length === 0) {
+                    this.logger.warn('No admins found to notify about new organization signup')
+                    return
+                }
+                
+                const orgName = result.user.name || 'Unnamed Organization'
+                
+                admins.forEach(admin => {
+                    EmailService.instance.sendNewOrganizationSignupEmail(admin.user.email, orgName)
+                        .catch(err => this.logger.error('Failed to send admin notification email', err as Error))
+                })
+            }).catch(err => {
+                this.logger.error('Failed to fetch admins for notification', err as Error)
+            })
+
             return result
         } catch (error) {
             this.logger.error('Failed to register organization', error as Error)

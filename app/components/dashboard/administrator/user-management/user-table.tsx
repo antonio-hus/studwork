@@ -18,6 +18,7 @@ interface Props {
     roles: typeof UserRole;
     isPending: boolean;
     onSuspendClick: (user: User) => void;
+    onDeleteClick: (user: User) => void;
     onViewClick: (user: User) => void;
 }
 
@@ -25,7 +26,7 @@ interface Props {
  * Responsive User List.
  * Renders a Card View on mobile devices and a Data Table on desktop.
  */
-export function UserTable({users, roles, isPending, onSuspendClick, onViewClick}: Props) {
+export function UserTable({users, roles, isPending, onSuspendClick, onDeleteClick, onViewClick}: Props) {
     const t = useTranslations("admin.users");
 
     if (users.length === 0) {
@@ -71,6 +72,7 @@ export function UserTable({users, roles, isPending, onSuspendClick, onViewClick}
                                 roles={roles}
                                 onSuspendClick={() => onSuspendClick(user)}
                                 onViewClick={() => onViewClick(user)}
+                                onDeleteClick={() => onDeleteClick(user)}
                             />
                         </div>
 
@@ -155,6 +157,7 @@ export function UserTable({users, roles, isPending, onSuspendClick, onViewClick}
                                         roles={roles}
                                         onSuspendClick={() => onSuspendClick(user)}
                                         onViewClick={() => onViewClick(user)}
+                                        onDeleteClick={() => onDeleteClick(user)}
                                     />
                                 </TableCell>
                             </TableRow>

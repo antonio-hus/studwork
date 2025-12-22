@@ -50,12 +50,16 @@ export class ProjectRepository {
 
     /**
      * Retrieves a count of projects for each status.
+     * @param organizationId - Optional organization ID to filter by.
      * @returns A Promise resolving to a map of ProjectStatus to count.
      */
-    async countByStatus(): Promise<Record<ProjectStatus, number>> {
+    async countByStatus(organizationId?: string): Promise<Record<ProjectStatus, number>> {
         try {
+            const where: ProjectWhereInput = organizationId ? {organizationId} : {};
+            
             const counts = await database.project.groupBy({
                 by: ['status'],
+                where,
                 _count: {
                     status: true,
                 },
@@ -196,14 +200,15 @@ export class ProjectRepository {
      * Includes related organization (with user) and application data.
      *
      * @param {string} id The unique project ID.
-     * @returns {Promise<Project | null>} The project data or null if not found.
+     * @returns {Promise<ProjectWithDetails | null>} The project data or null if not found.
      */
-    async getById(id: string): Promise<Project | null> {
+    async getById(id: string): Promise<ProjectWithDetails | null> {
         try {
             return await database.project.findUnique({
                 where: {id},
                 include: {
                     organization: {include: {user: true}},
+                    coordinator: {include: {user: true}},
                     applications: true
                 }
             });

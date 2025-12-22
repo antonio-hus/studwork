@@ -26,11 +26,12 @@ export class ApplicationService {
 
     /**
      * Retrieves a count of applications for each status.
+     * @param organizationId - Optional organization ID to filter by.
      * @returns A Promise resolving to a map of ApplicationStatus to count.
      */
-    async countApplicationsByStatus(): Promise<Record<ApplicationStatus, number>> {
+    async countApplicationsByStatus(organizationId?: string): Promise<Record<ApplicationStatus, number>> {
         try {
-            return await ApplicationRepository.instance.countByStatus();
+            return await ApplicationRepository.instance.countByStatus(organizationId);
         } catch (error) {
             this.logger.error('Failed to count applications by status', error as Error);
             throw error;

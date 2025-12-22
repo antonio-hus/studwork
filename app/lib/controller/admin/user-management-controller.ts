@@ -92,8 +92,8 @@ export async function verifyOrganization(userId: string): Promise<ActionResponse
 
         await orgService.verifyOrganization(userId)
 
-        revalidatePath('/admin/users')
-        revalidatePath('/admin/organizations/pending')
+        revalidatePath('/administrator/users')
+        revalidatePath('/administrator/organizations/pending')
         return {success: true, data: undefined}
     } catch (error) {
         logger.error('Failed to verify organization', error as Error)
@@ -119,8 +119,8 @@ export async function rejectOrganization(userId: string, reason: string): Promis
         // Delete the account
         await OrganizationService.instance.deleteOrganizationAccount(userId)
 
-        revalidatePath('/admin/users')
-        revalidatePath('/admin/organizations/pending')
+        revalidatePath('/administrator/users')
+        revalidatePath('/administrator/organizations/pending')
         return { success: true, data: undefined }
     } catch (error) {
         logger.error('Failed to reject organization', error as Error)
@@ -158,7 +158,37 @@ export async function toggleUserSuspension(
             await userService.unsuspendUser(userId)
         }
 
-        revalidatePath('/admin/users')
+        revalidatePath('/administrator/users')
+        return {success: true, data: undefined}
+    } catch (error) {
+        logger.error('Failed to toggle suspension', error as Error)
+        return {success: false, error: (error as Error).message || t('errors.unexpected')}
+    }
+}
+
+/**
+ * Deletes a user account.
+ * Restricted to administrators. Cannot be used on self.
+ *
+ * @param userId - The ID of the user to suspend/unsuspend.
+ * @returns A response indicating success or failure.
+ */
+export async function deleteUser(
+    userId: string
+): Promise<ActionResponse<void>> {
+    const t = await getTranslations()
+    try {
+        const admin = await ensureAdmin(t)
+        if (admin.id === userId) return {success: false, error: 'Cannot suspend self'}
+
+        const userService = UserService.instance
+        const targetUser = await userService.getUserById(userId)
+
+        if (!targetUser) return {success: false, error: t('errors.auth.user_not_found')}
+
+        await userService.deleteUser(userId)
+
+        revalidatePath('/administrator/users')
         return {success: true, data: undefined}
     } catch (error) {
         logger.error('Failed to toggle suspension', error as Error)

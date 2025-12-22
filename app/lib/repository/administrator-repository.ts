@@ -25,6 +25,22 @@ export class AdministratorRepository {
         }
         return AdministratorRepository._instance
     }
+    
+    /**
+     * Retrieves all administrator profiles.
+     *
+     * @returns A list of all administrator profiles including their user relation.
+     */
+    async getMany(): Promise<AdministratorWithUser[]> {
+        try {
+            return await database.administrator.findMany({
+                include: {user: true},
+            });
+        } catch (error) {
+            this.logger.error('Failed to retrieve administrators', error as Error);
+            throw error;
+        }
+    }
 
     /**
      * Retrieves an administrator profile by the associated user ID.

@@ -32,11 +32,12 @@ export class ProjectService {
 
     /**
      * Retrieves a count of projects for each status.
+     * @param organizationId - Optional organization ID to filter by.
      * @returns A Promise resolving to a map of ProjectStatus to count.
      */
-    async countProjectsByStatus(): Promise<Record<ProjectStatus, number>> {
+    async countProjectsByStatus(organizationId?: string): Promise<Record<ProjectStatus, number>> {
         try {
-            return await ProjectRepository.instance.countByStatus();
+            return await ProjectRepository.instance.countByStatus(organizationId);
         } catch (error) {
             this.logger.error('Failed to count projects by status', error as Error);
             throw error;
@@ -81,7 +82,7 @@ export class ProjectService {
      * @param id - The project ID.
      * @returns The project or null if not found.
      */
-    async getProjectById(id: string): Promise<Project | null> {
+    async getProjectById(id: string): Promise<ProjectWithDetails | null> {
         return ProjectRepository.instance.getById(id);
     }
 

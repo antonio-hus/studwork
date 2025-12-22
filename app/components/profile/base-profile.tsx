@@ -14,7 +14,6 @@ import {
 import {useTranslations} from "next-intl";
 import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
-import {Label} from "@/components/ui/label";
 import {
     Dialog,
     DialogContent,
@@ -83,68 +82,58 @@ export function BaseProfile({
                             </p>
                         </div>
                     </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        {isEditMode ? (
+                            <>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={onCancel}
+                                    disabled={isSaving}
+                                    className="w-full sm:w-auto border-muted order-2 sm:order-1"
+                                >
+                                    <X className="mr-2 h-4 w-4"/>
+                                    {t("buttons.cancel")}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    onClick={onSave}
+                                    disabled={isSaving}
+                                    className="w-full sm:w-auto order-1 sm:order-2"
+                                >
+                                    {isSaving ? (
+                                        <Loader2 className="w-4 h-4 mr-2 animate-spin"/>
+                                    ) : (
+                                        <Save className="w-4 h-4 mr-2"/>
+                                    )}
+                                    {t("buttons.save_changes")}
+                                </Button>
+                            </>
+                        ) : (
+                            <Button
+                                variant="default"
+                                size="sm"
+                                onClick={onToggleEdit}
+                                className="w-full sm:w-auto bg-primary text-background border-primary/20 border shadow-sm"
+                            >
+                                <Pencil className="mr-2 h-4 w-4"/>
+                                {t("buttons.edit_profile")}
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Main Content Card */}
                 <Card className="shadow-sm border-border bg-muted/30 overflow-hidden">
-                    <div className="border-b border-border/50 bg-background/50 backdrop-blur-sm sticky top-0 z-10">
-                        <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                            <div className="flex items-center gap-2">
-                                <Label className="text-xs font-medium text-muted-foreground uppercase">
-                                    {t("header.label")}
-                                </Label>
-                            </div>
-
-                            {/* Action Buttons */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full sm:w-auto">
-                                {isEditMode ? (
-                                    <>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={onCancel}
-                                            disabled={isSaving}
-                                            className="w-full border-muted"
-                                        >
-                                            <X className="mr-2 h-4 w-4"/>
-                                            {t("buttons.cancel")}
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            onClick={onSave}
-                                            disabled={isSaving}
-                                            className="w-full"
-                                        >
-                                            {isSaving ? (
-                                                <Loader2 className="w-4 h-4 mr-2 animate-spin"/>
-                                            ) : (
-                                                <Save className="w-4 h-4 mr-2"/>
-                                            )}
-                                            {t("buttons.save_changes")}
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <Button
-                                        variant="default"
-                                        size="sm"
-                                        onClick={onToggleEdit}
-                                        className="w-full bg-primary text-background border-primary/20 border shadow-sm col-span-full sm:col-span-2"
-                                    >
-                                        <Pencil className="mr-2 h-4 w-4"/>
-                                        {t("buttons.edit_profile")}
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Content Area */}
                     <CardContent className="p-4 sm:p-6 space-y-8">
                         {children}
 
                         {/* Dangerous Zone */}
                         {onDelete && (
-                            <div className="mt-6 border-t border-background">
+                            <div className="mt-6 border-t border-background pt-6">
                                 <div className="rounded-lg border border-error/30 bg-error/5 p-6">
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
                                         <div className="flex items-start gap-4">

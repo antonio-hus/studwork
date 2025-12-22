@@ -184,7 +184,7 @@ export function UserProfileDialog({user, open, onOpenChange, roles}: Props) {
                                             />
                                             <ProfileInfoItem
                                                 icon={<FileText/>}
-                                                label={t('labels.resume')}
+                                                label={t('labels.linkedin')}
                                                 value={details.student?.resumeUrl}
                                                 isLink
                                                 colSpan2

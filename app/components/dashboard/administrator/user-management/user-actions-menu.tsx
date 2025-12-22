@@ -12,7 +12,8 @@ import {
     UserCog,
     CheckCircle2,
     ShieldCheck,
-    Ban
+    Ban,
+    Trash2
 } from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import {
@@ -29,6 +30,7 @@ interface Props {
     user: User;
     roles: typeof UserRole;
     onSuspendClick: () => void;
+    onDeleteClick: () => void;
     onViewClick: () => void;
 }
 
@@ -44,7 +46,7 @@ interface Props {
  * @param {() => void} props.onSuspendClick Callback for the suspend/unsuspend action.
  * @returns {React.JSX.Element} A dropdown menu with user-specific actions.
  */
-export function UserActionsMenu({user, roles, onSuspendClick, onViewClick}: Props): React.JSX.Element {
+export function UserActionsMenu({user, roles, onSuspendClick, onDeleteClick, onViewClick}: Props): React.JSX.Element {
     const t = useTranslations('admin.users');
     const router = useRouter();
 
@@ -122,6 +124,13 @@ export function UserActionsMenu({user, roles, onSuspendClick, onViewClick}: Prop
                             {t('actions.suspend')}
                         </>
                     )}
+                </DropdownMenuItem>
+
+                <DropdownMenuItem
+                    onClick={onDeleteClick}
+                    className="cursor-pointer text-error focus:text-error focus:bg-error/10"
+                >
+                    <Trash2 className="mr-2 h-4 w-4"/>{t('actions.delete')}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

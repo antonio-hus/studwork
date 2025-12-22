@@ -10,8 +10,14 @@ import {getPasswordResetEmailTemplate} from '@/resources/emails/password-reset'
 import {getAccountSuspendedTemplate} from '@/resources/emails/account-suspended'
 import {getOrganizationRejectedTemplate} from '@/resources/emails/organization-rejected'
 import {getOrganizationApprovedTemplate} from '@/resources/emails/organization-approved'
+import {getNewOrganizationSignupTemplate} from '@/resources/emails/new-organization-signup'
+import {getCoordinatorReviewSubmittedTemplate} from '@/resources/emails/coordinator-review-submitted'
+import {getOrganizationReviewSubmittedTemplate} from '@/resources/emails/organization-review-submitted'
 import {Config} from "@/lib/domain/config"
 import {createLogger} from '@/lib/utils/logger'
+import {UserRepository} from "@/lib/repository/user-repository";
+import {AdministratorRepository} from "@/lib/repository/administrator-repository";
+import {AdministratorService} from "@/lib/service/admin-service";
 
 /**
  * Email Service
@@ -285,6 +291,91 @@ export class EmailService {
             this.logger.info('Account suspended email sent', { email })
         } catch (error) {
             this.logger.error('Failed to send suspension email', error as Error)
+        }
+    }
+
+    async sendNewOrganizationSignupEmail(
+        adminEmail: string,
+        orgName: string,
+        locale: Locale = 'en'
+    ): Promise<void> {
+        try {
+            const transporter = await this.getTransporter()
+            const config = await this.getSafeConfig()
+            if (!transporter) return
+
+            const t = await getTranslations({locale})
+            const adminDashboardUrl = `${process.env.APP_URL}/admin/organizations`
+
+            const htmlBody = getNewOrganizationSignupTemplate(orgName, adminDashboardUrl, t, locale, config)
+
+            await transporter.sendMail({
+                from: await this.getFromAddress(t('from')),
+                to: adminEmail,
+                subject: t('subject'),
+                html: htmlBody,
+            })
+            this.logger.info('New organization signup email sent to admin', { email: adminEmail })
+        } catch (error) {
+            this.logger.error('Failed to send new organization signup email', error as Error)
+        }
+    }
+
+    async sendCoordinatorReviewSubmittedEmail(
+        email: string,
+        studentName: string,
+        projectName: string,
+        locale: Locale = 'en'
+    ): Promise<void> {
+        try {
+            const transporter = await this.getTransporter()
+            const config = await this.getSafeConfig()
+            if (!transporter) return
+
+            const t = await getTranslations({locale})
+            const dashboardUrl = `${process.env.APP_URL}/dashboard/completions`
+
+            const htmlBody = getCoordinatorReviewSubmittedTemplate(studentName, projectName, dashboardUrl, t, locale, config)
+
+            await transporter.sendMail({
+                from: await this.getFromAddress(t('from')),
+                to: email,
+                subject: t('email.coordinatorReviewSubmitted.subject'),
+                html: htmlBody,
+            })
+
+            this.logger.info('Coordinator review submitted email sent', { email })
+        } catch (error) {
+            this.logger.error('Failed to send coordinator review submitted email', error as Error)
+        }
+    }
+
+    async sendOrganizationReviewSubmittedEmail(
+        email: string,
+        studentName: string,
+        projectName: string,
+        locale: Locale = 'en'
+    ): Promise<void> {
+        try {
+            const transporter = await this.getTransporter()
+            const config = await this.getSafeConfig()
+            if (!transporter) return
+
+            const t = await getTranslations({locale})
+            const dashboardUrl = `${process.env.APP_URL}/dashboard/completions`
+
+            const htmlBody = getOrganizationReviewSubmittedTemplate(studentName, projectName, dashboardUrl, t, locale, config)
+
+            await transporter.sendMail({
+                from: await this.getFromAddress(t('from')),
+                to: email,
+                subject: t('email.organizationReviewSubmitted.subject'),
+                html: htmlBody,
+            })
+
+            this.logger.info('Organization review submitted email sent', { email })
+        } catch (error) {
+            this.logger.error('Failed to send organization review submitted email', error as Error)
         }
     }
 

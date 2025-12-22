@@ -3,25 +3,17 @@
 
 import React, {useMemo, useState} from "react";
 import {useTranslations} from "next-intl";
-import {User, UserRole} from "@/lib/domain/user";
+import {User} from "@/lib/domain/user";
 import {ProjectStatus} from "@/lib/domain/project";
 import {ApplicationStatus} from "@/lib/domain/application";
 import {
     LayoutDashboard,
-    Users,
     Briefcase,
     Clock,
     CheckCircle,
     Layout,
-    GraduationCap,
-    Building2,
-    UserCog,
     BarChart3,
-    PieChart,
     ArrowUpRight,
-    LucideIcon,
-    Scale,
-    TrendingUp
 } from "lucide-react";
 import {
     BarChart,
@@ -31,50 +23,40 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    PieChart as RePieChart,
-    Pie,
-    Cell,
-    Legend
 } from "recharts";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {CustomTooltip, KpiCard, StatRow} from "@/components/dashboard/analytics-widgets";
+import {KpiCard, StatRow, CustomTooltip} from "@/components/dashboard/analytics-widgets";
 
 interface Props {
-    userRoles: typeof UserRole;
     projectStatuses: typeof ProjectStatus;
     applicationStatuses: typeof ApplicationStatus;
     user: User;
-    initialUserCounts: Record<UserRole, number>;
     initialProjectCounts: Record<ProjectStatus, number>;
     initialApplicationCounts: Record<ApplicationStatus, number>;
     initialCompletionCount: number;
 }
 
 /**
- * AdminDashboardClient
+ * OrganizationDashboardClient
  *
- * Primary visual dashboard for system administrators.
- * Displays key metrics, charts, and operational ratios for platform monitoring.
+ * Primary visual dashboard for organizations.
+ * Displays key metrics, charts, and operational ratios for project monitoring.
  */
-export function AdminDashboardClient({
-                                         userRoles,
-                                         projectStatuses,
-                                         applicationStatuses,
-                                         user,
-                                         initialUserCounts,
-                                         initialProjectCounts,
-                                         initialApplicationCounts,
-                                         initialCompletionCount,
-                                     }: Props) {
-    const t = useTranslations("dashboard.admin");
+export function OrganizationDashboardClient({
+                                                projectStatuses,
+                                                applicationStatuses,
+                                                user,
+                                                initialProjectCounts,
+                                                initialApplicationCounts,
+                                                initialCompletionCount,
+                                            }: Props) {
+    const t = useTranslations("dashboard.admin"); // Reusing admin translations for now, or create new ones
 
-    const [userCounts] = useState(initialUserCounts);
     const [projectCounts] = useState(initialProjectCounts);
     const [applicationCounts] = useState(initialApplicationCounts);
     const [completionCount] = useState(initialCompletionCount);
 
     const stats = useMemo(() => {
-        const totalUsers = Object.values(userCounts).reduce((a, b) => a + b, 0);
         const totalApplications =
             applicationCounts[applicationStatuses.ACCEPTED] +
             applicationCounts[applicationStatuses.REJECTED] +
@@ -90,31 +72,18 @@ export function AdminDashboardClient({
             projectCounts[projectStatuses.PUBLISHED] +
             projectCounts[projectStatuses.IN_PROGRESS];
 
-        const coordinatorLoad = userCounts[userRoles.COORDINATOR] > 0
-            ? (activeProjects / userCounts[userRoles.COORDINATOR])
-            : 0;
-
         const applicantsPerProject = activeProjects > 0
             ? (totalApplications / activeProjects)
             : 0;
 
         return {
-            totalUsers,
             totalApplications,
             acceptanceRate,
             activeProjects,
             totalProjects,
-            coordinatorLoad,
             applicantsPerProject
         };
-    }, [userCounts, projectCounts, applicationCounts, applicationStatuses, projectStatuses]);
-
-    const userChartData = useMemo(() => [
-        {name: t('students'), value: userCounts[userRoles.STUDENT], color: 'var(--color-muted)'},
-        {name: t('coordinators'), value: userCounts[userRoles.COORDINATOR], color: 'var(--color-accent)'},
-        {name: t('organizations'), value: userCounts[userRoles.ORGANIZATION], color: 'var(--color-secondary)'},
-        {name: t('administrators'), value: userCounts[userRoles.ADMINISTRATOR], color: 'var(--color-primary)'},
-    ].filter(d => d.value > 0), [userCounts, userRoles, t]);
+    }, [projectCounts, applicationCounts, applicationStatuses, projectStatuses]);
 
     const projectPipelineData = useMemo(() => [
         {name: t('draft'), value: projectCounts[projectStatuses.DRAFT]},
@@ -145,124 +114,7 @@ export function AdminDashboardClient({
                     </div>
                 </div>
 
-                {/* ZONE 1: USER ANALYTICS */}
-                <Card className="shadow-sm border-border bg-muted/30 overflow-hidden">
-                    <CardHeader className="border-b border-border/50 py-4 px-6">
-                        <div className="flex items-center gap-2">
-                            <Users className="h-5 w-5 text-muted-foreground"/>
-                            <CardTitle className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                                {t("userAnalytics")}
-                            </CardTitle>
-                        </div>
-                    </CardHeader>
-
-                    <CardContent className="p-4 sm:p-6 space-y-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <KpiCard
-                                label={t("totalUsers")}
-                                value={stats.totalUsers}
-                                icon={Users}
-                                trend={t("platformGrowth")}
-                                variant="primary"
-                            />
-                            <KpiCard
-                                label={t("students")}
-                                value={userCounts[userRoles.STUDENT]}
-                                icon={GraduationCap}
-                                trend={t("activeLearners")}
-                                variant="muted"
-                            />
-                            <KpiCard
-                                label={t("organizations")}
-                                value={userCounts[userRoles.ORGANIZATION]}
-                                icon={Building2}
-                                trend={t("partners")}
-                                variant="secondary"
-                            />
-                            <KpiCard
-                                label={t("coordinators")}
-                                value={userCounts[userRoles.COORDINATOR]}
-                                icon={UserCog}
-                                trend={t("academicStaff")}
-                                variant="accent"
-                            />
-                        </div>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            {/* User Distribution Chart */}
-                            <div
-                                className="col-span-1 lg:col-span-2 rounded-xl border border-border bg-card shadow-sm p-4 sm:p-6">
-                                <div className="mb-6 flex items-center gap-3">
-                                    <div className="p-2 bg-muted/20 rounded-md">
-                                        <PieChart className="w-4 h-4 text-muted-foreground"/>
-                                    </div>
-                                    <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-                                        {t("userDistribution")}
-                                    </h3>
-                                </div>
-                                <div className="h-[300px] sm:h-[280px] w-full min-w-0">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <RePieChart>
-                                            <Pie
-                                                data={userChartData}
-                                                cx="50%"
-                                                cy="50%"
-                                                innerRadius={60}
-                                                outerRadius={80}
-                                                paddingAngle={4}
-                                                dataKey="value"
-                                                stroke="hsl(var(--card))"
-                                                strokeWidth={3}
-                                            >
-                                                {userChartData.map((entry, index) => (
-                                                    <Cell key={`cell-${index}`} fill={entry.color}/>
-                                                ))}
-                                            </Pie>
-                                            <Tooltip content={<CustomTooltip/>}/>
-                                            <Legend
-                                                verticalAlign="bottom"
-                                                align="center"
-                                                layout="horizontal"
-                                                iconType="circle"
-                                                wrapperStyle={{paddingTop: '20px', fontSize: '12px'}}
-                                                formatter={(value) => <span
-                                                    className="text-xs font-medium text-muted-foreground ml-1">{value}</span>}
-                                            />
-                                        </RePieChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </div>
-
-                            {/* Operational Ratios */}
-                            <div
-                                className="rounded-xl border border-border bg-card shadow-sm p-4 sm:p-6 flex flex-col justify-between">
-                                <div>
-                                    <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-6">
-                                        {t("operationalRatios")}
-                                    </h3>
-                                    <div className="space-y-8">
-                                        <StatRow
-                                            label={t("coordinatorLoad")}
-                                            value={stats.coordinatorLoad.toFixed(1)}
-                                            barColor="bg-primary"
-                                            percentage={(stats.coordinatorLoad / 10) * 100}
-                                            icon={UserCog}
-                                        />
-                                        <StatRow
-                                            label={t("marketDemand")}
-                                            value={stats.applicantsPerProject.toFixed(1)}
-                                            barColor="bg-secondary"
-                                            percentage={(stats.applicantsPerProject / 20) * 100}
-                                            icon={TrendingUp}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* ZONE 2: PROJECT OPERATIONS */}
+                {/* ZONE 1: PROJECT OPERATIONS */}
                 <Card className="shadow-sm border-border bg-muted/30 overflow-hidden">
                     <CardHeader className="border-b border-border/50 py-4 px-6">
                         <div className="flex items-center gap-2">
@@ -397,10 +249,10 @@ export function AdminDashboardClient({
                                     <div className="flex items-center justify-between">
                                         <span
                                             className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                                            {t("totalApplicationsProcessed")}
+                                            {t("marketDemand")}
                                         </span>
                                         <span className="text-xl font-bold text-foreground">
-                                            {stats.totalApplications}
+                                            {stats.applicantsPerProject.toFixed(1)}
                                         </span>
                                     </div>
                                 </div>
